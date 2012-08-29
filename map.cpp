@@ -20,3 +20,5 @@ void map_insert( char const * key,
 
    internal_map.insert( make_pair(key, value) );
 }
+
+}
