@@ -1,8 +1,11 @@
 #include "map.h"
 
-int main() {
+int main(void) 
+{
+  map_insert("key0", "value0" );
+  map_insert("key1", "value1" );
+  map_insert("key2", "value2" );
+  print_map();
 
-   map_insert( "key", "value" );
-
-   return 0;
+  return 0;
 }
