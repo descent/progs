@@ -5,7 +5,7 @@ main.o: main.c
 	gcc -c main.c -o main.o
 
 map.o: map.cpp
-	gcc -c map.cpp -o map.o
+	g++ -c map.cpp -o map.o
 
 clean:
 	rm -f *.o *.out
