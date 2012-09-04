@@ -1,0 +1,8 @@
+q4weather is a weather service application developed by Qt GUI framework. It supports multiple weather service including from Yahoo! and Google. Also, you could add other available weather provider as a inheriting class from Engine. Find screenshots in ./pics/
+
+-------------------
+1.	Build & Install
+
+	# qmake
+	# make
+	# ./q4weather
