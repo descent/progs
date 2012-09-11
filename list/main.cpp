@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <cstdlib>
+
 using std::cout;
 using std::endl;
 
@@ -16,14 +18,16 @@ void print(Node *n)
   cout << endl;
 }
 
-Node *create_list()
+Node *create_list(int size)
 {
-  int data[] = {1,2,3,4,5};
+  srand(time(0));
+
   Node *head = new Node(0);
   Node *cur_n = head;
-  for (int i=0 ; i < sizeof(data)/sizeof(int) ; ++i)
+  for (int i=0 ; i < size ; ++i)
   {
-    Node *n = new Node(data[i]);
+    int num = rand() % 1000;
+    Node *n = new Node(num);
     cur_n->set_next(n);
     cur_n = n;
   }
@@ -33,7 +37,8 @@ Node *create_list()
 
 int main()
 {
-  Node *head = create_list();
+  const int size = 10;
+  Node *head = create_list(size);
 
   print(head);
   head->del_next_node();
