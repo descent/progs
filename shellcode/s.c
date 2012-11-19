@@ -12,6 +12,12 @@ typedef void (*FUNCPTR)();
 int main() {
     printf("<< Shellcode begin >>\n");
 
+#if 0
     FUNCPTR fp = (FUNCPTR)shellcode;
     fp();
+#else
+    goto *(char *)shellcode;
+#endif
+    printf("<< Shellcode end >>\n");
+    return 0;
 }
