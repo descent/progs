@@ -1,3 +1,4 @@
 ptrptr: ptrptr.c
-	gcc -m32 ptrptr.c -o ptrptr
-
+	gcc -g -m32 ptrptr.c -o ptrptr
+clean:
+	rm ptrptr
