@@ -19,5 +19,13 @@ int main(int argc, const char *argv[])
   my_func1(*q);
   my_func2(*q);
   my_func3(*q);
+
+  int (*r)[5] = apricot[0];
+  r = apricot[1];
+
+  int *t = apricot[0][1];
+  t = apricot[1][2];
+
+
   return 0;
 }
