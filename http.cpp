@@ -36,7 +36,8 @@ int main(void)
         }
         //printf("已建立連線....\n");
 
-        strcpy(request,"GET ~/play.mp4 HTTP/1.1\r\n");               ///********
+        strcpy(request,"GET /~descent/play.mp4 HTTP/1.1\r\n");               ///********
+        strcat(request,"USER-AGENT: myhttpclient\r\n");
         strcat(request,"HOST: 192.168.100.122\r\n");
         //strcat(request,"user-Agent: Mozilla/5.0 (Window NT 6.1; rv:19.0) Gecko/20100101 Firefox/19.0\r\n");
         //strcat(request,"Accept: text/html,application/xhtml+xml.application/xml;q=0.9,*/*;q=0.8\r\n");
@@ -57,8 +58,8 @@ int main(void)
         {
                 printf("send request\n");
         }
-        recv(s,buf,PACKET_SIZE,0);                                              /******worked*******/
-        printf("%s",buf);
+        ssize_t recv_leng = recv(s,buf,PACKET_SIZE,0);                                              /******worked*******/
+        printf("buf : %s",buf);
 
         char *p  ,*q;
         int i,filesize,first=1;
