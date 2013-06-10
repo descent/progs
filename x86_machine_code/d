@@ -1,0 +1,11 @@
+descent@w-linux:x86_machine_code$ objdump -d -m i8086 address_mode.elf 
+
+address_mode.elf:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00000100 <_text>:
+ 100:   03 07                   add    (%bx),%ax
+
+
