@@ -1,11 +1,11 @@
 m: main.o hello.o
-	gcc -o $@ $^
+	gcc -std=c99 -o $@ $^
 #hello: hello.o
 #	gcc -g -o $@ $<
 
 hello.o: hello.c
-	gcc -c $<
+	gcc -std=c99 -c $<
 main.o: main.c
-	gcc -g -c $<
+	gcc -std=c99 -g -c $<
 clean:
 	rm -rf *.o
