@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+
+#include <sys/mman.h>
+
 
 #include "type.h"
 #include "elf.h"
@@ -52,6 +56,10 @@ SymbolData lookup_symbol_data(u8 *section_addr, u32 section_num, u32 symbol_inde
 
 }
 
+
+#define SECTION_NUM 100
+u32 section_offset[SECTION_NUM];
+
 int main()
 {
 
@@ -61,7 +69,17 @@ int main()
   int size = ftell(fs);
   fseek(fs, 0, SEEK_SET);
 
+  u32 align_addr;
+
   hello_addr = (u8*)malloc(size);
+  printf("hello addr: %p\n", hello_addr);
+  align_addr = (u32)hello_addr;
+  printf("align addr: %x\n", align_addr);
+
+  align_addr &= 0xfffff000;
+  align_addr += 0x1000;
+  hello_addr = align_addr;
+  printf("align 0x1000 hello addr: %p\n", hello_addr);
   fread(hello_addr, 1, size, fs);
   fclose(fs);
 
@@ -76,11 +94,30 @@ int main()
   Elf32_Shdr *shdr_addr = (Elf32_Shdr*)(hello_addr + elf_hdr->e_shoff);
 
 
+  u32 text_offset;
+  for (int i=0 ; i < elf_hdr->e_shnum ; ++i)
+  {
+    //printf("#%d section offset: %#x\n", i, shdr->sh_offset);
+    section_offset[i] = shdr->sh_offset;
+    //printf("section_offset[%d]: %#x\n", i, section_offset[i]);
+    ++shdr;
+  }
+
+  shdr = (Elf32_Shdr*)(hello_addr + elf_hdr->e_shoff);
+
   for (int i=0 ; i < elf_hdr->e_shnum ; ++i)
   {
     //printf("#%d shdr : %p\n", i, (u8*)shdr-hello_addr);
+    if (i == 1) // .text section
+    {
+      printf("text offset: %#x\n", shdr->sh_offset);
+      text_offset = shdr->sh_offset;
+    }
+
     if (shdr->sh_type == 9)
     {
+      printf("section_offset[1]: %#x\n", section_offset[1]);
+      printf("section_offset[3]: %#x\n", section_offset[3]);
     printf("#%d name : %x\n", i, shdr->sh_name);
     printf("#%d type : %x\n", i, shdr->sh_type);
     printf("#%d shoff: %x\n", i, shdr->sh_offset);
@@ -103,10 +140,50 @@ int main()
 	printf("symbol_data.offset: %x\n", symbol_data.offset);
 	printf("symbol_data.addr: %x\n", symbol_data.addr);
 	printf("symbol_data.section_index: %x\n", symbol_data.section_index);
+	printf("modify addr: %#x\n", text_offset + symbol_data.offset);
+        printf("modify value: %#x\n", section_offset[symbol_data.section_index] + symbol_data.addr);
+
+        *(u32*)(hello_addr + text_offset + symbol_data.offset) = section_offset[symbol_data.section_index] + symbol_data.addr;
+
         ++rel;
       }
+      #if 0
+        SymbolData symbol_data = lookup_symbol_data((u8*)shdr_addr, elf_hdr->e_shnum, 9);
+	printf("sym9 symbol_data.addr: %x\n", symbol_data.addr);
+	printf("sym9 symbol_data.section_index: %x\n", symbol_data.section_index);
+        #endif
     }
     ++shdr;
+  }
+
+  //unsigned int addr = 0;
+
+  errno = 0;
+  if (mprotect(hello_addr, size, PROT_EXEC|PROT_READ|PROT_WRITE) == 0)
+  {
+    goto *(hello_addr + text_offset + 0xc);
+  }
+  else
+  {
+    switch (errno)
+    {
+      case EACCES:
+      {
+        printf("1\n");
+        break;
+      }
+      case EINVAL:
+      {
+        printf("2\n");
+        break;
+      }
+      case ENOMEM:
+      {
+        printf("3\n");
+        break;
+      }
+    }
+    perror("mprotect err\n");
   }
 
   return 0;
