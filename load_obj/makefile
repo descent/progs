@@ -7,6 +7,6 @@ m: main.o hello.o
 hello.o: hello.c
 	gcc $(CFLAGS) -c $<
 main.o: main.c
-	gcc $(CFLAGS) -c $<
+	gcc -g $(CFLAGS) -c $<
 clean:
 	rm -rf *.o
