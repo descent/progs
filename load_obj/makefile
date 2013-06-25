@@ -1,11 +1,12 @@
+CFLAGS=-m32 -std=c99
 m: main.o hello.o
-	gcc -std=c99 -o $@ $^
+	gcc $(CFLAGS) -o $@ $^
 #hello: hello.o
 #	gcc -g -o $@ $<
 
 hello.o: hello.c
-	gcc -std=c99 -c $<
+	gcc $(CFLAGS) -c $<
 main.o: main.c
-	gcc -std=c99 -g -c $<
+	gcc $(CFLAGS) -c $<
 clean:
 	rm -rf *.o
