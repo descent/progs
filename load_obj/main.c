@@ -114,7 +114,7 @@ int main()
       text_offset = shdr->sh_offset;
     }
 
-    if (shdr->sh_type == 9)
+    if (i==2 && shdr->sh_type == 9)
     {
       printf("section_offset[1]: %#x\n", section_offset[1]);
       printf("section_offset[3]: %#x\n", section_offset[3]);
@@ -142,8 +142,30 @@ int main()
 	printf("symbol_data.section_index: %x\n", symbol_data.section_index);
 	printf("modify addr: %#x\n", text_offset + symbol_data.offset);
         printf("modify value: %#x\n", section_offset[symbol_data.section_index] + symbol_data.addr);
+	switch (class)
+	{
+          case 1:
+	  {
+            *(u32*)(hello_addr + text_offset + symbol_data.offset) += hello_addr + section_offset[symbol_data.section_index] + symbol_data.addr;
+            break;
+	  }
+          case 2:
+	  {
+            s32 org_val = *(u32*)(hello_addr + text_offset + symbol_data.offset);
+	    printf("org val: %d\n", org_val);
+            *(u32*)(hello_addr + text_offset + symbol_data.offset) = hello_addr + section_offset[symbol_data.section_index] + symbol_data.addr + org_val - (u32)(hello_addr + text_offset + symbol_data.offset);
+            //*(s32*)(hello_addr + text_offset + symbol_data.offset) = 0xffffffde;
+            printf("1 %#x\n", (u32)(hello_addr + text_offset + symbol_data.offset));
+            printf("func addr %#x\n", hello_addr + section_offset[symbol_data.section_index] + symbol_data.addr);
+            printf("val %#x\n", hello_addr + section_offset[symbol_data.section_index] + symbol_data.addr + org_val - (u32)(hello_addr + text_offset + symbol_data.offset));
+            //*(u32*)(hello_addr + text_offset + symbol_data.offset) = 0xdeffffff;
+            break;
+	  }
 
-        *(u32*)(hello_addr + text_offset + symbol_data.offset) = section_offset[symbol_data.section_index] + symbol_data.addr;
+
+          
+	}
+
 
         ++rel;
       }
@@ -158,10 +180,11 @@ int main()
 
   //unsigned int addr = 0;
 
+#if 1
   errno = 0;
   if (mprotect(hello_addr, size, PROT_EXEC|PROT_READ|PROT_WRITE) == 0)
   {
-    goto *(hello_addr + text_offset + 0xc);
+    goto *(hello_addr + text_offset + 0xe);
   }
   else
   {
@@ -185,7 +208,7 @@ int main()
     }
     perror("mprotect err\n");
   }
-
+#endif
   return 0;
   
 
