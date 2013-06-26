@@ -202,7 +202,7 @@ int main()
   for (int i=0 ; i < elf_hdr->e_shnum ; ++i)
   {
     printf("#%d section_name[%#x]: %s\n", i, shdr->sh_name, section_string+(shdr->sh_name));
-    //section_offset[i] = shdr->sh_offset;
+    section_offset[i] = shdr->sh_offset;
     //printf("section_offset[%d]: %#x\n", i, section_offset[i]);
     ++shdr;
   }
@@ -243,6 +243,10 @@ int main()
 	printf("symbo_index: %x\n", symbo_index);
 	printf("symbol_data.offset: %x\n", symbol_data.offset);
 	printf("symbol_data.addr: %x\n", symbol_data.addr);
+
+	printf("section_offset[1]: %x\n", section_offset[1]);
+	printf("section_offset[3]: %x\n", section_offset[3]);
+
 	printf("symbol_data.section_index: %x\n", symbol_data.section_index);
 	printf("modify addr: %#x\n", text_offset + symbol_data.offset);
         printf("modify value: %#x\n", section_offset[symbol_data.section_index] + symbol_data.addr);
