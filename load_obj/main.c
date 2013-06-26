@@ -1,12 +1,55 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <string.h>
 
 #include <sys/mman.h>
 
 
 #include "type.h"
 #include "elf.h"
+
+#define STR_NUM 30
+
+typedef struct StrTabData_
+{
+  char  *str_;
+  u32 len_;
+}StrTabData;
+
+StrTabData symbol_name[STR_NUM];
+
+int sec_num;
+
+u8 *section_string;
+u8 *symbol_string;
+
+
+char *sec_names[STR_NUM];
+u32 sec_offset[STR_NUM];
+
+int get_section_index(const char *section_name)
+{
+  for (int i = 0 ; i < sec_num ; ++i)
+  {
+    if (strcmp(section_name, sec_names[i]) == 0)
+    {
+      return i;	      
+    }
+  }
+  return -1;
+}
+
+char *get_rel_section_name(char *rel_section_name)
+{
+  const char *pattern_len = ".rel";
+  if (strstr(rel_section_name, pattern_len))
+  {
+    return rel_section_name + strlen(pattern_len);
+  }
+  else
+    return 0;
+}
 
 u8 *hello_addr;
 
@@ -19,18 +62,6 @@ typedef struct SymbolData_
   u32 section_index;
 }SymbolData;
 
-typedef struct StrTabData_
-{
-  char  *str_;
-  u32 len_;
-}StrTabData;
-
-#define STR_NUM 30
-StrTabData section_name[STR_NUM];
-StrTabData symbol_name[STR_NUM];
-
-u8 *section_string;
-u8 *symbol_string;
 
 int lookup_string_section(u8 *section_addr, u32 section_num)
 {
@@ -43,12 +74,12 @@ int lookup_string_section(u8 *section_addr, u32 section_num)
       if (shstrndx == i) 
       {
         printf("section name string table\n");
-        str_tab = section_name;
+        //str_tab = section_name;
         section_string = hello_addr+shdr->sh_offset;
       }
       else
       {
-        str_tab = symbol_name;
+        //str_tab = symbol_name;
         symbol_string = hello_addr+shdr->sh_offset;
       }
 
@@ -187,6 +218,8 @@ int main()
   printf("shnum: %x\n", elf_hdr->e_shnum);
   printf("e_shstrndx: %d\n", elf_hdr->e_shstrndx);
 
+  sec_num = elf_hdr->e_shnum;
+
   shstrndx = elf_hdr->e_shstrndx;
 
   Elf32_Shdr *shdr = (Elf32_Shdr*)(hello_addr + elf_hdr->e_shoff);
@@ -202,9 +235,18 @@ int main()
   for (int i=0 ; i < elf_hdr->e_shnum ; ++i)
   {
     printf("#%d section_name[%#x]: %s\n", i, shdr->sh_name, section_string+(shdr->sh_name));
+    sec_names[i] = section_string+(shdr->sh_name);
+    sec_offset[i] = shdr->sh_offset;
     section_offset[i] = shdr->sh_offset;
+
+
     //printf("section_offset[%d]: %#x\n", i, section_offset[i]);
     ++shdr;
+  }
+
+  for (int i=0 ; i < elf_hdr->e_shnum ; ++i)
+  {
+    printf("sec name[%d]: %s\n", i, sec_names[i]);
   }
 
   shdr = (Elf32_Shdr*)(hello_addr + elf_hdr->e_shoff);
@@ -212,14 +254,36 @@ int main()
   for (int i=0 ; i < elf_hdr->e_shnum ; ++i)
   {
     //printf("#%d shdr : %p\n", i, (u8*)shdr-hello_addr);
+    
+
+#if 0
     if (i == 1) // .text section
     {
       printf("text offset: %#x\n", shdr->sh_offset);
       text_offset = shdr->sh_offset;
     }
+#endif
 
     if (i==2 && shdr->sh_type == 9)
     {
+
+      printf("rel section name: %s\n", section_string+shdr->sh_name); 
+      char *rel_section_name = get_rel_section_name(section_string+shdr->sh_name);
+      printf("need rel section name: %s\n", rel_section_name);
+
+      int rel_sec_idx = get_section_index(rel_section_name);
+
+      if (rel_sec_idx == -1)
+      {
+        printf("rel_sec_idx = -1\n");
+        exit(1);	       
+      }
+      printf("rel_sec_idx: %d\n", rel_sec_idx);
+      printf("rel_sec_offset: %#x\n", sec_offset[rel_sec_idx]);
+      text_offset = sec_offset[rel_sec_idx];
+
+      //exit(-1);
+
       printf("section_offset[1]: %#x\n", section_offset[1]);
       printf("section_offset[3]: %#x\n", section_offset[3]);
     printf("#%d name : %x\n", i, shdr->sh_name);
