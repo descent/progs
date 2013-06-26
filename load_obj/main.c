@@ -10,12 +10,108 @@
 
 u8 *hello_addr;
 
+int shstrndx;
+
 typedef struct SymbolData_
 {
   u32 offset;
   u32 addr;
   u32 section_index;
 }SymbolData;
+
+typedef struct StrTabData_
+{
+  char  *str_;
+  u32 len_;
+}StrTabData;
+
+#define STR_NUM 30
+StrTabData section_name[STR_NUM];
+StrTabData symbol_name[STR_NUM];
+
+u8 *section_string;
+u8 *symbol_string;
+
+int lookup_string_section(u8 *section_addr, u32 section_num)
+{
+  StrTabData *str_tab;
+  Elf32_Shdr *shdr = (Elf32_Shdr*)(section_addr);
+  for (int i=0 ; i < section_num ; ++i)
+  {
+    if (shdr->sh_type == 3) // string section
+    {
+      if (shstrndx == i) 
+      {
+        printf("section name string table\n");
+        str_tab = section_name;
+        section_string = hello_addr+shdr->sh_offset;
+      }
+      else
+      {
+        str_tab = symbol_name;
+        symbol_string = hello_addr+shdr->sh_offset;
+      }
+
+      char *ptr = hello_addr+shdr->sh_offset;
+      int ptr_index=0;
+      int total_len=0;
+
+      printf("found string section: %d\n", i);
+      printf("shdr->sh_size: %#x\n", shdr->sh_size);
+      printf("shdr->sh_offset: %#x\n", shdr->sh_offset);
+      while(1)
+      {
+        int len = strlen(ptr);
+        printf("ptr: %s ## ptr index: %x ## len: %u\n", ptr, total_len, len);
+        total_len += len + 1;
+
+
+        if (total_len >= shdr->sh_size)
+          break;
+
+        ptr += (len + 1);
+
+      }
+      //printf("shdr->sh_entsize: %#x\n", shdr->sh_entsize);
+
+      //int ent_num = shdr->sh_size/shdr->sh_entsize;
+    }
+    ++shdr;
+  }
+}
+
+int lookup_symbol(u8 *section_addr, u32 section_num, const char* symbol_name)
+{
+  Elf32_Shdr *shdr = (Elf32_Shdr*)(section_addr);
+  for (int i=0 ; i < section_num ; ++i)
+  {
+    if (shdr->sh_type == 2) // symbol table
+    {
+      printf("found symbol section: %d\n", i);
+      int ent_num = shdr->sh_size/shdr->sh_entsize;
+      Elf32_Sym *sym = (Elf32_Sym*)(hello_addr + shdr->sh_offset);
+      for (int j=0 ; j < ent_num ; ++j)
+      {
+        if (symbol_name != 0)
+        {
+          if (strcmp(symbol_name, symbol_string + sym->st_name) == 0)
+          {
+            return sym->st_value;
+          }
+        }
+        printf("index: %d ", j);
+        printf("name[%#x]: %s ", sym->st_name, symbol_string + sym->st_name);
+        printf("val: %#x ", sym->st_value);
+        printf("size: %#x\n", sym->st_size);
+
+        ++sym;
+      }
+    }
+
+    ++shdr;
+  }
+}
+
 
 SymbolData lookup_symbol_data(u8 *section_addr, u32 section_num, u32 symbol_index)
 {
@@ -89,16 +185,24 @@ int main()
 
   printf("shoff: %x\n", elf_hdr->e_shoff);
   printf("shnum: %x\n", elf_hdr->e_shnum);
+  printf("e_shstrndx: %d\n", elf_hdr->e_shstrndx);
+
+  shstrndx = elf_hdr->e_shstrndx;
 
   Elf32_Shdr *shdr = (Elf32_Shdr*)(hello_addr + elf_hdr->e_shoff);
   Elf32_Shdr *shdr_addr = (Elf32_Shdr*)(hello_addr + elf_hdr->e_shoff);
 
+  lookup_string_section((u8*)shdr_addr, elf_hdr->e_shnum);
+  lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, 0);
+
+  u32 hello_val = lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, "hello");
+  printf("hello_val: %#x\n", hello_val);
 
   u32 text_offset;
   for (int i=0 ; i < elf_hdr->e_shnum ; ++i)
   {
-    //printf("#%d section offset: %#x\n", i, shdr->sh_offset);
-    section_offset[i] = shdr->sh_offset;
+    printf("#%d section_name[%#x]: %s\n", i, shdr->sh_name, section_string+(shdr->sh_name));
+    //section_offset[i] = shdr->sh_offset;
     //printf("section_offset[%d]: %#x\n", i, section_offset[i]);
     ++shdr;
   }
@@ -184,7 +288,7 @@ int main()
   errno = 0;
   if (mprotect(hello_addr, size, PROT_EXEC|PROT_READ|PROT_WRITE) == 0)
   {
-    goto *(hello_addr + text_offset + 0xe);
+    goto *(hello_addr + text_offset + hello_val);
   }
   else
   {
@@ -211,6 +315,7 @@ int main()
 #endif
   return 0;
   
+}
 
 // find rel.text and rel.data
 // inf rel.text/rel.data offset in object file.
@@ -235,5 +340,3 @@ OFFSET   TYPE              VALUE
 
 
 #endif
-
-}
