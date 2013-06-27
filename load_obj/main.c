@@ -1,9 +1,13 @@
+#define _GNU_SOURCE 
+#include <link.h> // must put the head line, if not get link error.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 
 #include <sys/mman.h>
+
 
 
 #include "type.h"
@@ -187,8 +191,32 @@ SymbolData lookup_symbol_data(u8 *section_addr, u32 section_num, u32 symbol_inde
 #define SECTION_NUM 100
 u32 section_offset[SECTION_NUM];
 
+u32 libc_addr;
+
+int print_callback(struct dl_phdr_info *info, size_t size, void *data)
+{
+  if (strstr(info->dlpi_name, "libc"))
+  {
+    printf("%08x %s\n", info->dlpi_addr, info->dlpi_name);
+    libc_addr = info->dlpi_addr;
+  }
+  return 0;
+}
+
 int main()
 {
+  dl_iterate_phdr(print_callback, NULL);
+  printf("libc addr: %x\n", libc_addr);
+  {
+    Elf32Ehdr *elf_hdr = (Elf32Ehdr*)libc_addr;
+  printf("shoff: %x\n", elf_hdr->e_shoff);
+  printf("shnum: %x\n", elf_hdr->e_shnum);
+  printf("e_shstrndx: %d\n", elf_hdr->e_shstrndx);
+  }
+
+  //u32 hello_val = lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, "hello");
+
+  return 0;
 
   FILE *fs;
   fs = fopen("./hello.o", "r");
