@@ -364,7 +364,7 @@ int main()
           printf("relocate printf\n");
             s32 org_val = *(u32*)(hello_addr + text_offset + symbol_data.offset);
 	    printf("org val: %d\n", org_val);
-            next_i_addr = (u32)((hello_addr + text_offset + symbol_data.offset) + 4);
+            next_i_addr = (u32)((hello_addr + text_offset + symbol_data.offset) - org_val);
             printf("next instruct addr: %#x\n", next_i_addr);
             printf("printf addr: %#x\n", printf_addr);
             call_offset = printf_addr - next_i_addr;
