@@ -15,6 +15,8 @@
 
 #define STR_NUM 30
 
+u32 printf_addr;
+
 typedef struct StrTabData_
 {
   char  *str_;
@@ -203,20 +205,25 @@ int print_callback(struct dl_phdr_info *info, size_t size, void *data)
   return 0;
 }
 
+
 int main()
 {
   dl_iterate_phdr(print_callback, NULL);
   printf("libc addr: %x\n", libc_addr);
+
+  if (libc_addr != 0)
   {
     Elf32Ehdr *elf_hdr = (Elf32Ehdr*)libc_addr;
-  printf("shoff: %x\n", elf_hdr->e_shoff);
-  printf("shnum: %x\n", elf_hdr->e_shnum);
-  printf("e_shstrndx: %d\n", elf_hdr->e_shstrndx);
+    printf("shoff: %x\n", elf_hdr->e_shoff);
+    printf("shnum: %x\n", elf_hdr->e_shnum);
+    printf("e_shstrndx: %d\n", elf_hdr->e_shstrndx);
   }
+  printf_addr = &printf;
+  printf("printf addr: %x\n", printf_addr);
 
   //u32 hello_val = lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, "hello");
 
-  return 0;
+  //return 0;
 
   FILE *fs;
   fs = fopen("./hello.o", "r");
