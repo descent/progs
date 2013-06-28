@@ -16,6 +16,8 @@
 #define STR_NUM 30
 
 u32 printf_addr;
+u32 next_i_addr;
+s32 call_offset;
 
 typedef struct StrTabData_
 {
@@ -117,7 +119,7 @@ int lookup_string_section(u8 *section_addr, u32 section_num)
   }
 }
 
-int lookup_symbol(u8 *section_addr, u32 section_num, const char* symbol_name)
+Elf32_Sym *lookup_symbol(u8 *section_addr, u32 section_num, const char* symbol_name)
 {
   Elf32_Shdr *shdr = (Elf32_Shdr*)(section_addr);
   for (int i=0 ; i < section_num ; ++i)
@@ -133,12 +135,14 @@ int lookup_symbol(u8 *section_addr, u32 section_num, const char* symbol_name)
         {
           if (strcmp(symbol_name, symbol_string + sym->st_name) == 0)
           {
-            return sym->st_value;
+            //printf("st_shndx: %#x ", sym->st_shndx);
+            return sym;
           }
         }
         printf("index: %d ", j);
         printf("name[%#x]: %s ", sym->st_name, symbol_string + sym->st_name);
         printf("val: %#x ", sym->st_value);
+        printf("st_shndx: %#x ", sym->st_shndx);
         printf("size: %#x\n", sym->st_size);
 
         ++sym;
@@ -147,6 +151,7 @@ int lookup_symbol(u8 *section_addr, u32 section_num, const char* symbol_name)
 
     ++shdr;
   }
+  return 0;
 }
 
 
@@ -263,7 +268,11 @@ int main()
   lookup_string_section((u8*)shdr_addr, elf_hdr->e_shnum);
   lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, 0);
 
-  u32 hello_val = lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, "hello");
+  lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, "printf");
+
+  Elf32Sym *sym = lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, "hello");
+
+  u32 hello_val = sym->st_value;
   printf("hello_val: %#x\n", hello_val);
 
   u32 text_offset;
@@ -301,7 +310,6 @@ int main()
 
     if (i==2 && shdr->sh_type == 9)
     {
-
       printf("rel section name: %s\n", section_string+shdr->sh_name); 
       char *rel_section_name = get_rel_section_name(section_string+shdr->sh_name);
       printf("need rel section name: %s\n", rel_section_name);
@@ -332,6 +340,7 @@ int main()
       Elf32_Rel *rel = (Elf32_Rel*)(hello_addr + shdr->sh_offset);
       for (int j=0 ; j < ent_num ; ++j)
       {
+        printf("#j: %d\n", j);
 	printf("r_offset: %x\n", rel->r_offset);
 	printf("r_info: %x\n", rel->r_info);
 	u8 class = rel->r_info & 0xff;
@@ -340,6 +349,7 @@ int main()
 	symbol_data.offset = rel->r_offset;
 	printf("class: %x\n", class);
 	printf("symbo_index: %x\n", symbo_index);
+	//printf("symbo name: %s\n", symbol_string+symbo_index);
 	printf("symbol_data.offset: %x\n", symbol_data.offset);
 	printf("symbol_data.addr: %x\n", symbol_data.addr);
 
@@ -349,6 +359,26 @@ int main()
 	printf("symbol_data.section_index: %x\n", symbol_data.section_index);
 	printf("modify addr: %#x\n", text_offset + symbol_data.offset);
         printf("modify value: %#x\n", section_offset[symbol_data.section_index] + symbol_data.addr);
+        if (j == 1) // printf
+        {
+          printf("relocate printf\n");
+            s32 org_val = *(u32*)(hello_addr + text_offset + symbol_data.offset);
+	    printf("org val: %d\n", org_val);
+            next_i_addr = (u32)((hello_addr + text_offset + symbol_data.offset) + 4);
+            printf("next instruct addr: %#x\n", next_i_addr);
+            printf("printf addr: %#x\n", printf_addr);
+            call_offset = printf_addr - next_i_addr;
+            *(u32*)(hello_addr + text_offset + symbol_data.offset) = call_offset;
+            printf("call offset: %#x\n", call_offset);
+            //exit(0);
+
+
+        }
+        else
+        {
+
+
+
 	switch (class)
 	{
           case 1:
@@ -373,6 +403,8 @@ int main()
           
 	}
 
+        }
+
 
         ++rel;
       }
@@ -391,7 +423,16 @@ int main()
   errno = 0;
   if (mprotect(hello_addr, size, PROT_EXEC|PROT_READ|PROT_WRITE) == 0)
   {
-    goto *(hello_addr + text_offset + hello_val);
+    //typedef void *Fptr();
+    //Fptr fp;
+
+    //(Fptr)(hello_addr + text_offset + hello_val);
+
+    // function ptr, call instruct
+    (*(void(*)())(hello_addr + text_offset + hello_val) )();
+    
+    // this not call instruct is jmp, can not return.
+    //goto *(hello_addr + text_offset + hello_val);
   }
   else
   {
