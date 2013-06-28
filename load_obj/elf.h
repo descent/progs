@@ -134,13 +134,13 @@ typedef struct {
   elf32_word    sh_info;
   elf32_word    sh_addralign;
   elf32_word    sh_entsize;
-} Elf32_Shdr;
+} Elf32Shdr;
 
 
 typedef struct {
   elf32_addr    r_offset;
   elf32_word    r_info;
-} Elf32_Rel;
+} Elf32Rel;
 
 
 typedef struct {
@@ -150,6 +150,6 @@ typedef struct {
   u8 st_info;
   u8 st_other;
   elf32_half st_shndx;
-} Elf32_Sym;
+} Elf32Sym;
 
 #endif
