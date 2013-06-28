@@ -1,7 +1,7 @@
 CFLAGS=-m32 -std=c99
 all: m hello.o
 m: main.o 
-	gcc $(CFLAGS) -o $@ $^
+	gcc -static $(CFLAGS) -o $@ $^
 #hello: hello.o
 #	gcc -g -o $@ $<
 
