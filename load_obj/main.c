@@ -19,6 +19,8 @@ u32 printf_addr;
 u32 next_i_addr;
 s32 call_offset;
 
+u32 symbol_table_addr;
+
 typedef struct StrTabData_
 {
   char  *str_;
@@ -154,6 +156,12 @@ Elf32_Sym *lookup_symbol(u8 *section_addr, u32 section_num, const char* symbol_n
   return 0;
 }
 
+Elf32Sym *lookup_symbol_by_index(u32 symbol_index)
+{
+// need check symbol_index is valid.
+  //Elf32_Sym *sym = (Elf32_Sym*)(symbol_table_addr) + symbol_index;
+  return (Elf32_Sym*)(symbol_table_addr) + symbol_index;
+}
 
 SymbolData lookup_symbol_data(u8 *section_addr, u32 section_num, u32 symbol_index)
 {
@@ -282,6 +290,9 @@ int main()
     sec_names[i] = section_string+(shdr->sh_name);
     sec_offset[i] = shdr->sh_offset;
     section_offset[i] = shdr->sh_offset;
+    if (shdr->sh_type == 2) // symbol table
+      symbol_table_addr = hello_addr + shdr->sh_offset;
+
 
 
     //printf("section_offset[%d]: %#x\n", i, section_offset[i]);
@@ -359,7 +370,11 @@ int main()
 	printf("symbol_data.section_index: %x\n", symbol_data.section_index);
 	printf("modify addr: %#x\n", text_offset + symbol_data.offset);
         printf("modify value: %#x\n", section_offset[symbol_data.section_index] + symbol_data.addr);
-        if (j == 1) // printf
+
+        Elf32Sym *sym  = lookup_symbol_by_index(symbo_index);
+        printf("rel symbol name: %s\n", symbol_string + sym->st_name);
+
+        if (strcmp(symbol_string + sym->st_name, "printf") == 0)
         {
           printf("relocate printf\n");
             s32 org_val = *(u32*)(hello_addr + text_offset + symbol_data.offset);
