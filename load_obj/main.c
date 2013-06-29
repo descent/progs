@@ -1,5 +1,7 @@
+#ifdef FIND_SO_LIB
 #define _GNU_SOURCE 
 #include <link.h> // must put the head line, if not get link error.
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,7 +78,7 @@ typedef struct SymbolData_
 int lookup_string_section(u8 *section_addr, u32 section_num)
 {
   StrTabData *str_tab;
-  Elf32_Shdr *shdr = (Elf32_Shdr*)(section_addr);
+  Elf32Shdr *shdr = (Elf32Shdr*)(section_addr);
   for (int i=0 ; i < section_num ; ++i)
   {
     if (shdr->sh_type == 3) // string section
@@ -121,16 +123,16 @@ int lookup_string_section(u8 *section_addr, u32 section_num)
   }
 }
 
-Elf32_Sym *lookup_symbol(u8 *section_addr, u32 section_num, const char* symbol_name)
+Elf32Sym *lookup_symbol(u8 *section_addr, u32 section_num, const char* symbol_name)
 {
-  Elf32_Shdr *shdr = (Elf32_Shdr*)(section_addr);
+  Elf32Shdr *shdr = (Elf32Shdr*)(section_addr);
   for (int i=0 ; i < section_num ; ++i)
   {
     if (shdr->sh_type == 2) // symbol table
     {
       printf("found symbol section: %d\n", i);
       int ent_num = shdr->sh_size/shdr->sh_entsize;
-      Elf32_Sym *sym = (Elf32_Sym*)(hello_addr + shdr->sh_offset);
+      Elf32Sym *sym = (Elf32Sym*)(hello_addr + shdr->sh_offset);
       for (int j=0 ; j < ent_num ; ++j)
       {
         if (symbol_name != 0)
@@ -160,14 +162,14 @@ Elf32Sym *lookup_symbol_by_index(u32 symbol_index)
 {
 // need check symbol_index is valid.
   //Elf32_Sym *sym = (Elf32_Sym*)(symbol_table_addr) + symbol_index;
-  return (Elf32_Sym*)(symbol_table_addr) + symbol_index;
+  return (Elf32Sym*)(symbol_table_addr) + symbol_index;
 }
 
 SymbolData lookup_symbol_data(u8 *section_addr, u32 section_num, u32 symbol_index)
 {
   // find symbol section first.
 
-  Elf32_Shdr *shdr = (Elf32_Shdr*)(section_addr) + symbol_index;
+  Elf32Shdr *shdr = (Elf32Shdr*)(section_addr) + symbol_index;
   for (int i=0 ; i < section_num ; ++i)
   {
     if (shdr->sh_type == 2) // symbol table
@@ -179,7 +181,7 @@ SymbolData lookup_symbol_data(u8 *section_addr, u32 section_num, u32 symbol_inde
     printf("#%d entsize: %x\n", i, shdr->sh_entsize);
 #endif
       int ent_num = shdr->sh_size/shdr->sh_entsize;
-      Elf32_Sym *sym = (Elf32_Sym*)(hello_addr + shdr->sh_offset) + symbol_index;
+      Elf32Sym *sym = (Elf32Sym*)(hello_addr + shdr->sh_offset) + symbol_index;
       SymbolData symbol_data;
 
       symbol_data.addr = sym->st_value;
@@ -208,6 +210,7 @@ u32 section_offset[SECTION_NUM];
 
 u32 libc_addr;
 
+#ifdef FIND_SO_LIB
 int print_callback(struct dl_phdr_info *info, size_t size, void *data)
 {
   if (strstr(info->dlpi_name, "libc"))
@@ -217,10 +220,12 @@ int print_callback(struct dl_phdr_info *info, size_t size, void *data)
   }
   return 0;
 }
+#endif
 
 
 int main()
 {
+#ifdef FIND_SO_LIB
   dl_iterate_phdr(print_callback, NULL);
   printf("libc addr: %x\n", libc_addr);
 
@@ -231,9 +236,9 @@ int main()
     printf("shnum: %x\n", elf_hdr->e_shnum);
     printf("e_shstrndx: %d\n", elf_hdr->e_shstrndx);
   }
+#endif
   printf_addr = &printf;
   printf("printf addr: %x\n", printf_addr);
-
   //u32 hello_val = lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, "hello");
 
   //return 0;
@@ -270,8 +275,8 @@ int main()
 
   shstrndx = elf_hdr->e_shstrndx;
 
-  Elf32_Shdr *shdr = (Elf32_Shdr*)(hello_addr + elf_hdr->e_shoff);
-  Elf32_Shdr *shdr_addr = (Elf32_Shdr*)(hello_addr + elf_hdr->e_shoff);
+  Elf32Shdr *shdr = (Elf32Shdr*)(hello_addr + elf_hdr->e_shoff);
+  Elf32Shdr *shdr_addr = (Elf32Shdr*)(hello_addr + elf_hdr->e_shoff);
 
   lookup_string_section((u8*)shdr_addr, elf_hdr->e_shnum);
   lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, 0);
@@ -304,7 +309,7 @@ int main()
     printf("sec name[%d]: %s\n", i, sec_names[i]);
   }
 
-  shdr = (Elf32_Shdr*)(hello_addr + elf_hdr->e_shoff);
+  shdr = (Elf32Shdr*)(hello_addr + elf_hdr->e_shoff);
 
   for (int i=0 ; i < elf_hdr->e_shnum ; ++i)
   {
@@ -348,7 +353,7 @@ int main()
 
 
       int ent_num = shdr->sh_size/shdr->sh_entsize;
-      Elf32_Rel *rel = (Elf32_Rel*)(hello_addr + shdr->sh_offset);
+      Elf32Rel *rel = (Elf32Rel*)(hello_addr + shdr->sh_offset);
       for (int j=0 ; j < ent_num ; ++j)
       {
         printf("#j: %d\n", j);
