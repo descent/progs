@@ -14,14 +14,25 @@
 
 #include "type.h"
 #include "elf.h"
+#include "mype.h"
 
 #define STR_NUM 30
+
+
+// coff global variable
+
+IMAGE_SYMBOL *coff_sym_addr;
+
+//
+//  elf global variable
 
 u32 printf_addr;
 u32 next_i_addr;
 s32 call_offset;
 
 u32 symbol_table_addr;
+u32 hello_val;
+u32 text_offset;
 
 typedef struct StrTabData_
 {
@@ -222,31 +233,19 @@ int print_callback(struct dl_phdr_info *info, size_t size, void *data)
 }
 #endif
 
+int size;
 
-int main()
+int load_coff(const char *fn)
 {
-#ifdef FIND_SO_LIB
-  dl_iterate_phdr(print_callback, NULL);
-  printf("libc addr: %x\n", libc_addr);
+}
 
-  if (libc_addr != 0)
-  {
-    Elf32Ehdr *elf_hdr = (Elf32Ehdr*)libc_addr;
-    printf("shoff: %x\n", elf_hdr->e_shoff);
-    printf("shnum: %x\n", elf_hdr->e_shnum);
-    printf("e_shstrndx: %d\n", elf_hdr->e_shstrndx);
-  }
-#endif
-  printf_addr = &printf;
-  printf("printf addr: %x\n", printf_addr);
-  //u32 hello_val = lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, "hello");
 
-  //return 0;
-
+int load_elf(const char *fn)
+{
   FILE *fs;
   fs = fopen("./hello.o", "r");
   fseek(fs, 0, SEEK_END);
-  int size = ftell(fs);
+  size = ftell(fs);
   fseek(fs, 0, SEEK_SET);
 
   u32 align_addr;
@@ -285,10 +284,10 @@ int main()
 
   Elf32Sym *sym = lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, "hello");
 
-  u32 hello_val = sym->st_value;
+  hello_val = sym->st_value;
   printf("hello_val: %#x\n", hello_val);
 
-  u32 text_offset;
+  text_offset;
   for (int i=0 ; i < elf_hdr->e_shnum ; ++i)
   {
     printf("#%d section_name[%#x]: %s\n", i, shdr->sh_name, section_string+(shdr->sh_name));
@@ -438,6 +437,170 @@ int main()
   }
 
   //unsigned int addr = 0;
+
+}
+
+#define COFF_SECTION_NUM 10
+int coff_sec_num;
+IMAGE_SECTION_HEADER *coff_sections[COFF_SECTION_NUM];
+
+
+IMAGE_SECTION_HEADER *get_coff_section_by_secname(const char *sec_name)
+{
+  for (int i=0 ; i < coff_sec_num ; ++i)
+  {
+    if (strcmp(sec_name, coff_sections[i]->Name)==0)
+      return coff_sections[i];
+  }
+  return 0;
+}
+
+void usage(const char *fn)
+{
+  printf("%s fn\n", fn);
+}
+
+int main(int argc, const char *argv[])
+{
+#if 0
+  if (argc <= 1)
+  {
+    usage(argv[0]);
+    return 1;
+  }
+#endif
+
+#ifdef FIND_SO_LIB
+  dl_iterate_phdr(print_callback, NULL);
+  printf("libc addr: %x\n", libc_addr);
+
+  if (libc_addr != 0)
+  {
+    Elf32Ehdr *elf_hdr = (Elf32Ehdr*)libc_addr;
+    printf("shoff: %x\n", elf_hdr->e_shoff);
+    printf("shnum: %x\n", elf_hdr->e_shnum);
+    printf("e_shstrndx: %d\n", elf_hdr->e_shstrndx);
+  }
+#endif
+
+
+  printf_addr = &printf;
+  printf("printf addr: %x\n", printf_addr);
+  //u32 hello_val = lookup_symbol((u8*)shdr_addr, elf_hdr->e_shnum, "hello");
+
+  
+  FILE *fs;
+  //fs = fopen(argv[1], "r");
+  fs = fopen("./hello.coff", "r");
+  fseek(fs, 0, SEEK_END);
+  size = ftell(fs);
+  fseek(fs, 0, SEEK_SET);
+
+  u32 align_addr;
+
+  hello_addr = (u8*)malloc(size);
+  printf("hello addr: %p\n", hello_addr);
+  align_addr = (u32)hello_addr;
+  printf("align addr: %x\n", align_addr);
+
+  align_addr &= 0xfffff000;
+  align_addr += 0x1000;
+  hello_addr = align_addr;
+  printf("align 0x1000 hello addr: %p\n", hello_addr);
+  fread(hello_addr, 1, size, fs);
+  fclose(fs);
+
+  IMAGE_FILE_HEADER *coff_hdr = (IMAGE_FILE_HEADER*)hello_addr;
+  printf("Machine: %#x\n", coff_hdr->Machine);
+  printf("NumberOfSections: %#x\n", coff_hdr->NumberOfSections);
+  printf("PointerToSymbolTable: %#x\n", coff_hdr->PointerToSymbolTable);
+  printf("NumberOfSymbols: %#x\n", coff_hdr->NumberOfSymbols);
+
+  IMAGE_SYMBOL *sym = (IMAGE_SYMBOL*)(hello_addr + coff_hdr->PointerToSymbolTable);
+  coff_sym_addr = sym;
+  for (int i=0 ; i < coff_hdr->NumberOfSymbols ; ++i)
+  {
+    printf("#%d\n", i);
+    if (strcmp(sym->N.ShortName, "_hello")==0)
+      hello_val = sym->Value;
+    if (sym->N.Name.Short != 0)
+      printf("ShortName: %s\n", sym->N.ShortName);
+    else
+      printf("use long name\n");
+    printf("Value: %#x\n", sym->Value);
+    printf("SectionNumber %#x\n", sym->SectionNumber);
+    printf("Type %#x\n", sym->Type);
+    ++sym;
+  }
+
+  IMAGE_SECTION_HEADER *coff_section_hdr = (IMAGE_SECTION_HEADER*)(hello_addr + sizeof(IMAGE_FILE_HEADER) );
+  coff_sec_num = coff_hdr->NumberOfSections;
+  for (int i=0 ; i < coff_hdr->NumberOfSections ; ++i)
+  {
+    coff_sections[i] = coff_section_hdr;
+    if (strcmp(".text", coff_section_hdr->Name)==0)
+      text_offset = coff_section_hdr->PointerToRawData;
+    ++coff_section_hdr;
+  }
+
+  coff_section_hdr = (IMAGE_SECTION_HEADER*)(hello_addr + sizeof(IMAGE_FILE_HEADER) );
+
+  for (int i=0 ; i < coff_hdr->NumberOfSections ; ++i)
+  {
+    printf("section name: %s\n", coff_section_hdr->Name);
+    printf("SizeOfRawData: %#x\n", coff_section_hdr->SizeOfRawData);
+    printf("PointerToRawData: %#x\n", coff_section_hdr->PointerToRawData);
+    printf("PointerToRelocations: %#x\n", coff_section_hdr->PointerToRelocations);
+    printf("VirtualAddress: %#x\n", coff_section_hdr->VirtualAddress);
+
+    if (coff_section_hdr->PointerToRelocations != 0)
+    {
+      printf("NumberOfRelocations: %d\n", coff_section_hdr->NumberOfRelocations);
+      IMAGE_RELOCATION *rel = (IMAGE_RELOCATION*)(hello_addr + coff_section_hdr->PointerToRelocations);
+      for (int i=0 ; i < coff_section_hdr->NumberOfRelocations ; ++i)
+      {
+        printf("#%d ## DUMMYUNIONNAME.VirtualAddress: %#x\n", i, rel->DUMMYUNIONNAME.VirtualAddress);
+        printf("SymbolTableIndex: %#x\n", rel->SymbolTableIndex);
+        printf("Type: %#x\n", rel->Type);
+        IMAGE_SYMBOL *sym_offset = coff_sym_addr + rel->SymbolTableIndex;
+        printf("rel symbol name: %s\n", sym_offset->N.ShortName);
+        printf("StorageClass: %#x\n", sym_offset->StorageClass);
+        printf("sym type: %#x\n", sym_offset->Type);
+        printf("sym value: %#x\n", sym_offset->Value);
+        printf("sym NumberOfAuxSymbols: %#x\n", sym_offset->NumberOfAuxSymbols);
+
+        u32 modify_addr = (u32)(hello_addr + coff_section_hdr->PointerToRawData + rel->DUMMYUNIONNAME.VirtualAddress);
+        printf("modify offset: %#x\n", coff_section_hdr->PointerToRawData + rel->DUMMYUNIONNAME.VirtualAddress);
+        printf("modify addr: %#x\n", modify_addr);
+
+        if (strcmp(sym_offset->N.ShortName, "_printf") == 0)
+        {
+          next_i_addr = modify_addr + 4;
+          call_offset = printf_addr - next_i_addr;
+          *((u32*)modify_addr) = call_offset;
+
+          printf("relocation coff win32 printf addr to linux glibc printf\n");
+        }
+        else
+        {
+          if (sym_offset->StorageClass == 3)
+          {
+            IMAGE_SECTION_HEADER *modify_sec = get_coff_section_by_secname(sym_offset->N.ShortName);
+            if (modify_sec == 0)
+              break;
+
+            printf("modify_sec off: %#x\n", modify_sec->PointerToRawData);
+            *((u32*)modify_addr) = (hello_addr + modify_sec->PointerToRawData);
+          }
+
+        }
+
+        ++rel;
+      }
+    }
+
+    ++coff_section_hdr;
+  }
 
 #if 1
   errno = 0;
