@@ -7,7 +7,8 @@ m: main.o
 
 hello.o: hello.c
 	gcc $(CFLAGS) -c $<
-main.o: main.c
+
+main.o: main.c type.h elf.h mype.h
 	gcc -g $(CFLAGS) -c $<
 clean:
 	rm -rf *.o
