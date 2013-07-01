@@ -239,6 +239,16 @@ int print_callback(struct dl_phdr_info *info, size_t size, void *data)
 }
 #endif
 
+u32 get_symbol_offset_by_name(IMAGE_SYMBOL *sym)
+{
+  //printf("get %s offset\n", sym_name);
+}
+
+IMAGE_SECTION_HEADER *get_coff_section_by_index(int index)
+{
+  return coff_sections[index];
+}
+
 int size;
 
 int load_coff(const char *fn)
@@ -306,6 +316,10 @@ int load_coff(const char *fn)
         printf("modify offset: %#x\n", coff_section_hdr->PointerToRawData + rel->DUMMYUNIONNAME.VirtualAddress);
         printf("modify addr: %#x\n", modify_addr);
 
+
+        IMAGE_SYMBOL *sym = coff_sym_addr + rel->SymbolTableIndex;
+        printf("sym in %d section\n", sym->SectionNumber);
+
         if (strcmp(sym_offset->N.ShortName, "_printf") == 0)
         {
           next_i_addr = modify_addr + 4;
@@ -318,13 +332,45 @@ int load_coff(const char *fn)
         {
           if (sym_offset->StorageClass == 3)
           {
-            IMAGE_SECTION_HEADER *modify_sec = get_coff_section_by_secname(sym_offset->N.ShortName);
-            if (modify_sec == 0)
-              break;
+            //IMAGE_SECTION_HEADER *modify_sec = get_coff_section_by_secname(sym_offset->N.ShortName);
+            IMAGE_SECTION_HEADER *sec_hdr = get_coff_section_by_index(sym->SectionNumber - 1);
+            #if 0
+            if (modify_sec != 0)
+            {
+              printf("modify_sec off: %#x\n", modify_sec->PointerToRawData);
+              *((u32*)modify_addr) = (hello_addr + modify_sec->PointerToRawData);
+            }
+            #endif
 
-            printf("modify_sec off: %#x\n", modify_sec->PointerToRawData);
-            *((u32*)modify_addr) = (hello_addr + modify_sec->PointerToRawData);
+                 if (rel->Type == 0x6)
+                 {
+                   s32 modify_val = (hello_addr + sec_hdr->PointerToRawData + sym->Value);
+                   *((u32*)modify_addr) = modify_val;
+                 }
+
           }
+          else if (sym_offset->StorageClass == 2)
+               {
+                 // find _func address and _i
+                 printf("sym val  %#x\n", sym->Value);
+                 IMAGE_SECTION_HEADER *sec_hdr = get_coff_section_by_index(sym->SectionNumber - 1);
+                 printf("%s section offset is : %#x\n", sec_hdr->Name, sec_hdr->PointerToRawData);
+                 // next instruct addr - func addr 
+
+                 if (rel->Type == 0x14)
+                 {
+                   next_i_addr = modify_addr + 4;
+                   s32 modify_val = (hello_addr + sec_hdr->PointerToRawData + sym->Value) - next_i_addr;
+                   *((u32*)modify_addr) = modify_val;
+                 }
+
+                 if (rel->Type == 0x6)
+                 {
+                   s32 modify_val = (hello_addr + sec_hdr->PointerToRawData + sym->Value);
+                   *((u32*)modify_addr) = modify_val;
+                 }
+
+               }
 
         }
 
@@ -537,7 +583,6 @@ int load_elf(const char *fn)
   //unsigned int addr = 0;
 
 }
-
 
 
 IMAGE_SECTION_HEADER *get_coff_section_by_secname(const char *sec_name)
