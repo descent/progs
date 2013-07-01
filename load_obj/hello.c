@@ -1,11 +1,12 @@
 #include <stdio.h>
 
 int i=0x1234;
+//int p=0x9876;
 
 void func(int *j)
 {
   *j = 0x5678;
-  printf("j: %x\n", *j);
+  printf("i: %x\n", i);
   return;
 }
 
