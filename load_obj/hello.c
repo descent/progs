@@ -1,12 +1,16 @@
 #include <stdio.h>
 
+int p=0x9876;
 int i=0x1234;
-//int p=0x9876;
 
 void func(int *j)
 {
-  *j = 0x5678;
-  printf("i: %x\n", i);
+  *j = 0x56ef;
+#ifdef _MSC_VER
+  printf("vc i: %x\n", i);
+#else
+  printf("gcc/linux i: %x\n", i);
+#endif
   return;
 }
 
