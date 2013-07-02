@@ -186,7 +186,7 @@ SymbolData lookup_symbol_data(u8 *section_addr, u32 section_num, u32 symbol_inde
 {
   // find symbol section first.
 
-  Elf32Shdr *shdr = (Elf32Shdr*)(section_addr) + symbol_index;
+  Elf32Shdr *shdr = (Elf32Shdr*)(section_addr);
   for (int i=0 ; i < section_num ; ++i)
   {
     if (shdr->sh_type == 2) // symbol table
@@ -520,7 +520,49 @@ int load_elf(const char *fn)
         printf("modify value: %#x\n", section_offset[symbol_data.section_index] + symbol_data.addr);
 
         Elf32Sym *sym  = lookup_symbol_by_index(symbo_index);
-        printf("rel symbol name: %s\n", symbol_string + sym->st_name);
+        printf("sym st_info: %#x\n", sym->st_info);
+        printf("sym st_info bind: %#x\n", sym->st_info >> 4);
+        printf("sym st_info type: %#x\n", sym->st_info & 0xf);
+
+        if ((sym->st_info & 0xf) != 3)
+          printf("rel symbol name: %s\n", symbol_string + sym->st_name);
+        // ref: http://docs.oracle.com/cd/E19683-01/816-1386/6m7qcoblj/index.html#chapter6-tbl-21
+        switch (sym->st_info & 0xf)
+        {
+          case 0:
+          {
+            printf("notype\n");
+            break;
+          }
+          case 1:
+          {
+            printf("object\n");
+            break;
+          }
+          case 2:
+          {
+            printf("func\n");
+            break;
+          }
+          case 3:
+          {
+            printf("section\n");
+            //printf("rel symbol name: %s\n", section_string + ((Elf32Shdr*)(hello_addr+section_offset[symbol_data.section_index]))->sh_name );
+            break;
+          }
+          case 4:
+          {
+            printf("file\n");
+            break;
+          }
+          default:
+          {
+            printf("current not support");
+            break;
+          }
+        }
+
+
 
         if (strcmp(symbol_string + sym->st_name, "printf") == 0)
         {
@@ -552,15 +594,29 @@ int load_elf(const char *fn)
           case 2:
 	  {
             s32 org_val = *(u32*)(hello_addr + text_offset + symbol_data.offset);
-	    printf("org val: %d\n", org_val);
+
+            s32 modify_val = hello_addr + section_offset[symbol_data.section_index] + symbol_data.addr + org_val - (u32)(hello_addr + text_offset + symbol_data.offset);
+            printf("modify_val : %#x\n", modify_val);
+
             *(u32*)(hello_addr + text_offset + symbol_data.offset) = hello_addr + section_offset[symbol_data.section_index] + symbol_data.addr + org_val - (u32)(hello_addr + text_offset + symbol_data.offset);
+            printf("text_offset: %#x\n", text_offset);
+
             //*(s32*)(hello_addr + text_offset + symbol_data.offset) = 0xffffffde;
             printf("1 %#x\n", (u32)(hello_addr + text_offset + symbol_data.offset));
+
             printf("func addr %#x\n", hello_addr + section_offset[symbol_data.section_index] + symbol_data.addr);
+            printf("func offset %#x\n", section_offset[symbol_data.section_index] + symbol_data.addr);
+	    printf("org val: %d\n", org_val);
+
             printf("val %#x\n", hello_addr + section_offset[symbol_data.section_index] + symbol_data.addr + org_val - (u32)(hello_addr + text_offset + symbol_data.offset));
             //*(u32*)(hello_addr + text_offset + symbol_data.offset) = 0xdeffffff;
             break;
 	  }
+          default:
+          {
+            printf("not support class: %x\n", class);
+            break;
+          }
 
 
           
