@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 #ifdef FIND_SO_LIB
 #define _GNU_SOURCE 
 #include <link.h> // must put the head line, if not get link error.
@@ -714,6 +716,7 @@ int main(int argc, const char *argv[])
   size = ftell(fs);
   fseek(fs, 0, SEEK_SET);
 
+  size += 4096;
   u32 align_addr;
 
   hello_addr = (u8*)malloc(size);
@@ -741,6 +744,8 @@ int main(int argc, const char *argv[])
 
 #if 1
   errno = 0;
+  int pagesize = (int)sysconf(_SC_PAGESIZE);
+  printf("pagesize: %d\n", pagesize);
   if (mprotect(hello_addr, size, PROT_EXEC|PROT_READ|PROT_WRITE) == 0)
   {
     //typedef void *Fptr();
