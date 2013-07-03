@@ -469,7 +469,9 @@ int load_elf(const char *fn)
     }
 #endif
 
-    if (i==2 && shdr->sh_type == 9)
+    // fixed me: the version do relocation for .text, do nothing for .rel.eh_frame/.eh_frame.
+    // I don't know what is .rel.eh_frame/.eh_frame.
+    if ( (shdr->sh_type == 9) && (strcmp(".rel.text", section_string+shdr->sh_name)==0) )
     {
       printf("rel section name: %s\n", section_string+shdr->sh_name); 
       char *rel_section_name = get_rel_section_name(section_string+shdr->sh_name);
