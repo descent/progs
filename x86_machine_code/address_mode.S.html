@@ -1,11 +1,16 @@
 <fieldset><legend>address_mode.S</legend>
 <pre>
-<b>1</b> # practice x86 machine code
-<b>2</b> .code16
-<b>3</b> #.code32
-<b>4</b> .text
-<b>5</b> .global begin
-<b>6</b> begin:
-<b>7</b>   add (%bx), %ax
+<b> 1</b> # practice x86 machine code
+<b> 2</b> #.code16
+<b> 3</b> .code32
+<b> 4</b> .text
+<b> 5</b> .global begin
+<b> 6</b> begin:
+<b> 7</b> #  add 0x12345678(%eax, %esi, 4), %esi
+<b> 8</b> #  add 0x12(%bx, %si, 2), %si
+<b> 9</b> #  mov  0x1234,%esi 
+<b>10</b>   movl  $5, (%ebx)
+<b>11</b>   movb  $5, (%ebx)
+<b>12</b>   mov  $5, %ebx
 </pre>
 </fieldset>

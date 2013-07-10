@@ -4,4 +4,9 @@
 .text
 .global begin
 begin:
-  calll 0xDF81D4
+#  add 0x12345678(%eax, %esi, 4), %esi
+#  add 0x12(%bx, %si, 2), %si
+#  mov  0x1234,%esi 
+#  movl  $5, (%ebx)
+#  movb  $5, (%ebx)
+  mov  $5, %ebx

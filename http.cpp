@@ -38,7 +38,7 @@ int main(void)
         }
         //printf("已建立連線....\n");
 
-        strcpy(request,"GET /~descent/play.mp4 HTTP/1.0\r\n");  
+        strcpy(request,"GET /~descent/play.mp4 HTTP/1.1\r\n");  
         //strcpy(request,"GET /~descent/n1.txt HTTP/1.0\r\n");     
         strcat(request,"USER-AGENT: myhttpclient\r\n");
         strcat(request,"ACCEPT: */*\r\n");
