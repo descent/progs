@@ -12,6 +12,7 @@ fill_input_scp.o: fill_input_scp.cpp
 
 http: http.cpp
 	$(CXX) -g $< -o $@
-
+im: im.cpp
+	$(CXX) -g $< -o $@
 clean:
 	rm ptrptr
