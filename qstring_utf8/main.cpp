@@ -14,6 +14,9 @@
 
 using namespace std;
 
+const char *c_fg = "*";
+const char *c_bg = "|";
+
 // draw 256 gray
 void my_draw_bitmap(FT_Bitmap *bitmap,int pen_x,int pen_y)
 {
@@ -50,9 +53,9 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
       for (int i=7 ; i>=0 ; --i)
       {
         if (((c >> i) & 0x1) == 1)
-          printf("*");
+          printf(c_fg);
         else
-          printf("|");
+          printf(c_bg);
         //++cur_x;
       }
       ++tmp;
@@ -76,6 +79,31 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 
 int main(int argc, char *argv[])
 {
+  string fontpath="./fireflysung.ttf";
+
+  int opt;
+  while ((opt = getopt(argc, argv, "b:f:p:h?")) != -1)
+  {
+    switch (opt)
+    {
+      case 'p':
+      {
+        fontpath = optarg;
+        break;
+      }
+      case 'f':
+      {
+        c_fg = optarg;
+        break;
+      }
+      case 'b':
+      {
+        c_bg = optarg;
+        break;
+      }
+    }
+  }
+
   FT_Vector vector;
   //TGlyph glyphs[MAX_GLYPHS];
   //PGlyph glyph=glyphs;
@@ -89,8 +117,6 @@ int main(int argc, char *argv[])
     cout << "FT_Init_FreeType(&library) error!!" << endl;
     return -1;
   }
-
-  string fontpath="./fireflysung.ttf";
 
   error=FT_New_Face(library,fontpath.c_str(),0,&face); // 從字型載入 face
   if (error==FT_Err_Unknown_File_Format)
