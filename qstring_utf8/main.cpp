@@ -79,13 +79,19 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 
 int main(int argc, char *argv[])
 {
+  QString str = QString::fromUtf8("中文"); 
   string fontpath="./fireflysung.ttf";
 
   int opt;
-  while ((opt = getopt(argc, argv, "b:f:p:h?")) != -1)
+  while ((opt = getopt(argc, argv, "s:b:f:p:h?")) != -1)
   {
     switch (opt)
     {
+      case 's':
+      {
+        str = QString::fromUtf8(optarg);
+        break;
+      }
       case 'p':
       {
         fontpath = optarg;
@@ -147,27 +153,28 @@ int main(int argc, char *argv[])
 
   FT_UInt gindex;
 
-  QString str = QString::fromUtf8("中文"); 
   QVector<uint> utf32_str = str.toUcs4();
-  qDebug() << utf32_str.size();
+  //qDebug() << utf32_str.size();
   for (int i=0 ; i < utf32_str.size() ; ++i)
   {
-    qDebug() << utf32_str[i];
-  }
+    qDebug() << "utf-32: " << utf32_str[i];
 
-  gindex = FT_Get_Char_Index(face, utf32_str[0]);
-  if (gindex==0)
-  {
-    cout << "glyph index not found" << endl;
-    return 0;
-  }
+    gindex = FT_Get_Char_Index(face, utf32_str[i]);
+    if (gindex==0)
+    {
+      cout << "glyph index not found" << endl;
+      return 0;
+    }
 
-   error=FT_Set_Char_Size(face,0,10*64,360,360);
-   if (error)
-   {
-    cout << "FT_Set_Pixel_Sizes error" << endl;
-    return -1;
-   }
+#if 0
+     error=FT_Set_Char_Size(face,0,10*64,360/2,360/2);
+     if (error)
+     {
+       cout << "FT_Set_Pixel_Sizes error" << endl;
+       return -1;
+     }
+#endif
+
 
   FT_Int load_flags=FT_LOAD_DEFAULT;
   error = FT_Load_Glyph(face, gindex,load_flags);
@@ -194,5 +201,13 @@ int main(int argc, char *argv[])
   my_draw_bitmap_mono(&slot->bitmap,slot->bitmap_left,slot->bitmap_top);
 
 
+
+
+  }
+
+
+
+
+  FT_Done_FreeType(library);
   return 0;
 }
