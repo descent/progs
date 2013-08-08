@@ -16,6 +16,58 @@
 
 using namespace std;
 
+#include <vga.h>
+#include <vgagl.h>
+
+
+#define BLACK			(0)
+#define BLUE			(1)
+#define GREEN			(2)
+#define CYAN			(3)
+#define RED			(4)
+#define MAGENTA			(5)
+#define BROWN			(6) // or YELLOW
+#define GRAY		        (7)
+
+#define LIGHTBLACK      	(8)
+#define LIGHTBLUE       	(9)
+#define LIGHTGREEN      	(10)
+#define LIGHTCYAN       	(11)
+#define LIGHTRED        	(12)
+#define LIGHTMAGENTA    	(13)
+#define LIGHTBROWN      	(14)
+
+#ifdef VGALIB
+#define LIGHTWHITE      	(vga_white())
+#else
+#define LIGHTWHITE      	(255)
+#endif
+
+void init_graph_mode()
+{
+  vga_init();
+  int vga_mode=G640x480x256;
+  vga_setmode(vga_mode);
+  gl_setcontextvga(vga_mode);
+
+  gl_setpalettecolor(BLUE, 0, 0, 63); // blue
+  gl_setpalettecolor(BLACK, 0, 0, 0); // black
+  gl_setpalettecolor(GREEN, 0, 63, 0);
+  gl_setpalettecolor(RED, 63, 0, 0);
+  gl_setpalettecolor(BROWN, 170/4, 85/4, 0);
+  gl_setpalettecolor(MAGENTA, 170/4, 0, 170/4);
+  gl_setpalettecolor(CYAN, 0, 170/4, 170/4);
+  gl_setpalettecolor(GRAY, 48, 48, 48);
+
+  gl_setpalettecolor(LIGHTBLACK, 85/4, 85/4, 85/4);
+  gl_setpalettecolor(LIGHTBLUE, 85/4, 85/4, 255/4);
+  gl_setpalettecolor(LIGHTGREEN, 85/4, 255/4, 85/4);
+  gl_setpalettecolor(LIGHTCYAN, 85/4, 255/4, 255/4);
+  gl_setpalettecolor(LIGHTRED, 25/45/4, 85/4, 85/4);
+  gl_setpalettecolor(LIGHTMAGENTA, 255/4, 85/4, 255/4);
+  gl_setpalettecolor(LIGHTBROWN, 255/4, 255/4, 85/4);
+}
+
 const char *c_fg = "*";
 const char *c_bg = "|";
 
@@ -23,6 +75,22 @@ const char *c_bg = "|";
 void my_draw_bitmap(FT_Bitmap *bitmap,int pen_x,int pen_y)
 {
 }
+#if 0
+ vga_clear();
+ unsigned char *tmp=Bitmap->buffer;
+ for (int i=0 ; i < Bitmap->rows ; i++)
+ {
+  for (int j=0 ; j < Bitmap->width ; j++)
+  {
+   if (*tmp)
+    gl_setpixelrgb(pen_x+j,pen_y+i,*tmp,*tmp,*tmp);
+   tmp++;
+  }
+ }
+ vga_getch();
+
+ vga_setmode(TEXT);
+#endif
 
 void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 {
@@ -36,6 +104,11 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
     cout << "bitmap pixel mode : grays" << endl;
     cout << "bitmap grays level : " << bitmap->num_grays << endl;
    }
+
+  int startx = pen_x;
+  int starty = pen_y;
+  int cx=0, cy=0;
+
 
   unsigned char *tmp = bitmap->buffer;
   for (int i=0 ; i < bitmap->rows ; i++)
@@ -55,15 +128,20 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
       for (int i=7 ; i>=0 ; --i)
       {
         if (((c >> i) & 0x1) == 1)
-          printf(c_fg);
+          //printf(c_fg);
+          gl_setpixel(startx+cx, starty+cy, GRAY);
         else
-          printf(c_bg);
+          gl_setpixelrgb(startx+cx, starty+cy, 0, 0, 0);
+          //printf(c_bg);
         //++cur_x;
+        ++cx;
       }
       ++tmp;
       c = *tmp;
 
     }
+    cx=0;
+    ++cy;
     printf("\n");
 
     #if 0
@@ -157,6 +235,10 @@ int main(int argc, char *argv[])
 
   QVector<uint> utf32_str = str.toUcs4();
   //qDebug() << utf32_str.size();
+
+  init_graph_mode();
+
+  int x=0, y=0;
   for (int i=0 ; i < utf32_str.size() ; ++i)
   {
     qDebug() << "utf-32: " << utf32_str[i];
@@ -169,7 +251,7 @@ int main(int argc, char *argv[])
     }
 
 #if 1
-     error=FT_Set_Char_Size(face,0,10*64,360/2,360/2);
+     error=FT_Set_Char_Size(face,0,10*64,360,360);
      if (error)
      {
        cout << "FT_Set_Pixel_Sizes error" << endl;
@@ -199,16 +281,14 @@ int main(int argc, char *argv[])
    }
   }
 
-  FT_GlyphSlot slot=face->glyph;
-  my_draw_bitmap_mono(&slot->bitmap,slot->bitmap_left,slot->bitmap_top);
-
-
-
-
+    FT_GlyphSlot slot=face->glyph;
+    //my_draw_bitmap_mono(&slot->bitmap,slot->bitmap_left,slot->bitmap_top);
+    my_draw_bitmap_mono(&slot->bitmap, x, y);
+    x+=40;
   }
 
-
-
+  vga_getch();
+  vga_setmode(TEXT);
 
   FT_Done_FreeType(library);
   return 0;
