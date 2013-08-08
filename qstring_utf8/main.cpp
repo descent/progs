@@ -2,6 +2,8 @@
 #include <QVector>
 #include <QDebug>
 
+#include <unistd.h>
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
@@ -110,7 +112,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  FT_Vector vector;
+  //FT_Vector vector;
   //TGlyph glyphs[MAX_GLYPHS];
   //PGlyph glyph=glyphs;
   FT_Library library;
@@ -166,7 +168,7 @@ int main(int argc, char *argv[])
       return 0;
     }
 
-#if 0
+#if 1
      error=FT_Set_Char_Size(face,0,10*64,360/2,360/2);
      if (error)
      {
