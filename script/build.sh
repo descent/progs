@@ -3,12 +3,12 @@
 qt_make=/home/lucid/ltib/rootfs/usr/local/Trolltech/qt4/bin/qmake
 
 cd /tmp
-rm -rf mmadplayer update_connect_status c2d_rect c2d_ticker /tmp/pkg
+rm -rf mmadplayer update_connect_status c2d_rect c2d_ticker /tmp/pkg pkg*
 
 git clone code@192.168.20.100:/home/code/git/update_connect_status.git
 git clone code@192.168.20.100:/home/code/git/mmadplayer.git
-git clone ssh://git@bitbucket.org/dsung/c2d_rect.git
-git clone ssh://git@bitbucket.org/dsung/c2d_ticker.git
+git clone code@192.168.20.100:/home/code/git/c2d_rect.git
+git clone code@192.168.20.100:/home/code/git/c2d_ticker.git
 
 cd /tmp/mmadplayer
 git checkout origin/xmlrpc_gst-launch -b xmlrpc_gst-launch
