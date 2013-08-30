@@ -35,6 +35,14 @@ ln -s /tmp/update_connect_status/inc/func.h /tmp/c2d_ticker/func.h
 $qt_make src.pro
 make
 
+cd /tmp/mmadplayer/mmadplayer_ctl
+$qt_make mmadplayer_ctl.pro
+make
+
+cd /tmp/mmadplayer/qte_server/
+$qt_make qtes.pro
+make
+
 cd /tmp/mmadplayer
 ln -s /tmp/update_connect_status/inc/func.h /tmp/mmadplayer/func.h
 $qt_make mmadplayer.pro
@@ -49,3 +57,8 @@ cp -r /tmp/c2d_rect/c2d_rect  /tmp/pkg/mmadplayer_dir/
 cp -r /tmp/c2d_ticker/c2d_ticker  /tmp/pkg/mmadplayer_dir/
 mv /tmp/pkg/mmadplayer_dir/reg* /tmp/pkg/
 cp /tmp/pkg/mmadplayer_dir/mmadplayer_v2.sh /tmp/pkg/mmadplayer_dir/mmadplayer.sh
+mv /tmp/pkg/mmadplayer_dir /tmp/pkg/mmadplayer
+
+cd /tmp
+#tar cvf pkg-`date +%Y%m%d-%H%M%S`.tar pkg
+tar cvf pkg.tar pkg
