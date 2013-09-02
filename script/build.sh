@@ -45,6 +45,8 @@ make
 
 cd /tmp/mmadplayer
 ln -s /tmp/update_connect_status/inc/func.h /tmp/mmadplayer/func.h
+version=`git show --summary |grep commit |cut -d ' ' -f2`
+sed -i -e "s/\$Format:%H\\$/$version/g" const.h
 $qt_make mmadplayer.pro
 make
 make install
@@ -56,6 +58,8 @@ cp /tmp/update_connect_status/tools/*  /tmp/pkg/mmadplayer_dir/
 cp -r /tmp/c2d_rect/c2d_rect  /tmp/pkg/mmadplayer_dir/
 cp -r /tmp/c2d_ticker/c2d_ticker  /tmp/pkg/mmadplayer_dir/
 mv /tmp/pkg/mmadplayer_dir/reg* /tmp/pkg/
+cp /tmp/pkg/mmadplayer/*.qm /tmp/pkg/mmadplayer_dir/
+sed -i -e "s/mmadplayer&/mmadplayer -l jp\\&/g" /tmp/pkg/mmadplayer_dir/mmadplayer_v2.sh
 cp /tmp/pkg/mmadplayer_dir/mmadplayer_v2.sh /tmp/pkg/mmadplayer_dir/mmadplayer.sh
 mv /tmp/pkg/mmadplayer_dir /tmp/pkg/mmadplayer
 
