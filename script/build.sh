@@ -23,7 +23,7 @@ git clone code@192.168.20.100:/home/code/git/c2d_rect.git
 git clone code@192.168.20.100:/home/code/git/c2d_ticker.git
 
 cd /tmp/mmadplayer
-git checkout origin/xmlrpc_gst-launch -b xmlrpc_gst-launch
+git checkout xmlrpc_ver -b xmlrpc_ver
 ln -s /tmp/mmadplayer/setting.h /tmp/update_connect_status/inc/setting.h
 
 echo "cd /tmp/mmadplayer to make"
