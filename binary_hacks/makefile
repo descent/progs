@@ -1,3 +1,4 @@
+CC=gcc
 ptrptr: ptrptr.c
 	gcc -g -m32 ptrptr.c -o ptrptr
 ma: ma.c
@@ -10,9 +11,10 @@ fill_input_scp: fill_input_scp.o
 fill_input_scp.o: fill_input_scp.cpp
 	$(CXX) -c -g $<
 
-http: http.cpp
-	$(CXX) -g $< -o $@
-im: im.cpp
-	$(CXX) -g $< -o $@
+92: 92.o
+	$(CC) -g -o $@ $<
+92.o: 92.c
+	$(CC) -g -c $<
+
 clean:
-	rm ptrptr
+	rm -rf *.o

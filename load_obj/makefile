@@ -10,5 +10,15 @@ hello.o: hello.c
 
 main.o: main.c type.h elf.h mype.h
 	gcc -g $(CFLAGS) -c $<
+
+mh: mh.o hello.pic.o
+	gcc -m32 -o $@ $^
+mh.o: mh.c
+	gcc -m32 -c mh.c 
+
+hello.pic.o: hello.c
+	gcc -m32 -fPIC -c hello.c -o $@
+
+
 clean:
 	rm -rf *.o

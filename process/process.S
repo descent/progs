@@ -1,3 +1,4 @@
+#define STACK_FRAME_OFFSET 10
 .code16
 .text
 .global begin
@@ -25,31 +26,26 @@ begin:
   movw    $0xb800, %ax
   movw    %ax, %gs
 
+## set stack frame eip
   movw $proc_a, stack_frame
-  movw $proc_b, stack_frame+6
+  movw $proc_b, stack_frame+STACK_FRAME_OFFSET
 
+## set stack frame cs
   movw %cs, %ax
   movw %ax, stack_frame+2
-  movw %ax, stack_frame+8
+  movw %ax, stack_frame+STACK_FRAME_OFFSET+2
 
+## set stack frame flag
   # get flag
   pushf
   movw (%esp), %ax
   popf
   movw %ax, stack_frame+4
-  movw %ax, stack_frame+10
+  movw %ax, stack_frame+STACK_FRAME_OFFSET+4
 
-
-#  pushw %ax
-#  pushw $proc_a
   movw $stack_frame, cur_proc
   movw cur_proc, %sp
   iret
-
-
-  #call switch_proc
-  int $0x30
-
 
   mov $0x4c00, %ax
   int $0x21           
@@ -65,10 +61,14 @@ stack_frame:
   .word 0x0# eip
   .word 0x1# cs
   .word 0x2# flag
+  .word 0x3# esp
+  .word 0x4# ss
 
   .word 0x0# eip
   .word 0x1# cs
   .word 0x2# flag
+  .word 0x3# esp
+  .word 0x4# ss
 
 .global proc_a
 proc_a:
@@ -103,7 +103,7 @@ switch_proc:
   movw $stack_frame, cur_proc
   jmp 2f
 1:
-  movw $stack_frame+6, cur_proc
+  movw $stack_frame+STACK_FRAME_OFFSET, cur_proc
 2:
   movw cur_proc, %sp
   iret
