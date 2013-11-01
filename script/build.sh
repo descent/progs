@@ -101,6 +101,7 @@ cp $build_dir/mmadplayer/wd_tool $pkg_dir/mmadplayer_dir/
 cp $build_dir/update_connect_status/tools/*  $pkg_dir/mmadplayer_dir/
 cp -r $build_dir/c2d_rect/c2d_rect  $pkg_dir/mmadplayer_dir/
 cp -r $build_dir/c2d_ticker/c2d_client/c2d_ticker $build_dir/c2d_ticker/c2d_server/c2d_ticker_server $pkg_dir/mmadplayer_dir/
+cp -r $build_dir/gst-player/play $pkg_dir/mmadplayer_dir/
 mv $pkg_dir/mmadplayer_dir/reg* $pkg_dir
 sed -i -e "s/mmadplayer&/mmadplayer -l jp\\&/g" $pkg_dir/mmadplayer_dir/mmadplayer_v2.sh
 cp $pkg_dir/mmadplayer_dir/mmadplayer_v2.sh $pkg_dir/mmadplayer_dir/mmadplayer.sh
