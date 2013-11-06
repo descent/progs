@@ -1,4 +1,5 @@
 # auto git clone and make the code
+# $Id$
 #!/bin/sh
 
 build_dir=/tmp/build_mmadplayer
@@ -35,8 +36,9 @@ cd $build_dir/gst-player
 make
 
 cd $build_dir/mmadplayer
+git checkout v1.0 -b v1.0
 #git checkout xmlrpc_ver -b xmlrpc_ver
-git checkout origin/play_cmd -b play_cmd
+#git checkout origin/play_cmd -b play_cmd
 ln -s $build_dir/mmadplayer/setting.h $build_dir/update_connect_status/inc/setting.h
 
 echo "cd $build_dir/mmadplayer to make"
