@@ -157,9 +157,14 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 
 }
 
+void usage(const char *fp)
+{
+  printf("%s -p font_path -s render_string\n", fp);
+}
+
 int main(int argc, char *argv[])
 {
-  QString str = QString::fromUtf8("中文"); 
+  QString str = QString::fromUtf8("a中文bあい"); 
   string fontpath="./fireflysung.ttf";
 
   int opt;
@@ -186,6 +191,11 @@ int main(int argc, char *argv[])
       {
         c_bg = optarg;
         break;
+      }
+      case 'h':
+      {
+        usage(argv[0]);
+        return 0;
       }
     }
   }
