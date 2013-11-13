@@ -28,13 +28,21 @@ class Widget:public QWidget
         vbox->addWidget(m_label); 
         vbox->addWidget(m_button); 
         setLayout(vbox); 
-         QThread * thread = new QThread(this); 
+        thread = new QThread(this); 
         m_worker->moveToThread(thread); 
          connect(m_button,SIGNAL(clicked()),this,SLOT(onButtonClicked())); 
         connect(this,SIGNAL(clicked(int)),m_worker,SLOT(slot1(int))); 
         connect(m_worker,SIGNAL(sig1(QString)),m_label,SLOT(setText(QString))); 
         thread->start(); 
     } 
+    ~Widget()
+    {
+      qDebug() << "wait thread end" << objectName();
+      thread->exit(0);
+      while (thread->isFinished() == false);
+      qDebug() << "delete thread";
+      delete thread;
+    }
 signals: 
     void clicked(int v); 
 private slots: 
@@ -48,6 +56,7 @@ private:
     QLabel * m_label; 
     QPushButton * m_button; 
     Worker * m_worker; 
+    QThread *thread;
 };
 
 
