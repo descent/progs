@@ -29,10 +29,11 @@ void TestClient::sendRequest()
   play_ticker_ = new PlayTicker();
  
   connect(this, SIGNAL(begin_thread() ), play_ticker_, SLOT(thread_play()));
+  connect(play_ticker_, SIGNAL(sig_play_done() ), this, SLOT(end_thread()));
 
-  QThread *thread = new QThread(this);
-  play_ticker_->moveToThread(thread);
-  thread->start();
+  thread_ = new QThread(this);
+  play_ticker_->moveToThread(thread_);
+  thread_->start();
   emit begin_thread();
 }
 

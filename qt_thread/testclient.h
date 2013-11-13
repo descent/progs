@@ -3,6 +3,8 @@
 
 #include <QtGui>
 
+#include <unistd.h>
+
 #include "ui_testclient.h"
 
 class PlayTicker : public QObject
@@ -19,7 +21,11 @@ class PlayTicker : public QObject
     void thread_play()
     {
       qDebug() << "currentThreadId(): " <<  QThread::currentThreadId();
-      while(1);
+      sleep(10);
+      qDebug() << "end thread_play()";
+      emit sig_play_done();
+
+      //while(1);
     }
 
   private:
@@ -36,6 +42,11 @@ public slots:
 private slots:
     void processReturnValue( int requestId, QVariant value );
     void processFault( int requestId, int errorCode, QString errorString );
+    void end_thread()
+    {
+      qDebug() << "thread exit";
+      thread_ ->exit(0);
+    }
 
   signals:
     void begin_thread();
@@ -45,6 +56,7 @@ private:
     int requestIdSum;
     int requestIdDiff;
     PlayTicker *play_ticker_;
+    QThread *thread_;
 };
 
 #endif
