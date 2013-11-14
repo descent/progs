@@ -20,6 +20,7 @@ using namespace std;
 
 const char *c_fg = "*";
 const char *c_bg = "|";
+char graphic_mode = '0';
 
 // draw 256 gray
 void my_draw_bitmap(FT_Bitmap *bitmap,int pen_x,int pen_y)
@@ -37,7 +38,6 @@ void my_draw_bitmap(FT_Bitmap *bitmap,int pen_x,int pen_y)
    tmp++;
   }
  }
- vga_getch();
 
  vga_setmode(TEXT);
 #endif
@@ -79,13 +79,17 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
       {
         if (((c >> i) & 0x1) == 1)
         {
-          printf(c_fg);
-          gl_setpixel(startx+cx, starty+cy, GRAY);
+          if (graphic_mode == '0')
+            printf(c_fg);
+          else
+            gl_setpixel(startx+cx, starty+cy, GRAY);
         }
         else
         {
-          gl_setpixelrgb(startx+cx, starty+cy, 0, 0, 0);
-          printf(c_bg);
+          if (graphic_mode == '0')
+            printf(c_bg);
+          else
+            gl_setpixelrgb(startx+cx, starty+cy, 0, 0, 0);
         }
         //++cur_x;
         ++cx;
@@ -108,7 +112,6 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
     ++tmp;
     #endif
   }
-
 }
 
 void usage(const char *fp)
@@ -122,7 +125,7 @@ int main(int argc, char *argv[])
   string fontpath="./fireflysung.ttf";
 
   int opt;
-  while ((opt = getopt(argc, argv, "s:b:f:p:h?")) != -1)
+  while ((opt = getopt(argc, argv, "s:b:f:p:g:h?")) != -1)
   {
     switch (opt)
     {
@@ -144,6 +147,12 @@ int main(int argc, char *argv[])
       case 'b':
       {
         c_bg = optarg;
+        break;
+      }
+      case 'g':
+      {
+        graphic_mode = optarg[0];
+        cout << "graphic_mode:" << graphic_mode;
         break;
       }
       case 'h':
@@ -200,7 +209,8 @@ int main(int argc, char *argv[])
   QVector<uint> utf32_str = str.toUcs4();
   //qDebug() << utf32_str.size();
 
-  Graphic graphic;
+  if (graphic_mode == '1')
+    static Graphic graphic;
 
   int x=0, y=0;
   for (int i=0 ; i < utf32_str.size() ; ++i)
