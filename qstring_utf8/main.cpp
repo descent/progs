@@ -22,6 +22,7 @@ const char *c_fg = "*";
 const char *c_bg = "|";
 char graphic_mode = '0';
 char aa = '0'; // anti-alias
+int font_size=10;
 
 void print_raw_data(FT_Bitmap *bitmap)
 {
@@ -146,13 +147,18 @@ int main(int argc, char *argv[])
   string fontpath="./fireflysung.ttf";
 
   int opt;
-  while ((opt = getopt(argc, argv, "a:s:b:f:p:g:h?")) != -1)
+  while ((opt = getopt(argc, argv, "t:a:s:b:f:p:g:h?")) != -1)
   {
     switch (opt)
     {
-      case 's':
+      case 't':
       {
         str = QString::fromUtf8(optarg);
+        break;
+      }
+      case 's':
+      {
+        font_size = strtol(optarg, 0, 10);
         break;
       }
       case 'p':
@@ -251,7 +257,7 @@ int main(int argc, char *argv[])
     }
 
 #if 1
-     error=FT_Set_Char_Size(face,0,80*64,360,360);
+     error=FT_Set_Char_Size(face, 0, font_size*64,360,360);
      if (error)
      {
        cout << "FT_Set_Pixel_Sizes error" << endl;
