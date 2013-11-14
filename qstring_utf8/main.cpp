@@ -43,6 +43,12 @@ void print_raw_data(FT_Bitmap *bitmap)
 
 void my_draw_bitmap_256(FT_Bitmap *bitmap,int pen_x,int pen_y)
 {
+  if (graphic_mode == '0')
+  {
+    cout << "anti-alias mode only support graphic mode" << endl;
+    return;
+  }
+
   int startx = pen_x;
   int starty = pen_y;
   int cx=0, cy=0;
