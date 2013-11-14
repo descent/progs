@@ -21,26 +21,7 @@ using namespace std;
 const char *c_fg = "*";
 const char *c_bg = "|";
 char graphic_mode = '0';
-
-// draw 256 gray
-void my_draw_bitmap(FT_Bitmap *bitmap,int pen_x,int pen_y)
-{
-}
-#if 0
- vga_clear();
- unsigned char *tmp=Bitmap->buffer;
- for (int i=0 ; i < Bitmap->rows ; i++)
- {
-  for (int j=0 ; j < Bitmap->width ; j++)
-  {
-   if (*tmp)
-    gl_setpixelrgb(pen_x+j,pen_y+i,*tmp,*tmp,*tmp);
-   tmp++;
-  }
- }
-
- vga_setmode(TEXT);
-#endif
+char aa = '0'; // anti-alias
 
 void print_raw_data(FT_Bitmap *bitmap)
 {
@@ -57,6 +38,10 @@ void print_raw_data(FT_Bitmap *bitmap)
     }
     printf("\n");
   }
+}
+
+void my_draw_bitmap_256(FT_Bitmap *bitmap,int pen_x,int pen_y)
+{
 }
 
 void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
@@ -133,7 +118,7 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 
 void usage(const char *fp)
 {
-  printf("%s -p font_path -s render_string -f fb -b bg\n", fp);
+  printf("%s -p font_path -s render_string -f fb -b bg -g 0 -a 0\n", fp);
 }
 
 int main(int argc, char *argv[])
@@ -142,7 +127,7 @@ int main(int argc, char *argv[])
   string fontpath="./fireflysung.ttf";
 
   int opt;
-  while ((opt = getopt(argc, argv, "s:b:f:p:g:h?")) != -1)
+  while ((opt = getopt(argc, argv, "a:s:b:f:p:g:h?")) != -1)
   {
     switch (opt)
     {
@@ -166,10 +151,15 @@ int main(int argc, char *argv[])
         c_bg = optarg;
         break;
       }
+      case 'a':
+      {
+        aa = optarg[0];
+        break;
+      }
+
       case 'g':
       {
         graphic_mode = optarg[0];
-        cout << "graphic_mode:" << graphic_mode;
         break;
       }
       case 'h':
@@ -263,8 +253,10 @@ int main(int argc, char *argv[])
   {
    cout << "run FT_Render_Glyph" << endl;
    //error=FT_Render_Glyph(face->glyph,ft_render_mode_normal);
-   //error=FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
-   error=FT_Render_Glyph(face->glyph, FT_RENDER_MODE_MONO);
+   if (aa == '1')
+     error=FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+   else
+     error=FT_Render_Glyph(face->glyph, FT_RENDER_MODE_MONO);
    if (error)
    {
     cout << "FT_Render_Glyph error " << endl;
@@ -274,11 +266,13 @@ int main(int argc, char *argv[])
 
     FT_GlyphSlot slot=face->glyph;
     //my_draw_bitmap_mono(&slot->bitmap,slot->bitmap_left,slot->bitmap_top);
-    my_draw_bitmap_mono(&slot->bitmap, x, y);
+    if (aa=='1')
+      my_draw_bitmap_256(&slot->bitmap, x, y);
+    else
+      my_draw_bitmap_mono(&slot->bitmap, x, y);
     print_raw_data(&slot->bitmap);
     x+=40;
   }
-
 
   FT_Done_FreeType(library);
   return 0;
