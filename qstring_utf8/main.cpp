@@ -16,57 +16,7 @@
 
 using namespace std;
 
-#include <vga.h>
-#include <vgagl.h>
-
-
-#define BLACK			(0)
-#define BLUE			(1)
-#define GREEN			(2)
-#define CYAN			(3)
-#define RED			(4)
-#define MAGENTA			(5)
-#define BROWN			(6) // or YELLOW
-#define GRAY		        (7)
-
-#define LIGHTBLACK      	(8)
-#define LIGHTBLUE       	(9)
-#define LIGHTGREEN      	(10)
-#define LIGHTCYAN       	(11)
-#define LIGHTRED        	(12)
-#define LIGHTMAGENTA    	(13)
-#define LIGHTBROWN      	(14)
-
-#ifdef VGALIB
-#define LIGHTWHITE      	(vga_white())
-#else
-#define LIGHTWHITE      	(255)
-#endif
-
-void init_graph_mode()
-{
-  vga_init();
-  int vga_mode=G640x480x256;
-  vga_setmode(vga_mode);
-  gl_setcontextvga(vga_mode);
-
-  gl_setpalettecolor(BLUE, 0, 0, 63); // blue
-  gl_setpalettecolor(BLACK, 0, 0, 0); // black
-  gl_setpalettecolor(GREEN, 0, 63, 0);
-  gl_setpalettecolor(RED, 63, 0, 0);
-  gl_setpalettecolor(BROWN, 170/4, 85/4, 0);
-  gl_setpalettecolor(MAGENTA, 170/4, 0, 170/4);
-  gl_setpalettecolor(CYAN, 0, 170/4, 170/4);
-  gl_setpalettecolor(GRAY, 48, 48, 48);
-
-  gl_setpalettecolor(LIGHTBLACK, 85/4, 85/4, 85/4);
-  gl_setpalettecolor(LIGHTBLUE, 85/4, 85/4, 255/4);
-  gl_setpalettecolor(LIGHTGREEN, 85/4, 255/4, 85/4);
-  gl_setpalettecolor(LIGHTCYAN, 85/4, 255/4, 255/4);
-  gl_setpalettecolor(LIGHTRED, 25/45/4, 85/4, 85/4);
-  gl_setpalettecolor(LIGHTMAGENTA, 255/4, 85/4, 255/4);
-  gl_setpalettecolor(LIGHTBROWN, 255/4, 255/4, 85/4);
-}
+#include "graphic.h"
 
 const char *c_fg = "*";
 const char *c_bg = "|";
@@ -250,7 +200,7 @@ int main(int argc, char *argv[])
   QVector<uint> utf32_str = str.toUcs4();
   //qDebug() << utf32_str.size();
 
-  init_graph_mode();
+  Graphic graphic;
 
   int x=0, y=0;
   for (int i=0 ; i < utf32_str.size() ; ++i)
@@ -301,8 +251,6 @@ int main(int argc, char *argv[])
     x+=40;
   }
 
-  vga_getch();
-  vga_setmode(TEXT);
 
   FT_Done_FreeType(library);
   return 0;
