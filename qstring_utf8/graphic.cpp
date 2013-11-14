@@ -14,10 +14,11 @@ Graphic::~Graphic()
 void Graphic::init_graph_mode()
 {
   vga_init();
-  int vga_mode=G640x480x256;
+  int vga_mode=G640x480x16M;
   vga_setmode(vga_mode);
   gl_setcontextvga(vga_mode);
 
+#if 0
   gl_setpalettecolor(BLUE, 0, 0, 63); // blue
   gl_setpalettecolor(BLACK, 0, 0, 0); // black
   gl_setpalettecolor(GREEN, 0, 63, 0);
@@ -34,4 +35,5 @@ void Graphic::init_graph_mode()
   gl_setpalettecolor(LIGHTRED, 25/45/4, 85/4, 85/4);
   gl_setpalettecolor(LIGHTMAGENTA, 255/4, 85/4, 255/4);
   gl_setpalettecolor(LIGHTBROWN, 255/4, 255/4, 85/4);
+#endif
 }
