@@ -42,6 +42,23 @@ void my_draw_bitmap(FT_Bitmap *bitmap,int pen_x,int pen_y)
  vga_setmode(TEXT);
 #endif
 
+void print_raw_data(FT_Bitmap *bitmap)
+{
+  unsigned char *tmp = bitmap->buffer;
+  for (int i=0 ; i < bitmap->rows ; i++)
+  {
+    unsigned char c = *tmp;
+    
+    for (int j=0 ; j < bitmap->pitch ; j++)
+    {
+      printf("%x, ", c); 
+      ++tmp;
+      c = *tmp;
+    }
+    printf("\n");
+  }
+}
+
 void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 {
   cout << "bitmap rows : " << bitmap->rows << endl;
@@ -258,6 +275,7 @@ int main(int argc, char *argv[])
     FT_GlyphSlot slot=face->glyph;
     //my_draw_bitmap_mono(&slot->bitmap,slot->bitmap_left,slot->bitmap_top);
     my_draw_bitmap_mono(&slot->bitmap, x, y);
+    print_raw_data(&slot->bitmap);
     x+=40;
   }
 
