@@ -159,7 +159,7 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 
 void usage(const char *fp)
 {
-  printf("%s -p font_path -s render_string\n", fp);
+  printf("%s -p font_path -s render_string -f fb -b bg\n", fp);
 }
 
 int main(int argc, char *argv[])
