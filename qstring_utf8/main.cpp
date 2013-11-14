@@ -59,7 +59,8 @@ void my_draw_bitmap_256(FT_Bitmap *bitmap,int pen_x,int pen_y)
     
     for (int j=0 ; j < bitmap->pitch ; j++)
     {
-      gl_setpixel(startx+cx, starty+cy, c);
+      //gl_setpixel(startx+cx, starty+cy, c);
+      gl_setpixelrgb(startx+cx, starty+cy, c, c, c);
       printf("%x, ", c); 
       ++tmp;
       c = *tmp;
