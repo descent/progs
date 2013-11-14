@@ -128,11 +128,15 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
       for (int i=7 ; i>=0 ; --i)
       {
         if (((c >> i) & 0x1) == 1)
-          //printf(c_fg);
+        {
+          printf(c_fg);
           gl_setpixel(startx+cx, starty+cy, GRAY);
+        }
         else
+        {
           gl_setpixelrgb(startx+cx, starty+cy, 0, 0, 0);
-          //printf(c_bg);
+          printf(c_bg);
+        }
         //++cur_x;
         ++cx;
       }
