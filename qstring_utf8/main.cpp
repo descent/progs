@@ -91,12 +91,12 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
   int starty = pen_y;
   int cx=0, cy=0;
 
-
   unsigned char *tmp = bitmap->buffer;
   for (int i=0 ; i < bitmap->rows ; i++)
   {
     unsigned char c = *tmp;
     
+    int font_w = 0;
     for (int j=0 ; j < bitmap->pitch ; j++)
     {
       #if 0
@@ -109,6 +109,10 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 
       for (int i=7 ; i>=0 ; --i)
       {
+        ++font_w;
+        if (font_w < bitmap->width)
+        {
+
         if (((c >> i) & 0x1) == 1)
         {
           if (graphic_mode == '0')
@@ -122,6 +126,8 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
             printf(c_bg);
           else
             gl_setpixelrgb(startx+cx, starty+cy, 180, 0, 0);
+        }
+
         }
         //++cur_x;
         ++cx;
