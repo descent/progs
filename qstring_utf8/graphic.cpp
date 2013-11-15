@@ -3,6 +3,7 @@
 Graphic::Graphic()
 {
   init_graph_mode();
+  gl_fillbox(0,0,640,480, 200);
 }
 
 Graphic::~Graphic()
