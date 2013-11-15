@@ -60,7 +60,10 @@ void my_draw_bitmap_256(FT_Bitmap *bitmap,int pen_x,int pen_y)
     for (int j=0 ; j < bitmap->pitch ; j++)
     {
       //gl_setpixel(startx+cx, starty+cy, c);
-      gl_setpixelrgb(startx+cx, starty+cy, c, c, c);
+      if (c==0)
+        gl_setpixelrgb(startx+cx, starty+cy, 0, 120, 0);
+      else
+        gl_setpixelrgb(startx+cx, starty+cy, c, 0, 0);
       printf("%x, ", c); 
       ++tmp;
       c = *tmp;
@@ -118,7 +121,7 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
           if (graphic_mode == '0')
             printf(c_bg);
           else
-            gl_setpixelrgb(startx+cx, starty+cy, 0, 0, 0);
+            gl_setpixelrgb(startx+cx, starty+cy, 180, 0, 0);
         }
         //++cur_x;
         ++cx;
@@ -251,7 +254,8 @@ int main(int argc, char *argv[])
   if (graphic_mode == '1')
     static Graphic graphic;
 
-  int x=0, y=0;
+  //int x=0, y=14;
+  int x=0, y=100;
   for (int i=0 ; i < utf32_str.size() ; ++i)
   {
     qDebug() << "utf-32: " << utf32_str[i];
@@ -299,11 +303,21 @@ int main(int argc, char *argv[])
     FT_GlyphSlot slot=face->glyph;
     //my_draw_bitmap_mono(&slot->bitmap,slot->bitmap_left,slot->bitmap_top);
     if (aa=='1')
-      my_draw_bitmap_256(&slot->bitmap, x, y);
+      my_draw_bitmap_256(&slot->bitmap, x + slot->bitmap_left, y - slot->bitmap_top);
     else
-      my_draw_bitmap_mono(&slot->bitmap, x, y);
+    {
+      my_draw_bitmap_mono(&slot->bitmap, x + slot->bitmap_left, y - slot->bitmap_top);
+      cout << "slot->bitmap_left: " << slot->bitmap_left << endl;
+      cout << "slot->bitmap_top: " << slot->bitmap_top << endl;
+    }
     print_raw_data(&slot->bitmap);
-    x+=40;
+    #if 1
+    x += slot->advance.x >> 6;
+    y += slot->advance.y >> 6;
+    #else
+    x += slot->advance.x;
+    y += slot->advance.y;
+    #endif
   }
 
   FT_Done_FreeType(library);
