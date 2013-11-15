@@ -173,7 +173,8 @@ int main(int argc, char *argv[])
   string fontpath="./fireflysung.ttf";
 
   int opt;
-  while ((opt = getopt(argc, argv, "t:a:s:b:f:p:g:h?")) != -1)
+  int x=0, y=100;
+  while ((opt = getopt(argc, argv, "x:y:t:a:s:b:f:p:g:h?")) != -1)
   {
     switch (opt)
     {
@@ -185,6 +186,16 @@ int main(int argc, char *argv[])
       case 's':
       {
         font_size = strtol(optarg, 0, 10);
+        break;
+      }
+      case 'x':
+      {
+        x = strtol(optarg, 0, 10);
+        break;
+      }
+      case 'y':
+      {
+        y = strtol(optarg, 0, 10);
         break;
       }
       case 'p':
@@ -272,7 +283,6 @@ int main(int argc, char *argv[])
     static Graphic graphic;
 
   //int x=0, y=14;
-  int x=0, y=100;
   for (int i=0 ; i < utf32_str.size() ; ++i)
   {
     qDebug() << "utf-32: " << utf32_str[i];
