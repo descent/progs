@@ -236,6 +236,7 @@ int main(int argc, char *argv[])
   cout << "face's sytle name is : " << face->style_name << endl;
   cout << "units per EM : " << face->units_per_EM << endl;
   cout << "num_fixed_sizes : " << face->num_fixed_sizes << endl;
+  cout << "flags : " << face->face_flags << endl;
   if (face->charmap==NULL)
    cout << "No charmap is selected" << endl;
   cout << "charmap numbers is : " << face->num_charmaps << endl;
@@ -267,14 +268,17 @@ int main(int argc, char *argv[])
       return 0;
     }
 
-#if 1
-     error=FT_Set_Char_Size(face, 0, font_size*64,360,360);
-     if (error)
-     {
-       cout << "FT_Set_Pixel_Sizes error" << endl;
-       return -1;
-     }
-#endif
+    if (face->face_flags & FT_FACE_FLAG_SCALABLE)
+    {
+      // only scale font can set font size.
+      error=FT_Set_Char_Size(face, 0, font_size*64,360,360);
+      if (error)
+      {
+        cout << "FT_Set_Pixel_Sizes error" << endl;
+        return -1;
+      }
+    }
+
 
 
   FT_Int load_flags=FT_LOAD_DEFAULT;
