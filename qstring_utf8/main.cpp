@@ -43,6 +43,16 @@ void print_raw_data(FT_Bitmap *bitmap)
 
 void my_draw_bitmap_256(FT_Bitmap *bitmap,int pen_x,int pen_y)
 {
+  cout << "bitmap rows : " << bitmap->rows << endl;
+  cout << "bitmap width : " << bitmap->width << endl;
+  cout << "bitmap pitch : " << bitmap->pitch << endl;
+  if (bitmap->pixel_mode==ft_pixel_mode_mono)
+    cout << "bitmap pixel mode : mono" << endl;
+   if (bitmap->pixel_mode==ft_pixel_mode_grays)
+   {
+    cout << "bitmap pixel mode : grays" << endl;
+    cout << "bitmap grays level : " << bitmap->num_grays << endl;
+   }
   if (graphic_mode == '0')
   {
     cout << "anti-alias mode only support graphic mode" << endl;
