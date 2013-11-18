@@ -336,8 +336,6 @@ int main(int argc, char *argv[])
       #endif
     }
 
-
-
   FT_Int load_flags=FT_LOAD_DEFAULT;
   error = FT_Load_Glyph(face, gindex,load_flags);
   if (error!=0)
@@ -364,10 +362,22 @@ int main(int argc, char *argv[])
     FT_GlyphSlot slot=face->glyph;
     cout << "slot->bitmap_left: " << slot->bitmap_left << endl;
     cout << "slot->bitmap_top: " << slot->bitmap_top << endl;
+    cout << "x: " << x << endl;
+    cout << "y: " << y << endl;
+    cout << "draw x: " << x + slot->bitmap_left << endl;
+    cout << "draw y: " << y - slot->bitmap_top << endl;
+
+    // ref: fbterm-1.7/src/font.cpp Font::Glyph *Font::getGlyph(u32 unicode)
+    int left = face->glyph->metrics.horiBearingX >> 6;
+    int top = (face->size->metrics.descender >> 6) - (face->glyph->metrics.horiBearingY >> 6);
+    cout << "left: " << left << endl;
+    cout << "top: " << top << endl;
 
     //my_draw_bitmap_mono(&slot->bitmap,slot->bitmap_left,slot->bitmap_top);
     if (aa=='1')
+    {
       my_draw_bitmap_256(&slot->bitmap, x + slot->bitmap_left, y - slot->bitmap_top);
+    }
     else
     {
       my_draw_bitmap_mono(&slot->bitmap, x + slot->bitmap_left, y - slot->bitmap_top);
