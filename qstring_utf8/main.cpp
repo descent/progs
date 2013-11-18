@@ -307,7 +307,7 @@ int main(int argc, char *argv[])
   //int x=0, y=14;
   for (int i=0 ; i < utf32_str.size() ; ++i)
   {
-    qDebug() << "utf-32: " << utf32_str[i];
+    cout << "utf-32: " << utf32_str[i] << endl;
 
     gindex = FT_Get_Char_Index(face, utf32_str[i]);
     if (gindex==0)
