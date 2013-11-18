@@ -362,14 +362,15 @@ int main(int argc, char *argv[])
   }
 
     FT_GlyphSlot slot=face->glyph;
+    cout << "slot->bitmap_left: " << slot->bitmap_left << endl;
+    cout << "slot->bitmap_top: " << slot->bitmap_top << endl;
+
     //my_draw_bitmap_mono(&slot->bitmap,slot->bitmap_left,slot->bitmap_top);
     if (aa=='1')
       my_draw_bitmap_256(&slot->bitmap, x + slot->bitmap_left, y - slot->bitmap_top);
     else
     {
       my_draw_bitmap_mono(&slot->bitmap, x + slot->bitmap_left, y - slot->bitmap_top);
-      cout << "slot->bitmap_left: " << slot->bitmap_left << endl;
-      cout << "slot->bitmap_top: " << slot->bitmap_top << endl;
     }
     print_raw_data(&slot->bitmap);
     #if 1
