@@ -164,7 +164,7 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 
 void usage(const char *fp)
 {
-  printf("%s -p font_path -s render_string -f fb -b bg -g 0 -a 0\n", fp);
+  printf("%s -p font_path -s font_size -t render_string -f fb -b bg -g 0 -a 0 -m [opened file] -x x -y y\n", fp);
 }
 
 int main(int argc, char *argv[])
@@ -174,13 +174,35 @@ int main(int argc, char *argv[])
 
   int opt;
   int x=0, y=100;
-  while ((opt = getopt(argc, argv, "x:y:t:a:s:b:f:p:g:h?")) != -1)
+  while ((opt = getopt(argc, argv, "m:x:y:t:a:s:b:f:p:g:h?")) != -1)
   {
     switch (opt)
     {
       case 't':
       {
         str = QString::fromUtf8(optarg);
+        break;
+      }
+      case 'm':
+      {
+        FILE *fs = fopen(optarg, "r");
+        if (fs == NULL)
+        {
+          printf("cannot open file:%s\n", optarg);
+          return -1;
+        }
+        str = "";
+        while(1)
+        {
+          const int LEN = 256;
+          char buf[LEN];
+          int read_len = fread(buf, 1, LEN, fs);
+          if (read_len == 0)
+          {
+            break;
+          }
+          str += QString::fromUtf8(buf, read_len);
+        }
         break;
       }
       case 's':
