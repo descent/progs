@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
     if (gindex==0)
     {
       cout << "glyph index not found" << endl;
-      return 0;
+      continue;
     }
 
     if (face->face_flags & FT_FACE_FLAG_SCALABLE)
