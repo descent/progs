@@ -7,6 +7,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
+
+#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -188,23 +190,18 @@ int main(int argc, char *argv[])
       }
       case 'm':
       {
-        FILE *fs = fopen(optarg, "r");
-        if (fs == NULL)
+        ifstream infile(optarg, ios::in);
+        if (!infile)
         {
           printf("cannot open file:%s\n", optarg);
           return -1;
         }
         str = "";
-        while(1)
+        string textline;
+        while(getline(infile, textline, '\n'))
         {
-          const int LEN = 256;
-          char buf[LEN];
-          int read_len = fread(buf, 1, LEN, fs);
-          if (read_len == 0)
-          {
-            break;
-          }
-          str += QString::fromUtf8(buf, read_len);
+          textline += '\n';
+          str += QString::fromUtf8(textline.c_str(), textline.length());
         }
         break;
       }
