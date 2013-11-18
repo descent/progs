@@ -169,7 +169,7 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 
 void usage(const char *fp)
 {
-  printf("%s -p font_path -s font_size -t render_string -f fb -b bg -g 0 -a 0 -m [opened file] -x x -y y\n", fp);
+  printf("%s -p font_path -s font_size -t render_string -f fb -b bg -g 0 -a 0 -m [opened file] -x x -y y -d step_y\n", fp);
 }
 
 int main(int argc, char *argv[])
@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
 
   int opt;
   int x=0, y=100, step_x=16, step_y = 16;
-  while ((opt = getopt(argc, argv, "m:x:y:t:a:s:b:f:p:g:h?")) != -1)
+  while ((opt = getopt(argc, argv, "d:m:x:y:t:a:s:b:f:p:g:h?")) != -1)
   {
     switch (opt)
     {
@@ -217,7 +217,12 @@ int main(int argc, char *argv[])
       }
       case 'y':
       {
-        y = strtol(optarg, 0, 10);
+        step_y = y = strtol(optarg, 0, 10);
+        break;
+      }
+      case 'd':
+      {
+        step_y = strtol(optarg, 0, 10);
         break;
       }
       case 'p':
