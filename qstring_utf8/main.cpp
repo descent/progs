@@ -316,6 +316,19 @@ int main(int argc, char *argv[])
   {
     cout << "utf-32: " << utf32_str[i] << endl;
 
+    switch (utf32_str[i])
+    {
+      //case 0xd:
+      //case 0xa:
+      case '\n':
+      {
+        x = 0;
+        y += step_y;
+        continue;
+        break;
+      }
+    }
+
     gindex = FT_Get_Char_Index(face, utf32_str[i]);
     if (gindex==0)
     {
