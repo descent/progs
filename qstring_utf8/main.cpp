@@ -318,6 +318,14 @@ int main(int argc, char *argv[])
 
     if (face->face_flags & FT_FACE_FLAG_SCALABLE)
     {
+      #if 1
+      error = FT_Set_Pixel_Sizes(face, font_size, font_size);
+      if (error)
+      {
+        cout << "FT_Set_Pixel_Sizes error" << endl;
+        return -1;
+      }
+      #else
       // only scale font can set font size.
       error=FT_Set_Char_Size(face, 0, font_size*64,360,360);
       if (error)
@@ -325,6 +333,7 @@ int main(int argc, char *argv[])
         cout << "FT_Set_Pixel_Sizes error" << endl;
         return -1;
       }
+      #endif
     }
 
 
