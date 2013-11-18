@@ -31,6 +31,8 @@ class Graphic
 {
   public:
     Graphic();
+      int width(){return 640;}
+      int height(){return 480;}
     ~Graphic();
     void init_graph_mode();
   private:
