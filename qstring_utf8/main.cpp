@@ -119,7 +119,6 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 
       for (int i=7 ; i>=0 ; --i)
       {
-        ++font_w;
         if (font_w < bitmap->width)
         {
 
@@ -141,6 +140,7 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
         }
         //++cur_x;
         ++cx;
+        ++font_w;
       }
       ++tmp;
       c = *tmp;
