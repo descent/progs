@@ -320,6 +320,12 @@ int main(int argc, char *argv[])
     {
       //case 0xd:
       //case 0xa:
+      case 0x9: // tab
+      {
+        x += 16;
+        continue;
+        break;
+      }
       case '\n':
       {
         x = 0;
