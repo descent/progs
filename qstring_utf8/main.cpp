@@ -24,6 +24,9 @@ char graphic_mode = '0';
 char aa = '0'; // anti-alias
 int font_size=10;
 
+int screen_width;
+int screen_height;
+
 void print_raw_data(FT_Bitmap *bitmap)
 {
   unsigned char *tmp = bitmap->buffer;
@@ -173,7 +176,7 @@ int main(int argc, char *argv[])
   string fontpath="./fireflysung.ttf";
 
   int opt;
-  int x=0, y=100;
+  int x=0, y=100, step_x=16, step_y = 16;
   while ((opt = getopt(argc, argv, "m:x:y:t:a:s:b:f:p:g:h?")) != -1)
   {
     switch (opt)
@@ -302,7 +305,11 @@ int main(int argc, char *argv[])
   //qDebug() << utf32_str.size();
 
   if (graphic_mode == '1')
+  {
     static Graphic graphic;
+    screen_width = graphic.width();
+    screen_height = graphic.height();
+  }
 
   //int x=0, y=14;
   for (int i=0 ; i < utf32_str.size() ; ++i)
@@ -376,10 +383,20 @@ int main(int argc, char *argv[])
     //my_draw_bitmap_mono(&slot->bitmap,slot->bitmap_left,slot->bitmap_top);
     if (aa=='1')
     {
+      if (x + slot->bitmap_left >= screen_width)
+      {
+        x = 0;
+        y += step_y;
+      }
       my_draw_bitmap_256(&slot->bitmap, x + slot->bitmap_left, y - slot->bitmap_top);
     }
     else
     {
+      if (x + slot->bitmap_left >= screen_width)
+      {
+        x = 0;
+        y += step_y;
+      }
       my_draw_bitmap_mono(&slot->bitmap, x + slot->bitmap_left, y - slot->bitmap_top);
     }
     print_raw_data(&slot->bitmap);
