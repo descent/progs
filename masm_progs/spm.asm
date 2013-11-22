@@ -45,6 +45,7 @@ DSEG ENDS
 CSEG SEGMENT USE16
   ASSUME CS:CSEG, DS:DSEG
 START:
+  xchg bx, bx
   mov ax, dseg
   mov ds, ax
   mov bx, 16
