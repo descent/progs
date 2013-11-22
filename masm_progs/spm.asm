@@ -125,6 +125,16 @@ NEXTCH:
   int 21h
 
 TOASCII PROC
+        and    al, 0fh
+        cmp     al, 9
+        ja      EN
+        add    al, 030h
+        jmp     EX
+EN:
+        sub     al, 0ah
+        add     al, 041h
+EX:
+        ret
 TOASCII ENDP
 
 EA20 PROC
