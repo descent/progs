@@ -1,12 +1,12 @@
 JUMP MACRO selector, offsetv
   DB 0eah
-  DW offsestv
+  DW offsetv
   DW selector
   ENDM
 
 ECHOCH MACRO ascii
   mov ah, 2
-  move dl, ascii
+  mov dl, ascii
   int 21h
   endm
 
@@ -46,6 +46,108 @@ CSEG SEGMENT USE16
   ASSUME CS:CSEG, DS:DSEG
 START:
   mov ax, dseg
+  mov ds, ax
+  mov bx, 16
+  mul bx
+  add ax, offset gdt
+  adc dx, 0
+  mov word ptr vgdtr.base, ax
+  mov word ptr vgdtr.base+2, dx
+  mov ax, cs
+  mul bx
+  mov code.basel, ax
+  mov code.basem, dl
+  mov code.baseh, dh
+  mov ax, ds
+  mul bx
+  add ax, offset buffer
+  adc dx, 0
+  mov datad.basel, ax
+  mov datad.basem, dl
+  mov datad.baseh, dh
+
+  lgdt qword ptr vgdtr
+
+  cli
+  call ea20
+
+  mov eax, cr0
+  or eax, 1
+  mov cr0, eax
+
+  JUMP <CODE_SEL>, <OFFSET VIRTUAL>
+
+VIRTUAL:
+  mov ax, datas_sel
+  mov ds, ax
+  mov ax, datad_sel
+  mov es, ax
+  cld
+  xor si, si
+  xor di, di
+  mov cx, bufferlen/4
+  repz movsd
+
+  mov eax, cr0
+  and eax, 0fffffffeh
+  mov cr0, eax
+
+  JUMP <SEG REAL>,<OFFSET REAL>
+
+REAL:
+  call da20
+  sti
+  mov ax, dseg
+  mov ds, ax
+  mov si, offset buffer
+  cld
+  mov bp, bufferlen/16
+NEXTLINE:
+  mov cx, 16
+NEXTCH:
+  lodsb
+  push ax
+  shr al, 4
+  call toascii
+  ECHOCH al
+  pop ax
+  call toascii
+  echoch al
+  echoch ' '
+  loop nextch
+  echoch 0dh
+  echoch 0ah
+  dec bp
+  jnz nextline
+
+  mov ax, 4c00h
+  int 21h
+
+TOASCII PROC
+TOASCII ENDP
+
+EA20 PROC
+  push ax
+  in al, 92h
+  or al, 2
+  out 92h, al
+  pop ax
+  ret
+EA20 ENDP
+
+DA20 PROC
+  push ax
+  in al, 92h
+  and al, 0fdh
+  out 92h, al
+  pop ax
+  ret
+DA20 ENDP
+
+
+
+
+
 CSEG ENDS
   END START
 
