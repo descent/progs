@@ -1,3 +1,5 @@
+; test by masm 5.0
+; t10-1.asm 80x86 汇编语言程序设计教程 page 376
 JUMP MACRO selector, offsetv
   DB 0eah
   DW offsetv
