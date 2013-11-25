@@ -218,7 +218,7 @@ vector<wchar_t> utf8_to_ucs4(const char *utf8)
     //cout << "U+" << hex << setw(4) << setfill('0') << c << '\n';
     usc4.push_back(c);
   }
-
+  remove(tmp_fn);
   return usc4;
 }
 
