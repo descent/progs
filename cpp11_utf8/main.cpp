@@ -179,15 +179,23 @@ vector<wchar_t> utf8_to_ucs4(const std::string utf8_str)
 
 vector<wchar_t> utf8_to_ucs4(const char *utf8)
 {
+  vector<wchar_t> usc4;
+  char tmp_fn[] = "./convert_XXXXXX";
+  if (mkstemp(tmp_fn) == -1)
+  {
+    return usc4;
+  }
+
+  cout << "tmp_fn: " << tmp_fn;
+
   //char utf8[] = u8"中";
-  ofstream("text.txt") << utf8;
+  ofstream(tmp_fn) << utf8;
   //ofstream("text.txt") << u8"z\u00df\u6c34\U0001d10b"; 
-  wifstream fin("text.txt");
+  wifstream fin(tmp_fn);
   // 该locale的facet - codecvt<wchar_t, char, mbstate_t>
   //     // 可以将UTF-8转化为UTF-32
   fin.imbue(locale("en_US.UTF-8")); 
 
-  vector<wchar_t> usc4;
 #if 0
   for(wchar_t c; fin >> c; )
   {
