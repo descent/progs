@@ -172,9 +172,12 @@ void usage(const char *fp)
   printf("%s -p font_path -s font_size -t render_string -f fb -b bg -g 0 -a 0 -m [opened file] -x x -y y -d step_y\n", fp);
 }
 
+vector<wchar_t> utf8_to_ucs4(const std::string utf8_str)
+{
+  return utf8_to_ucs4(utf8_str.c_str());
+}
 
 vector<wchar_t> utf8_to_ucs4(const char *utf8)
-//QVector<uint> utf8_to_ucs4()
 {
   //char utf8[] = u8"中";
   ofstream("text.txt") << utf8;
@@ -185,22 +188,41 @@ vector<wchar_t> utf8_to_ucs4(const char *utf8)
   fin.imbue(locale("en_US.UTF-8")); 
 
   vector<wchar_t> usc4;
+#if 0
   for(wchar_t c; fin >> c; )
   {
     cout << "U+" << hex << setw(4) << setfill('0') << c << '\n';
     usc4.push_back(c);
   }
+#endif
+
+  //wstring line;
+  wchar_t c;
+  while(fin.get(c))
+  {
+  #if 0
+    for (int i = 0 ; i < line.size() ; ++i)
+    {
+      usc4.push_back(line[i]);
+    }
+    cout << "U+\n"<< endl;
+#endif
+    //cout << "U+" << hex << setw(4) << setfill('0') << c << '\n';
+    usc4.push_back(c);
+  }
+
   return usc4;
 }
 
 int main(int argc, char *argv[])
 {
   //QString str = QString::fromUtf8("a中文bあい"); 
-  char *disp_str=0;
+  const char *disp_str = "a中文bあい";
   string fontpath="./fireflysung.ttf";
   //utf8_to_ucs4();
   //return -1;
 
+  string textline;
   int opt;
   int x=0, y=100, step_x=16, step_y = 16;
   while ((opt = getopt(argc, argv, "d:m:x:y:t:a:s:b:f:p:g:h?")) != -1)
@@ -215,21 +237,19 @@ int main(int argc, char *argv[])
       }
       case 'm':
       {
-      #if 0
         ifstream infile(optarg, ios::in);
         if (!infile)
         {
           printf("cannot open file:%s\n", optarg);
           return -1;
         }
-        str = "";
-        string textline;
-        while(getline(infile, textline, '\n'))
+        string line;
+        while(getline(infile, line, '\n'))
         {
-          textline += '\n';
-          str += QString::fromUtf8(textline.c_str(), textline.length());
+          textline += (line + '\n');
+          //str += QString::fromUtf8(textline.c_str(), textline.length());
         }
-        #endif
+        disp_str = textline.c_str();
         break;
       }
       case 's':
