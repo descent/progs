@@ -1,10 +1,12 @@
 CXX=g++
 CXXFLAGS=-std=c++11
 TARGET=bn
-bn: bn.o
+bn: bn.o guint.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-%.o: %.cpp
+guint.o: guint.cpp guint.h
 	$(CXX) $(CXXFLAGS) -c $<
+#%.o: %.cpp
+#	$(CXX) $(CXXFLAGS) -c $<
 clean:
 	rm -rf *.o $(TARGET)
