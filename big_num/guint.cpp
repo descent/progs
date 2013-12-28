@@ -141,6 +141,12 @@ Guint Guint::operator++(int)
   return tmp;
 }
 
+Guint Guint::operator+=(const Guint &guint)
+{
+  *this = add(guint);
+  return *this;
+}
+
 Guint operator+(const Guint &guint1, const Guint &guint2)
 {
   return guint1.add(guint2);

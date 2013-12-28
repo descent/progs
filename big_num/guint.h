@@ -32,8 +32,9 @@ class Guint
     Guint add(u32 n) const;
     Guint operator++();
     Guint operator++(int);
-  private:
+    Guint operator+=(const Guint &guint);
     int count() const {return data_.size();}
+  private:
     bool convert_to_cal_data(const std::string num);
     int idx_;
     //u16 carry_;
