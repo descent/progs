@@ -7,11 +7,15 @@
 Guint::Guint()
   : idx_(0)
 {
+  data_.push_back(0);
+  data_.push_back(0);
 }
 
 Guint::Guint(const vector<u16> data)
 {
   data_ = data;
+  if (data.size() < 2)
+    data_.push_back(0);
 }
 
 Guint::Guint(u32 num)
@@ -64,6 +68,10 @@ bool Guint::convert_to_cal_data(const std::string num)
     int j = nstr[k-1] - '0';
     data_.push_back(j*10 + i);
   }
+
+  if (data_.size() < 2)
+    data_.push_back(0); // if 89, append 0 to 0 89, use 2 u16.
+
 #if 0
   cout << "number" << endl;
 
