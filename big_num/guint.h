@@ -25,7 +25,7 @@ class Guint
   public:
     Guint();
     Guint(u32 num);
-    Guint(const char *num);
+    //Guint(const char *num);
     Guint(const std::string num);
     Guint(const vector<u16> data);
     Guint add(const Guint &guint) const;
