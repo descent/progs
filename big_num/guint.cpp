@@ -143,14 +143,55 @@ Guint operator+(const Guint &guint1, u32 n)
   return guint1.add(n);
 }
 
+bool operator<(const Guint &guint1, Guint &guint2)
+{
+}
 
+bool operator<(const Guint &guint1, u32 i)
+{
+}
+
+bool operator<=(const Guint &guint1, u32 i)
+{
+  Guint g2(i);
+
+  //cout << guint1.count() << ", " << g2.count() << endl;
+  if (guint1.count() <= g2.count())
+  {
+    u32 cmp1 = guint1.data_[1] << 16 + guint1.data_[0];
+    u32 cmp2 = g2.data_[1] << 16 + g2.data_[0];
+    return (cmp1 <= cmp2);
+  }
+  else
+  {
+    return false;
+  }
+}
 
 ostream& operator<<(ostream &os, const Guint &guint)
 {
-  for (int i=NUM-1 ; i >= 0 ; --i)
+  //cout << "oo: " << guint.count() << endl;
+  int i=guint.data_.size() - 1;
+
+  for ( ; i >= 0 ; --i)
   {
     if (guint.data_[i] != 0)
+      break;
+  }
+
+  if (i==-1)
+  {
+    os << "0";
+    return os;
+  }
+
+  for ( ; i >= 0 ; --i)
+  {
+    if (guint.data_[i] == 0)
+      os << "00";
+    else
       os << guint.data_[i];
   }
+
   return os;
 }
