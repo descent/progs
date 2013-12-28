@@ -15,14 +15,17 @@ int main(int argc, char *argv[])
   Guint guint1(s1);
   Guint guint2(s2);
 
-  Guint guint3("12345");
+  Guint guint3("89");
   Guint guint5 = guint1.add(guint2);
+  Guint guint6 = guint1 + guint3;
 
   cout << "s1: " << s1 << endl;
   cout << "s2: " << s2 << endl;
   cout << "guint1: " << guint1 << endl;
   cout << "guint2: " << guint2 << endl;
+  cout << "guint3: " << guint3 << endl;
   cout << "guint5: " << guint5 << endl;
+  cout << "guint6: " << guint6 << endl;
 #if 0
 
   u16 a = 0xffff;
