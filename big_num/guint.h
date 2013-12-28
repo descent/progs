@@ -20,17 +20,18 @@ const int NUM=5;
 class Guint
 {
   friend ostream & operator <<(ostream &os, const Guint &guint);
+  friend Guint operator+(const Guint &guint1, const Guint &guint2);
   public:
     Guint();
     Guint(const char *num);
     Guint(const std::string num);
     Guint(const vector<u16> data);
-    Guint add(const Guint &guint);
+    Guint add(const Guint &guint) const;
   private:
     int count() const {return data_.size();}
     bool convert_to_cal_data(const std::string num);
     int idx_;
-    u16 carry_;
+    //u16 carry_;
     vector<u16> data_;
 };
 

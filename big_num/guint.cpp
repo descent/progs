@@ -5,7 +5,7 @@
 #include <algorithm>
 
 Guint::Guint()
-  : idx_(0), carry_(0)
+  : idx_(0)
 {
 }
 
@@ -15,13 +15,13 @@ Guint::Guint(const vector<u16> data)
 }
 
 Guint::Guint(const std::string num)
-  : idx_(0), carry_(0)
+  : idx_(0)
 {
   convert_to_cal_data(num);
 }
 
 Guint::Guint(const char *num)
-  : idx_(0), carry_(0)
+  : idx_(0)
 {
   convert_to_cal_data(num);
 #if 0
@@ -85,9 +85,10 @@ bool Guint::convert_to_cal_data(const std::string num)
 
 }
 
-Guint Guint::add(const Guint &guint)
+Guint Guint::add(const Guint &guint) const
 {
   vector<u16> data;
+  u16 carry = 0;
 
   int n = max(count(), guint.count());
 
@@ -97,7 +98,7 @@ Guint Guint::add(const Guint &guint)
   {
     u16 a1 = i < count() ? data_[i] : 0;
     u16 a2 = i < guint.count() ? guint.data_[i] : 0;
-    u32 t = a1 + a2  + carry_;
+    u32 t = a1 + a2  + carry;
     cout << "a1: " << a1 << endl;
     cout << "a2: " << a2 << endl;
     //stringstream ss;
@@ -105,7 +106,7 @@ Guint Guint::add(const Guint &guint)
     //string tmp = ss.str();
     //cout << tmp << endl;
     data.push_back(t%100);
-    carry_ = t/100;
+    carry = t/100;
   }
 
   for (int i=0 ; i < data.size() ; ++i)
@@ -113,6 +114,11 @@ Guint Guint::add(const Guint &guint)
     cout << data[i] << endl;
   }
   return Guint(data);
+}
+
+Guint operator+(const Guint &guint1, const Guint &guint2)
+{
+  return guint1.add(guint2);
 }
 
 
