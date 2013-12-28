@@ -17,14 +17,9 @@ Guint::Guint(const vector<u16> data)
 Guint::Guint(u32 num)
   : idx_(0)
 {
-  u16 i1 = num & 0xffff;
-  u16 i2 = ((num >> 16 ) & 0xffff);
-  #if 0
-  cout << "i1: " << i1 << endl;
-  cout << "i2: " << i2 << endl;
-  #endif
-  data_.push_back(i1);
-  data_.push_back(i2);
+  stringstream ss;
+  ss << num;
+  convert_to_cal_data(ss.str());
 }
 
 Guint::Guint(const std::string num)
