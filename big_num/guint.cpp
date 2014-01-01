@@ -228,11 +228,15 @@ void mul(const Guint &guint1, const Guint &guint2)
     for (j=0 ; j < guint2.count() ; ++j)
     {
       t = data[i+j] + guint1.data_[i] * guint2.data_[j] + carry;
-      data[i+j] = t % 100;
+      //cout << "(" << i << "," << j << ")" << endl;
+      cout << "t: " <<  data[i+j] << "+" <<  guint1.data_[i] << "*" <<  guint2.data_[j] << "+" <<  carry << " = " << t << endl;
       carry = t / 100;
-      cout << "(" << i << "," << j << ")" << endl;
+      cout << "carry: " << carry << endl;
+      cout << "data[" << i << "," << j << "]: " << t%100<< endl;
+      data[i+j] = t % 100;
     }
     data[i+j] = carry;
+    cout << "data[" << i << "," << j << "] (carry): " << carry << endl;
   }
   #if 1
   for (int i=0 ; i < 10 ; ++i)
