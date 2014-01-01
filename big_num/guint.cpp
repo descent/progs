@@ -214,27 +214,27 @@ void mul(const Guint &guint1, const Guint &guint2)
 {
   vector<u16> data;
   data.reserve(100);
-  int i=0, j=0;
   u32 t = 0;
   cout << data.size() << endl;
   cout << data.capacity() << endl;
+  cout << guint1.count() << endl;
+  cout << guint2.count() << endl;
+  cout << "xx: " << guint1 << endl;;
 
-  for (i ; i < guint1.count() ; ++i)
+  int j=0;
+  for (int i=0 ; i < guint1.count() ; ++i)
   {
     u16 carry = 0;
-    for (j ; j < guint2.count() ; ++j)
+    for (j=0 ; j < guint2.count() ; ++j)
     {
       t = data[i+j] + guint1.data_[i] * guint2.data_[j] + carry;
       data[i+j] = t % 100;
       carry = t / 100;
       cout << "(" << i << "," << j << ")" << endl;
-
-
-     
     }
     data[i+j] = carry;
   }
-  #if 0
+  #if 1
   for (int i=0 ; i < 10 ; ++i)
     cout << data[i] << endl;
   #endif
