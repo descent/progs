@@ -32,6 +32,7 @@ class Guint
     Guint(const std::string num);
     Guint(const vector<u16> data);
 
+    std::string to_string() const;
     Guint add(const Guint &guint) const;
     Guint add(u32 n) const;
     Guint operator++();

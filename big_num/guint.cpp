@@ -83,6 +83,40 @@ bool Guint::convert_to_cal_data(const std::string num)
   return true;
 }
 
+std::string Guint::to_string() const
+{
+  stringstream ss;
+
+  cout << "ss: " << count() << endl;
+
+  int i=count() - 1;
+
+  for ( ; i >= 0 ; --i)
+  {
+    if (data_[i] != 0)
+      break;
+  }
+
+  if (i==-1)
+  {
+    ss << "0";
+  }
+
+  for ( ; i >= 0 ; --i)
+  {
+    if (data_[i] == 0)
+      ss << "00";
+    else
+    {
+      if (data_[i] < 10)
+        ss << "0";
+      ss << data_[i];
+    }
+  }
+
+  return ss.str();
+}
+
 Guint Guint::add(u32 n) const
 {
   Guint a(n);
