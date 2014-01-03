@@ -218,28 +218,7 @@ bool operator<=(const Guint &guint1, u32 i)
 
 ostream& operator<<(ostream &os, const Guint &guint)
 {
-  //cout << "oo: " << guint.count() << endl;
-  int i=guint.data_.size() - 1;
-
-  for ( ; i >= 0 ; --i)
-  {
-    if (guint.data_[i] != 0)
-      break;
-  }
-
-  if (i==-1)
-  {
-    os << "0";
-    return os;
-  }
-
-  for ( ; i >= 0 ; --i)
-  {
-    if (guint.data_[i] == 0)
-      os << "00";
-    else
-      os << guint.data_[i];
-  }
+  os << guint.to_string();
 
   return os;
 }
