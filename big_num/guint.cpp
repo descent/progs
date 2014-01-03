@@ -157,6 +157,55 @@ Guint Guint::add(const Guint &guint) const
   return Guint(data);
 }
 
+Guint Guint::mul(const Guint &guint) const
+{
+  u16 d1 = count(); 
+  u16 d2 = guint.count(); 
+
+  vector<u16> data;
+  data.reserve(d1+d2);
+  for (int i=0 ; i < d1+d2 ; ++i)
+    data[i] = 0;
+  u32 t = 0;
+
+  int j=0;
+  int i=0;
+  for (i=0 ; i < d1 ; ++i)
+  {
+    u16 carry = 0;
+    for (j=0 ; j < d2 ; ++j)
+    {
+      t = data[i+j] + data_[i] * guint.data_[j] + carry;
+      //cout << "(" << i << "," << j << ")" << endl;
+#if 0
+      cout << "t: " <<  data[i+j] << "+" <<  guint1.data_[i] << "*" <<  guint2.data_[j] << "+" <<  carry << " = " << t << endl;
+#endif
+      carry = t / 100;
+#if 0
+      cout << "carry: " << carry << endl;
+      cout << "data[" << i << "," << j << "]: " << t%100<< endl;
+#endif
+      data[i+j] = t % 100;
+    }
+    data[i+j] = carry;
+#if 0
+    cout << "data[" << i << "," << j << "] (carry): " << carry << endl;
+#endif
+  }
+  int digits = i+j - 1;
+
+  #if 0
+  cout << "[" << i << "," << j << "]" << endl;
+  for (int i = digits ; i >= 0 ; --i)
+    cout << data[i] << endl;
+  #endif
+  vector<u16> d;
+  for (int i = 0 ; i <= digits ; ++i)
+    d.push_back(data[i]);
+  Guint g(d); 
+  return g;
+}
+
 // prefix ++
 Guint Guint::operator++()
 {

@@ -35,6 +35,7 @@ class Guint
     std::string to_string() const;
     Guint add(const Guint &guint) const;
     Guint add(u32 n) const;
+    Guint mul(const Guint &guint) const;
     Guint operator++();
     Guint operator++(int);
     Guint operator+=(const Guint &guint);
