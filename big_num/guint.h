@@ -22,6 +22,7 @@ class Guint
   friend ostream & operator <<(ostream &os, const Guint &guint);
   friend Guint operator+(const Guint &guint1, const Guint &guint2);
   friend Guint operator+(const Guint &guint1, u32 n);
+  friend Guint operator*(const Guint &guint1, const Guint &guint2);
   friend bool operator<(const Guint &guint1, Guint &guint2);
   friend bool operator<(const Guint &guint1, u32 i);
   friend bool operator<=(const Guint &guint1, u32 i);

@@ -240,6 +240,11 @@ Guint operator+(const Guint &guint1, u32 n)
   return guint1.add(n);
 }
 
+Guint operator*(const Guint &guint1, const Guint &guint2)
+{
+  return guint1.mul(guint2);
+}
+
 bool operator<(const Guint &guint1, Guint &guint2)
 {
 }
