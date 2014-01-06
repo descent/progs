@@ -157,6 +157,37 @@ Guint Guint::add(const Guint &guint) const
   return Guint(data);
 }
 
+Guint Guint::subtraction(const Guint &guint) const
+{
+  vector<u16> data;
+  u16 borrow = 0;
+
+  int n = max(count(), guint.count());
+
+
+  for (int i=0 ; i < n ; ++i)
+  {
+    u16 a1 = i < count() ? data_[i] : 0;
+    u16 a2 = i < guint.count() ? guint.data_[i] : 0;
+    s32 t = a1 - a2 - borrow;
+    u16 c;
+
+    if (t < 0)
+    {
+      c = 100 + t;
+      borrow = 1;
+    }
+    else
+    {
+      c = t;
+      borrow = 0;
+    }
+    data.push_back(c);
+  }
+
+  return Guint(data);
+}
+
 Guint Guint::mul(const Guint &guint) const
 {
   u16 d1 = count(); 
