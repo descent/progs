@@ -41,6 +41,7 @@ class Guint
     Guint operator++();
     Guint operator++(int);
     Guint operator+=(const Guint &guint);
+    Guint operator*=(const Guint &guint);
     int count() const {return data_.size();}
   private:
     bool convert_to_cal_data(const std::string num);

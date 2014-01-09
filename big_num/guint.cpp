@@ -261,6 +261,12 @@ Guint Guint::operator+=(const Guint &guint)
   return *this;
 }
 
+Guint Guint::operator*=(const Guint &guint)
+{
+  *this = mul(guint);
+  return *this;
+}
+
 Guint operator+(const Guint &guint1, const Guint &guint2)
 {
   return guint1.add(guint2);
