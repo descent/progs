@@ -1,3 +1,5 @@
+// this is wrong usage for setjmp
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>
