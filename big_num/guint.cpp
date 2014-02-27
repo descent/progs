@@ -83,6 +83,40 @@ bool Guint::convert_to_cal_data(const std::string num)
   return true;
 }
 
+std::string Guint::to_string() const
+{
+  stringstream ss;
+
+  cout << "ss: " << count() << endl;
+
+  int i=count() - 1;
+
+  for ( ; i >= 0 ; --i)
+  {
+    if (data_[i] != 0)
+      break;
+  }
+
+  if (i==-1)
+  {
+    ss << "0";
+  }
+
+  for ( ; i >= 0 ; --i)
+  {
+    if (data_[i] == 0)
+      ss << "00";
+    else
+    {
+      if (data_[i] < 10)
+        ss << "0";
+      ss << data_[i];
+    }
+  }
+
+  return ss.str();
+}
+
 Guint Guint::add(u32 n) const
 {
   Guint a(n);
@@ -123,6 +157,86 @@ Guint Guint::add(const Guint &guint) const
   return Guint(data);
 }
 
+Guint Guint::subtraction(const Guint &guint) const
+{
+  vector<u16> data;
+  u16 borrow = 0;
+
+  int n = max(count(), guint.count());
+
+
+  for (int i=0 ; i < n ; ++i)
+  {
+    u16 a1 = i < count() ? data_[i] : 0;
+    u16 a2 = i < guint.count() ? guint.data_[i] : 0;
+    s32 t = a1 - a2 - borrow;
+    u16 c;
+
+    if (t < 0)
+    {
+      c = 100 + t;
+      borrow = 1;
+    }
+    else
+    {
+      c = t;
+      borrow = 0;
+    }
+    data.push_back(c);
+  }
+
+  return Guint(data);
+}
+
+Guint Guint::mul(const Guint &guint) const
+{
+  u16 d1 = count(); 
+  u16 d2 = guint.count(); 
+
+  vector<u16> data;
+  data.reserve(d1+d2);
+  for (int i=0 ; i < d1+d2 ; ++i)
+    data[i] = 0;
+  u32 t = 0;
+
+  int j=0;
+  int i=0;
+  for (i=0 ; i < d1 ; ++i)
+  {
+    u16 carry = 0;
+    for (j=0 ; j < d2 ; ++j)
+    {
+      t = data[i+j] + data_[i] * guint.data_[j] + carry;
+      //cout << "(" << i << "," << j << ")" << endl;
+#if 0
+      cout << "t: " <<  data[i+j] << "+" <<  guint1.data_[i] << "*" <<  guint2.data_[j] << "+" <<  carry << " = " << t << endl;
+#endif
+      carry = t / 100;
+#if 0
+      cout << "carry: " << carry << endl;
+      cout << "data[" << i << "," << j << "]: " << t%100<< endl;
+#endif
+      data[i+j] = t % 100;
+    }
+    data[i+j] = carry;
+#if 0
+    cout << "data[" << i << "," << j << "] (carry): " << carry << endl;
+#endif
+  }
+  int digits = i+j - 1;
+
+  #if 0
+  cout << "[" << i << "," << j << "]" << endl;
+  for (int i = digits ; i >= 0 ; --i)
+    cout << data[i] << endl;
+  #endif
+  vector<u16> d;
+  for (int i = 0 ; i <= digits ; ++i)
+    d.push_back(data[i]);
+  Guint g(d); 
+  return g;
+}
+
 // prefix ++
 Guint Guint::operator++()
 {
@@ -147,6 +261,12 @@ Guint Guint::operator+=(const Guint &guint)
   return *this;
 }
 
+Guint Guint::operator*=(const Guint &guint)
+{
+  *this = mul(guint);
+  return *this;
+}
+
 Guint operator+(const Guint &guint1, const Guint &guint2)
 {
   return guint1.add(guint2);
@@ -155,6 +275,11 @@ Guint operator+(const Guint &guint1, const Guint &guint2)
 Guint operator+(const Guint &guint1, u32 n)
 {
   return guint1.add(n);
+}
+
+Guint operator*(const Guint &guint1, const Guint &guint2)
+{
+  return guint1.mul(guint2);
 }
 
 bool operator<(const Guint &guint1, Guint &guint2)
@@ -184,28 +309,7 @@ bool operator<=(const Guint &guint1, u32 i)
 
 ostream& operator<<(ostream &os, const Guint &guint)
 {
-  //cout << "oo: " << guint.count() << endl;
-  int i=guint.data_.size() - 1;
-
-  for ( ; i >= 0 ; --i)
-  {
-    if (guint.data_[i] != 0)
-      break;
-  }
-
-  if (i==-1)
-  {
-    os << "0";
-    return os;
-  }
-
-  for ( ; i >= 0 ; --i)
-  {
-    if (guint.data_[i] == 0)
-      os << "00";
-    else
-      os << guint.data_[i];
-  }
+  os << guint.to_string();
 
   return os;
 }

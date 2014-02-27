@@ -22,6 +22,7 @@ class Guint
   friend ostream & operator <<(ostream &os, const Guint &guint);
   friend Guint operator+(const Guint &guint1, const Guint &guint2);
   friend Guint operator+(const Guint &guint1, u32 n);
+  friend Guint operator*(const Guint &guint1, const Guint &guint2);
   friend bool operator<(const Guint &guint1, Guint &guint2);
   friend bool operator<(const Guint &guint1, u32 i);
   friend bool operator<=(const Guint &guint1, u32 i);
@@ -32,11 +33,15 @@ class Guint
     Guint(const std::string num);
     Guint(const vector<u16> data);
 
+    std::string to_string() const;
     Guint add(const Guint &guint) const;
     Guint add(u32 n) const;
+    Guint subtraction(const Guint &guint) const;
+    Guint mul(const Guint &guint) const;
     Guint operator++();
     Guint operator++(int);
     Guint operator+=(const Guint &guint);
+    Guint operator*=(const Guint &guint);
     int count() const {return data_.size();}
   private:
     bool convert_to_cal_data(const std::string num);

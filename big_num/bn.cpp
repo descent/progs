@@ -8,6 +8,17 @@ using namespace std;
 
 //using namespace DS;
 
+void factorial()
+{
+  Guint guint(1);
+  Guint sum(1);
+  for ( ; guint <= 100 ; ++guint)
+  {
+    sum *= guint;
+  }
+  cout << "sum: " << sum << endl;
+}
+
 int main(int argc, char *argv[])
 {
   string s1("165535");
