@@ -1,0 +1,476 @@
+"*=============================================================================
+" MACRO by Caspar Fang
+"  RemoveSpaceTabInTheEndOfLine      (F6)
+"  ConvertTabToSpace                 (F7)
+"  AddCommentBlock                   (F9)
+"  ModifyCommentBlock                (F10)
+"  RemoveCommentBlock                (F11)
+"  StringComment                     (F12)
+"  SetComment                        (CTRL/ALT + B)
+"  SetTime                           (CTRL/ALT + T)
+"  AddIFConditionBlock(if)           (CTRL/ALT + 1)
+"  AddIFConditionBlock(ifdef)        (CTRL/ALT + 2)
+"  AddIFConditionBlock(ifndef)       (CTRL/ALT + 3)
+"  SetIFCondition                    (CTRL/ALT + I)
+"  AddSelectionComment               (CTRL/ALT + C)
+"  RemoveSelectionComment            (CTRL/ALT + R)
+"  AddFileHeader                     (CTRL/ALT + H)
+"  AddProcedureHeader                (CTRL/ALT + P)
+"  Add new search keyword            (SHT + F8)
+"============================================================================*/
+"
+"*=============================================================================
+" Update Method
+"  1. Copy _vimrc_utils to the place of _vimrc (or .vimrc)
+"  2. Add the line "source $HOME\_vimrc_utils" in the _vimrc (or .vimrc)
+"  3. Open Files - Your Files
+"  Done.
+"============================================================================*/
+
+" Decide comment symbol
+function! CommentSymbol ()
+  "
+  " Set the default comment
+  "
+  let markid_start='//'
+  let markid_end='//'
+  let pre_process_symbol='#'
+
+  "
+  " Set the comment by the different file type
+  "
+  if exists ("&filetype") != 0
+    if (&filetype == "asm") || (&filetype == "pov") || (&filetype == "dosini")
+      let markid_start=';'
+      let markid_end=';'
+      let pre_process_symbol=''
+    elseif (&filetype == "make") || (&filetype == "inform") || (&filetype == "conf") || (&filetype == "sh") || (&filetype == "screen")
+      let markid_start='#'
+      let markid_end='#'
+      let pre_process_symbol='!'
+    elseif &filetype == "dosbatch"
+      let markid_start='REM '
+      let markid_end='//'
+      let pre_process_symbol=''
+    elseif &filetype == "vim"
+      let markid_start='"'
+      let markid_end='//'
+      let pre_process_symbol=''
+    endif
+  endif
+
+  return [escape (markid_start, '/'), markid_start, markid_end, pre_process_symbol]
+endfunction
+
+"Mark from N to M
+function! MarkN2MbyComment (N, M, Comment)
+  let ln = a:N
+  while ln <= a:M
+    call MarkByLine (ln, a:Comment)
+    let ln = ln + 1
+  endwhile
+endfunction
+
+" Remove Mark from N to M
+function! RemoveMarkN2MbyComment (N, M, Comment)
+  let ln = a:N
+  while ln <= a:M
+    call RemoveMarkByLine (ln, a:Comment)
+    let ln = ln + 1
+  endwhile
+endfunction
+
+" Set CommentSymbol from user input
+function! SetCommentSymbol ()
+  if (exists ("g:CommentSymbol") == 0) || (g:CommentSymbol == "")
+
+    let g:CommentSymbol = input ("Set Comment Symbol : (EX:IB10300001): ")
+
+  endif
+endfunction
+
+" Clear CommentSymbol
+function! ClearCommentSymbol ()
+
+  if exists ("g:CommentSymbol") != 0
+    unlet g:CommentSymbol
+  endif
+
+endfunction
+
+" Set IF Condition value form user input
+function! SetConditionVariable ()
+
+  let g:ConditionVariable = input ("Set IF Condition (EX:0, 1, FOMLOAD) (Press ESC to Clear Previous Setting) : ")
+
+endfunction
+
+" Set Temp IF Condition value form user input
+function! SetTempConditionVariable ()
+
+  let TempConditionVariable = input ("Set IF Condition (EX:0, 1, FOMLOAD) : ")
+  return TempConditionVariable
+
+endfunction
+
+" Auto Set TimeSymbol
+function! AutoSetTimeSymbol ()
+  if (exists ("g:TimeSymbol") == 0) || (g:TimeSymbol == "")
+
+    let g:TimeSymbol = strftime ("%y%m%d")
+
+  endif
+
+endfunction
+
+" Force Set TimeSymbol
+function! ForceSetTimeSymbol ()
+
+  let g:TimeSymbol = input ("Set Customized Date (EX:060804) (Press ESC to set current date Automatically) : ")
+
+  if g:TimeSymbol == ""
+
+    call AutoSetTimeSymbol ()
+
+  endif
+
+endfunction
+
+" Add ceiling and floor comment
+function! CeilFloorComment (lnF, lnL, markid_start, markid_end, type)
+
+  call AutoSetTimeSymbol ()
+
+  call append (a:lnL, a:markid_start . "[-end-" . g:TimeSymbol. "-" . g:CommentSymbol . "-" . a:type . "]" . a:markid_end)
+  call append (a:lnF - 1, a:markid_start . "[-start-" . g:TimeSymbol. "-" . g:CommentSymbol . "-" . a:type . "]" . a:markid_end)
+
+endfunction
+
+" Add IF condition ceiling and floor
+function! CeilFloorIfCondition (lnF, lnL, SymbolStart, ConditionType, markid_start)
+
+  if (exists ("g:ConditionVariable") == 0 || g:ConditionVariable == "")
+    let Variable = SetTempConditionVariable ()
+  else
+    let Variable = g:ConditionVariable
+  endif
+
+  if Variable != ""
+    call append (a:lnL, a:SymbolStart . "endif" . " " . a:markid_start . a:SymbolStart . a:ConditionType . " " . Variable)
+    call append (a:lnL, a:SymbolStart . "else" . " " . a:markid_start . a:SymbolStart . a:ConditionType . " " . Variable)
+    call append (a:lnF - 1, a:SymbolStart . a:ConditionType . " " . Variable)
+    if a:ConditionType == "ifndef"
+      call append (a:lnF, a:SymbolStart . "define " . Variable)
+    endif
+  endif
+
+endfunction
+
+" AddCommentBlock
+function! AddCommentBlock (lnF, lnL)
+  if line (".") == a:lnL
+
+    call SetCommentSymbol ()
+
+    if (exists ("g:CommentSymbol") != 0) && (g:CommentSymbol != "")
+
+      let [comment, markid_start, markid_end, pre_process_symbol] = CommentSymbol ()
+
+      call CeilFloorComment (a:lnF, a:lnL, markid_start, markid_end, "add")
+
+    endif
+
+  endif
+endfunction
+
+" ModifyCommentBlock
+function! ModifyCommentBlock (lnF, lnL)
+  if line (".") == a:lnL
+
+    call SetCommentSymbol ()
+
+    if (exists ("g:CommentSymbol") !=0) && (g:CommentSymbol != "")
+
+      let [comment, markid_start, markid_end, pre_process_symbol] = CommentSymbol ()
+
+      call CeilFloorComment (a:lnF, a:lnL, markid_start, markid_end, "modify")
+
+    endif
+
+  endif
+endfunction
+
+" RemoveCommentBlock
+function! RemoveCommentBlock (lnF, lnL)
+
+  if line (".") == a:lnL
+
+    call SetCommentSymbol ()
+
+    if ((exists ("g:CommentSymbol") != 0) && (g:CommentSymbol != ""))
+
+      let [comment, markid_start, markid_end, pre_process_symbol] = CommentSymbol ()
+
+      call MarkN2MbyComment (a:lnF, a:lnL, comment)
+
+      call CeilFloorComment (a:lnF, a:lnL, markid_start, markid_end, "remove")
+
+    endif
+
+  endif
+endfunction
+
+" StringCommentBlock
+function! StringCommentBlock (lnF, lnL)
+  if line (".") == a:lnL
+
+    call SetCommentSymbol ()
+
+    if (exists ("g:CommentSymbol") !=0) && (g:CommentSymbol != "")
+
+      let [comment, markid_start, markid_end, pre_process_symbol] = CommentSymbol ()
+
+      call append (a:lnL, markid_start . "_End_" . g:CommentSymbol)
+      call append (a:lnF - 1, markid_start . "_Start_" . g:CommentSymbol)
+
+    endif
+
+  endif
+endfunction
+
+" AddIFConditionBlock
+function! AddIFConditionBlock (lnF, lnL, ConditionType)
+
+  if line (".") == a:lnL
+    let [comment, markid_start, markid_end, pre_process_symbol] = CommentSymbol ()
+
+    call CeilFloorIfCondition (a:lnF, a:lnL, pre_process_symbol, a:ConditionType, markid_start)
+  endif
+endfunction
+
+function! VisualAddCommentBlock ()
+  let lnF = line ("'<")
+  let lnL = line ("'>")
+  call AddCommentBlock (lnF, lnL)
+endfunction
+
+function! NormalAddCommentBlock ()
+  let lnF = line (".")
+  let lnL = line (".")
+  call AddCommentBlock (lnF, lnL)
+endfunction
+
+function! VisualModifyCommentBlock ()
+  let lnF = line ("'<")
+  let lnL = line ("'>")
+  call ModifyCommentBlock (lnF, lnL)
+endfunction
+
+function! NormalModifyCommentBlock ()
+  let lnF = line (".")
+  let lnL = line (".")
+  call ModifyCommentBlock (lnF, lnL)
+endfunction
+
+function! VisualRemoveCommentBlock ()
+  let lnF = line ("'<")
+  let lnL = line ("'>")
+  call RemoveCommentBlock (lnF, lnL)
+endfunction
+
+function! NormalRemoveCommentBlock ()
+  let lnF = line (".")
+  let lnL = line (".")
+  call RemoveCommentBlock (lnF, lnL)
+endfunction
+
+function! VisualStringCommentBlock ()
+  let lnF = line ("'<")
+  let lnL = line ("'>")
+  call StringCommentBlock (lnF, lnL)
+endfunction
+
+function! NormalStringCommentBlock ()
+  let lnF = line (".")
+  let lnL = line (".")
+  call StringCommentBlock (lnF, lnL)
+endfunction
+
+function! NormalAddIFConditionBlock (Condition)
+  let lnF = line (".")
+  let lnL = line (".")
+  call AddIFConditionBlock (lnF, lnL, a:Condition)
+endfunction
+
+function! VisualAddIFConditionBlock (Condition)
+  let lnF = line ("'<")
+  let lnL = line ("'>")
+  call AddIFConditionBlock (lnF, lnL, a:Condition)
+endfunction
+
+" Mark by select block
+function! AddSelectionComment (lnF, lnL)
+  if line (".") == a:lnL
+
+    let [comment, markid_start, markid_end, pre_process_symbol] = CommentSymbol ()
+
+    call MarkN2MbyComment (a:lnF, a:lnL, comment)
+
+  endif
+endfunction
+
+" Remove mark by select block
+function! RemoveSelectionComment (lnF, lnL)
+  if line (".") == a:lnL
+
+    let [comment, markid_start, markid_end, pre_process_symbol] = CommentSymbol ()
+
+    call RemoveMarkN2MbyComment (a:lnF, a:lnL, comment)
+
+  endif
+endfunction
+
+" Make this line by symbol
+function! MarkByLine (CurrentLine, comment)
+  let TempContent = getline (a:CurrentLine)
+  let TempContent = substitute (TempContent, '^', a:comment, 'g')
+  call setline (a:CurrentLine, TempContent)
+endfunction
+
+" Remove mark in this line depend on filetype
+function! RemoveMarkByLine (CurrentLine, comment)
+  let TempContent = getline (a:CurrentLine)
+  let TempContent = substitute (TempContent, '^\(\s*\)' . a:comment, '\1', 'g')
+  call setline (a:CurrentLine, TempContent)
+endfunction
+
+" Add the CopyRight in this file
+function! AddFileHeader ()
+  let [comment, markid_start, markid_end, pre_process_symbol] = CommentSymbol ()
+
+  call append (00, markid_start . ";******************************************************************************")
+  call append (01, markid_start . ";* Copyright (c) 1983-" . strftime ("%Y") . ", company_name International Corporation. All Rights Reserved.")
+  call append (02, markid_start . ";*")
+  call append (03, markid_start . ";* You may not reproduce, distribute, publish, display, perform, modify, adapt,")
+  call append (04, markid_start . ";* transmit, broadcast, present, recite, release, license or otherwise exploit")
+  call append (05, markid_start . ";* any part of this publication in any form, by any means, without the prior")
+  call append (06, markid_start . ";* written permission of company_name International Corporation.")
+  call append (07, markid_start . ";*")
+  call append (08, markid_start . ";******************************************************************************")
+  call append (09, markid_start . "; Revision History:")
+  call append (10, markid_start . ";")
+  call append (11, markid_start . "; $Log: $")
+  call append (12, markid_start . ";")
+  call append (13, markid_start . ";------------------------------------------------------------------------------")
+  call append (14, markid_start . ";")
+  call append (15, markid_start . "; Abstract:")
+  call append (16, markid_start . ";")
+endfunction
+
+" Add UEFI Function description
+function! AddProcedureHeader ()
+  let ln = search (')', 'cW')
+
+  if ln != 0
+    call append (ln + 0, "/*++")
+    call append (ln + 1, "Routine Description:")
+    call append (ln + 2, "  ")
+    call append (ln + 3, "Arguments:")
+    call append (ln + 4, "  None")
+    call append (ln + 5, "Returns:")
+    call append (ln + 6, "  None")
+    call append (ln + 7, "--*/")
+  endif
+endfunction
+
+" Remove the space or tab in the end of line
+function! RemoveSpaceInTail ()
+  let LastSearch = @/
+  exe '%s/\s\+$//gce'
+  let @/ = LastSearch
+endfunction
+
+" Convert tab to SpaceNum space
+function! ConverTab2Space (SpaceNum)
+  let LastSearch = @/
+  exe '%s/\t/' . repeat (' ', a:SpaceNum) . '/gce'
+  let @/ = LastSearch
+endfunction
+
+" Force change the CommentSymbol
+function! ForceSetCommentSymbol ()
+
+  call ClearCommentSymbol ()
+
+  call SetCommentSymbol ()
+
+endfunction
+
+nmap <silent><F6> :call RemoveSpaceInTail ()<CR>
+
+nmap <silent><F7> :call ConverTab2Space (&tabstop)<CR>
+
+vmap <silent><F9> :call VisualAddCommentBlock ()<CR>
+nmap <silent><F9> :call NormalAddCommentBlock ()<CR>
+
+vmap <silent><F10> :call VisualModifyCommentBlock ()<CR>
+nmap <silent><F10> :call NormalModifyCommentBlock ()<CR>
+
+vmap <silent><F11> :call VisualRemoveCommentBlock ()<CR>
+nmap <silent><F11> :call NormalRemoveCommentBlock ()<CR>
+
+vmap <silent><F12> :call VisualStringCommentBlock ()<CR>
+nmap <silent><F12> :call NormalStringCommentBlock ()<CR>
+
+nmap <silent><A-c> :call AddSelectionComment (line ('.'), line ('.'))<CR>
+vmap <silent><A-c> :call AddSelectionComment (line ('.'), line ('.'))<CR>
+nmap <silent><C-c> :call AddSelectionComment (line ('.'), line ('.'))<CR>
+vmap <silent><C-c> :call AddSelectionComment (line ('.'), line ('.'))<CR>
+
+nmap <silent><A-r> :call RemoveSelectionComment (line ('.'), line ('.'))<CR>
+vmap <silent><A-r> :call RemoveSelectionComment (line ('.'), line ('.'))<CR>
+nmap <silent><C-r> :call RemoveSelectionComment (line ('.'), line ('.'))<CR>
+vmap <silent><C-r> :call RemoveSelectionComment (line ('.'), line ('.'))<CR>
+
+nmap <silent><A-b> :call ForceSetCommentSymbol ()<CR>
+vmap <silent><A-b> :call ForceSetCommentSymbol ()<CR>
+nmap <silent><C-b> :call ForceSetCommentSymbol ()<CR>
+vmap <silent><C-b> :call ForceSetCommentSymbol ()<CR>
+
+nmap <silent><A-t> :call ForceSetTimeSymbol ()<CR>
+vmap <silent><A-t> :call ForceSetTimeSymbol ()<CR>
+nmap <silent><C-t> :call ForceSetTimeSymbol ()<CR>
+vmap <silent><C-t> :call ForceSetTimeSymbol ()<CR>
+
+nmap <silent><A-1> :call NormalAddIFConditionBlock ("if")<CR>
+vmap <silent><A-1> :call VisualAddIFConditionBlock ("if")<CR>
+nmap <silent><C-1> :call NormalAddIFConditionBlock ("if")<CR>
+vmap <silent><C-1> :call VisualAddIFConditionBlock ("if")<CR>
+
+nmap <silent><A-2> :call NormalAddIFConditionBlock ("ifdef")<CR>
+vmap <silent><A-2> :call VisualAddIFConditionBlock ("ifdef")<CR>
+nmap <silent><C-2> :call NormalAddIFConditionBlock ("ifdef")<CR>
+vmap <silent><C-2> :call VisualAddIFConditionBlock ("ifdef")<CR>
+
+nmap <silent><A-3> :call NormalAddIFConditionBlock ("ifndef")<CR>
+vmap <silent><A-3> :call VisualAddIFConditionBlock ("ifndef")<CR>
+nmap <silent><C-3> :call NormalAddIFConditionBlock ("ifndef")<CR>
+vmap <silent><C-3> :call VisualAddIFConditionBlock ("ifndef")<CR>
+
+nmap <silent><A-i> :call SetConditionVariable ()<CR>
+vmap <silent><A-i> :call SetConditionVariable ()<CR>
+nmap <silent><C-i> :call SetConditionVariable ()<CR>
+vmap <silent><C-i> :call SetConditionVariable ()<CR>
+
+nmap <silent><A-h> :call AddFileHeader ()<CR>
+vmap <silent><A-h> :call AddFileHeader ()<CR>
+nmap <silent><C-h> :call AddFileHeader ()<CR>
+vmap <silent><C-h> :call AddFileHeader ()<CR>
+
+nmap <silent><A-p> :call AddProcedureHeader ()<CR>
+vmap <silent><A-p> :call AddProcedureHeader ()<CR>
+nmap <silent><C-p> :call AddProcedureHeader ()<CR>
+vmap <silent><C-p> :call AddProcedureHeader ()<CR>
+
+" Add new search keyword
+nmap <silent><S-F8> :exec "/" . getreg ('/') . "\\\\|" . "\\<" . expand("<cword>") . "\\>"<CR>
