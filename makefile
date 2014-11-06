@@ -1,3 +1,6 @@
+ftoa: ftoa.cpp
+	g++ -g -o ftoa ftoa.cpp
+
 ptrptr: ptrptr.c
 	gcc -g -m32 ptrptr.c -o ptrptr
 ma: ma.c
