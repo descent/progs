@@ -11,11 +11,8 @@ typedef struct Node_
 }Node;
 
 Node *make_node(NodeElm elm);
-
-void insert(Node *node);
-
+void push_back(Node *node);
 void del(Node *node);
-
-void search(NodeElm elm);
+Node* search(const NodeElm *elm);
 
 #endif
