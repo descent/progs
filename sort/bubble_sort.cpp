@@ -4,12 +4,44 @@
 
 using namespace std;
 
-int main(int argc, char *argv[])
+#define DATA(unsort) \
+  char str[] = unsort; \
+  int len = strlen(str); 
+
+void insertion_sort()
+{
+  DATA("98765")
+
+  printf("== %s: \n", __FUNCTION__);
+  printf("org str: %s\n", str);
+
+  for (int i=1 ; i < len ; ++i)
+  {
+    int key = str[i];
+
+    int k = i-1;
+    for (; k >= 0 ; --k)
+    {
+      if (str[k] > key)
+      {
+        str[k+1] = str[k];
+      }
+      else
+      {
+        break;
+      }
+    }
+    str[k+1] = key;
+  }
+  printf("sorting str: %s\n", str);
+}
+
+void bubble_sort()
 {
   
-  char str[] = "987654321";
-  int len = strlen(str);
+  DATA("987654321")
 
+  printf("== %s: \n", __FUNCTION__);
   printf("org str: %s\n", str);
 
   for (int k=len ; k > 0 ; --k)
@@ -21,7 +53,13 @@ int main(int argc, char *argv[])
     }
   }
 
-  printf("sort str: %s\n", str);
+  printf("sorting str: %s\n", str);
+}
+
+int main(int argc, char *argv[])
+{
+  bubble_sort();
+  insertion_sort();
 
   return 0;
 }
