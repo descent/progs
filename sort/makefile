@@ -1,7 +1,9 @@
 %.o : %.cpp
 	g++ $(CFLAGS) -c $< 
 
-bubble_sort: bubble_sort.o
+use_c_qsort: use_c_qsort.o
+	g++ -o $@ $<
+sort: sort.o
 	g++ -o $@ $<
 clean:
-	rm -rf *.o bubble_sort
+	rm -rf *.o sort use_c_qsort
