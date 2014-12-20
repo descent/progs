@@ -4,15 +4,18 @@
 
 using namespace std;
 
+// provide str, len variable
 #define DATA(unsort) \
   char str[] = unsort; \
   int len = strlen(str); 
 
 void print_array(char *s, int len)
 {
+  printf("***\n");
   for (int i=0 ; i < len ; ++i)
     printf("%c ", s[i]);
   printf("\n");
+  printf("******\n");
 }
 
 int partition(char *s, int begin, int end)
@@ -25,8 +28,8 @@ int partition(char *s, int begin, int end)
   int pivot_index = len/2;
   char pivot = s[len/2];
 
-  print_array(s, len);
-  printf("s[%d] = pivot: %c\n", pivot_index, pivot);
+  //print_array(s, len);
+  //printf("pivot = s[%d] = %c\n", pivot_index, pivot);
 
   for (int i=0 ; i < len ; ++i)
   {
@@ -38,9 +41,12 @@ int partition(char *s, int begin, int end)
       right[right_index++] = s[i];
   }
 
+#if 0
   print_array(left, left_index);
   printf("\n");
   print_array(right, right_index);
+#endif
+
   memcpy(s, left, left_index);
   s[left_index] = pivot;
   memcpy(s+left_index+1, right, right_index);
@@ -96,12 +102,8 @@ void bubble_sort()
   printf("sorting str: %s\n", str);
 }
 
-int main(int argc, char *argv[])
+void quick_sort(char *str, int len)
 {
-  bubble_sort();
-  insertion_sort();
-
-  DATA("986521374")
   int pivot_index = partition(str, 0, len-1);
   printf("new pivot_index: %d\n", pivot_index);
   print_array(str, len);
@@ -123,7 +125,15 @@ int main(int argc, char *argv[])
   printf("===\n");
   print_array(str, len);
   printf("===\n");
+}
 
+int main(int argc, char *argv[])
+{
+  //bubble_sort();
+  //insertion_sort();
+
+  DATA("986251374")
+  quick_sort(str, len);
 
   return 0;
 }
