@@ -102,29 +102,36 @@ void bubble_sort()
   printf("sorting str: %s\n", str);
 }
 
-void quick_sort(char *str, int len)
+void quick_sort(char *str, int left, int right)
 {
-  int pivot_index = partition(str, 0, len-1);
+  int pivot_index = partition(str, left, right);
+
+#if 0
   printf("new pivot_index: %d\n", pivot_index);
   print_array(str, len);
   printf("===\n");
+#endif
 
-  if ((pivot_index - 0) > 1)
+  // handle left
+  if ((pivot_index - left) > 1)
   {
-    printf("left\n");
-    pivot_index = partition(str, 0, pivot_index-1);
-    printf("new pivot_index: %d\n", pivot_index);
+    //printf("left\n");
+    //pivot_index = partition(str, 0, pivot_index-1);
+    //printf("new pivot_index: %d\n", pivot_index);
+
+    printf("(0, %d)\n", pivot_index-1);
+    quick_sort(str, 0, pivot_index-1);
   }
 
-  if ((len - 1 - pivot_index) > 1)
+  if ((right - pivot_index) > 1)
   {
-    printf("right\n");
-    pivot_index = partition(str+pivot_index+1, pivot_index+1, len-1);
-    printf("new pivot_index: %d\n", pivot_index);
+    //printf("right\n");
+    //pivot_index = partition(str+pivot_index+1, pivot_index+1, len-1);
+    //printf("new pivot_index: %d\n", pivot_index);
+    int l = pivot_index + 1;
+    printf("(%d, %d)\n", l, right);
+    quick_sort(str+l, 0, right - pivot_index - 1);
   }
-  printf("===\n");
-  print_array(str, len);
-  printf("===\n");
 }
 
 int main(int argc, char *argv[])
@@ -132,8 +139,11 @@ int main(int argc, char *argv[])
   //bubble_sort();
   //insertion_sort();
 
-  DATA("986251374")
-  quick_sort(str, len);
-
+  DATA("zxyabcdefg")
+  printf("org:\n");
+  print_array(str, len);
+  quick_sort(str, 0, len-1);
+  printf("quick sorting:\n");
+  print_array(str, len);
   return 0;
 }
