@@ -18,6 +18,7 @@ void print_array(char *s, int len)
   printf("******\n");
 }
 
+#define IN_PLACE
 int partition(char *s, int begin, int end)
 {
   char left[100];
@@ -31,6 +32,22 @@ int partition(char *s, int begin, int end)
   //print_array(s, len);
   //printf("pivot = s[%d] = %c\n", pivot_index, pivot);
 
+#ifdef IN_PLACE
+//ref: http://emn178.pixnet.net/blog/post/88613503-%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E6%B3%95%28quick-sort%29
+
+  std::swap(s[pivot_index], s[end]);
+  int swap_index=begin;
+  for (int i = begin ; i < end ; ++i)
+  {
+    if (s[i] <= pivot)
+    {
+      std::swap(s[i], s[swap_index]);
+      ++swap_index;
+    }
+  }
+  std::swap(s[end], s[swap_index]);
+
+#else
   for (int i=0 ; i < len ; ++i)
   {
     if (i == pivot_index)
@@ -50,6 +67,7 @@ int partition(char *s, int begin, int end)
   memcpy(s, left, left_index);
   s[left_index] = pivot;
   memcpy(s+left_index+1, right, right_index);
+#endif
 
   return left_index;
 }
