@@ -10,15 +10,13 @@ using namespace std;
 class Recv
 {
   public:
-    virtual void operator() (string num, string str)
-    {
-    }
+    virtual void operator() (string &num, string &str)=0;
 };
 
 class Recv1:public Recv
 {
   public:
-    virtual void operator() (string num, string str)
+    virtual void operator() (string &num, string &str)
     {
       cout << "num: " << num << endl;
       cout << "str: " << str << endl;
@@ -36,7 +34,7 @@ class Recv2:public Recv
       next_char_ = nc;
       recv_ = recv;
     }
-    virtual void operator() (string num, string str)
+    virtual void operator() (string &num, string &str)
     {
       string tmp_str;
       tmp_str.push_back(next_char_); 
@@ -48,11 +46,13 @@ class Recv2:public Recv
 
       if ('0' <= next_char_ && next_char_ <= '9')
       {
-        (*recv_)(num+tmp_str, str);
+        string new_str = num + tmp_str;
+        (*recv_)(new_str, str);
       }
       else // non num
       {
-        (*recv_)(num, str+tmp_str);
+        string new_str = str + tmp_str;
+        (*recv_)(num, new_str);
       }
     }
   private:
@@ -64,7 +64,8 @@ void extract(const string &s, Recv *receive)
 {
   if (s.length() == 0)
   {
-    (*receive)("", "");
+    string e1, e2;
+    (*receive)(e1, e2);
   }
   else
   {
