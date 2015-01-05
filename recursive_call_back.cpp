@@ -10,13 +10,13 @@ using namespace std;
 class Recv
 {
   public:
-    virtual void operator() (string &num, string &str)=0;
+    virtual void operator() (const string &num, const string &str)=0;
 };
 
 class Recv1:public Recv
 {
   public:
-    virtual void operator() (string &num, string &str)
+    virtual void operator() (const string &num, const string &str)
     {
       cout << "num: " << num << endl;
       cout << "str: " << str << endl;
@@ -34,7 +34,7 @@ class Recv2:public Recv
       next_char_ = nc;
       recv_ = recv;
     }
-    virtual void operator() (string &num, string &str)
+    virtual void operator() (const string &num, const string &str)
     {
       string tmp_str;
       tmp_str.push_back(next_char_); 
