@@ -1,3 +1,7 @@
+recursive_call_back: recursive_call_back.o
+	$(CXX) -std=c++11 -o $@ -g $<
+recursive_call_back.o: recursive_call_back.cpp
+	$(CXX) -std=c++11 -c -g $<
 ftoa: ftoa.cpp
 	g++ -g -o ftoa ftoa.cpp
 
