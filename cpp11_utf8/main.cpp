@@ -15,6 +15,8 @@
 #include <cstdlib>
 #include <cmath>
 
+#include "wstring2utf8.h"
+
 using namespace std;
 
 #include "graphic.h"
@@ -222,6 +224,7 @@ vector<wchar_t> utf8_to_ucs4(const char *utf8)
   return usc4;
 }
 
+
 int main(int argc, char *argv[])
 {
   //QString str = QString::fromUtf8("a中文bあい"); 
@@ -360,7 +363,16 @@ int main(int argc, char *argv[])
 
   //QVector<uint> utf32_str = str.toUcs4();
   //QVector<uint> utf32_str = utf8_to_ucs4(disp_str);
-  vector<wchar_t> utf32_str = utf8_to_ucs4(disp_str);
+  //vector<wchar_t> utf32_str = utf8_to_ucs4(disp_str);
+
+  std::wstring utf32_str = utf8_to_wstring(disp_str);
+
+#if 0
+  vector<wchar_t> utf32_str;
+
+  utf32_str.push_back(20013);
+  utf32_str.push_back(25991);
+#endif
   //qDebug() << utf32_str.size();
 
   if (graphic_mode == '1')
