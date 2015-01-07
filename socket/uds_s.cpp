@@ -55,8 +55,29 @@ int main(int argc, char *argv[])
     }
     else if (ret)
          {
+           char buf[MAX_MESG_SIZE];
+
+           struct sockaddr_un client_addr;
+
            PF("Data is available now.\n");
-           /* FD_ISSET(0, &rfds) will be true. */
+           socklen_t sz = sizeof(client_addr);
+           PF("xx sz: %d\n", sz);
+           int read_size = recvfrom(sockfd, buf, MAX_MESG_SIZE, 0, (struct sockaddr*)&client_addr, &sz);
+           if (read_size == -1)
+           {
+             perror("recvfrom");
+             continue;
+           }
+           PF("sz: %d\n", sz);
+           PF("client_addr.sun_family: %d\n", client_addr.sun_family);
+           PF("client_addr.sun_path: %s\n", client_addr.sun_path);
+           PF("read_size: %d\n", read_size);
+           buf[read_size] = 0;
+           PF("buf: %s\n", buf);
+           PF("================\n");
+           strcpy(buf, "back message");
+           ssize_t send_len = sendto(sockfd, buf, strlen(buf), 0, (sockaddr *)&client_addr, sizeof(client_addr));
+
          }
          else // 0
          {
