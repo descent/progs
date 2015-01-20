@@ -81,8 +81,9 @@ void assemble(const string &str)
 } 
 #endif
 
-template<typename Func>
-void extract(const string &str, Func receive)
+//template<typename Func>
+//void extract(const string &str, Func receive)
+void extract(const string &str, std::function<void(const string&, const string&)> receive)
 {
   if (str.length() == 0)
   { 
