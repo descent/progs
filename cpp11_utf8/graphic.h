@@ -1,6 +1,8 @@
 #ifndef GRAPHIC_H
 #define GRAPHIC_H
 
+#ifdef SVGALIB
+
 #include <vga.h>
 #include <vgagl.h>
 
@@ -26,6 +28,8 @@
 #else
 #define LIGHTWHITE      	(255)
 #endif
+
+#endif // SVGALIB
 
 class Graphic
 {

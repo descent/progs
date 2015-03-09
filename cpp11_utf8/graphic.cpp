@@ -2,22 +2,28 @@
 
 Graphic::Graphic()
 {
+#ifdef SVGALIB
   init_graph_mode();
   gl_fillbox(0,0,640,480, 200);
+#endif
 }
 
 Graphic::~Graphic()
 {
+#ifdef SVGALIB
   vga_getch();
   vga_setmode(TEXT);
+#endif
 }
 
 void Graphic::init_graph_mode()
 {
+#ifdef SVGALIB
   vga_init();
   int vga_mode=G640x480x16M;
   vga_setmode(vga_mode);
   gl_setcontextvga(vga_mode);
+#endif
 
 #if 0
   gl_setpalettecolor(BLUE, 0, 0, 63); // blue

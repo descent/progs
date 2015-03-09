@@ -65,6 +65,7 @@ void my_draw_bitmap_256(FT_Bitmap *bitmap,int pen_x,int pen_y)
     return;
   }
 
+#ifdef SVGALIB
   int startx = pen_x;
   int starty = pen_y;
   int cx=0, cy=0;
@@ -89,6 +90,7 @@ void my_draw_bitmap_256(FT_Bitmap *bitmap,int pen_x,int pen_y)
     ++cy;
     //usleep(50000);
   }
+#endif
 }
 
 void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
@@ -133,15 +135,19 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
         {
           if (graphic_mode == '0')
             printf(c_fg);
+#ifdef SVGALIB
           else
             gl_setpixel(startx+cx, starty+cy, vga_white());
+#endif
         }
         else
         {
           if (graphic_mode == '0')
             printf(c_bg);
+#ifdef SVGALIB
           else
             gl_setpixelrgb(startx+cx, starty+cy, 180, 0, 0);
+#endif
         }
 
         }
@@ -365,9 +371,9 @@ int main(int argc, char *argv[])
   //QVector<uint> utf32_str = utf8_to_ucs4(disp_str);
   //vector<wchar_t> utf32_str = utf8_to_ucs4(disp_str);
 
-  std::wstring utf32_str = utf8_to_wstring(disp_str);
+  //std::wstring utf32_str = utf8_to_wstring(disp_str);
 
-#if 0
+#if 1
   vector<wchar_t> utf32_str;
 
   utf32_str.push_back(20013);
