@@ -1,3 +1,6 @@
+cidr: cidr.cpp
+	$(CXX) -g $< -o $@
+
 recursive_call_back: recursive_call_back.o
 	$(CXX) -std=c++11 -o $@ -g $<
 recursive_call_back.o: recursive_call_back.cpp
