@@ -1,11 +1,11 @@
 FT2_CFLAGS=`freetype-config --cflags`
 FT2_LIBS=`freetype-config --libs`
 CXXFLAGS=-g -std=c++11
-CXX=g++
+CXX=g++-5
 
 LDFLAGS=
 
-CLANG=1
+#CLANG=1
 
 # support svgalib
 # make SVGA=1
