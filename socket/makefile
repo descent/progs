@@ -1,3 +1,8 @@
+getaddrinfo_demo: getaddrinfo_demo.o
+	$(CXX) -o $@ $<
+getaddrinfo_demo.o: getaddrinfo_demo.cpp
+	$(CXX) -c $<
+	
 all: uds_c uds_s uds_c1 uds_s1
 uds_c: uds_c.o
 	$(CXX) -o $@ $<
