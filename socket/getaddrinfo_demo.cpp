@@ -10,7 +10,23 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
+#include <vector>
+
+using namespace std;
+
 #define BUF_SIZE 500
+
+int getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, vector<addrinfo> &res)
+{
+  struct addrinfo *result, *rp;
+  int s = getaddrinfo("www.google.com", 0, hints, &result);
+
+  for (rp = result; rp != NULL; rp = rp->ai_next) 
+  {
+    res.push_back(*rp);
+  }
+  return s;
+}
 
 int main(int argc, char *argv[])
 {
@@ -21,6 +37,9 @@ int main(int argc, char *argv[])
     socklen_t peer_addr_len;
     ssize_t nread;
     char buf[BUF_SIZE];
+    const char *dm="www.google.com";
+
+    printf("domain name: %s\n", dm);
 
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
@@ -32,59 +51,12 @@ int main(int argc, char *argv[])
     hints.ai_addr = NULL;
     hints.ai_next = NULL;
 
-    s = getaddrinfo("www.google.com", NULL, &hints, &result);
+#if 0
+    s = getaddrinfo(dm, NULL, &hints, &result);
     if (s != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(s));
         exit(EXIT_FAILURE);
     }
-
-    /* getaddrinfo() returns a list of address structures.
-       Try each address until we successfully bind(2).
-       If socket(2) (or bind(2)) fails, we (close the socket
-       and) try the next address. */
-
-#if 0
-    for (rp = result; rp != NULL; rp = rp->ai_next) {
-        sfd = socket(rp->ai_family, rp->ai_socktype,
-                rp->ai_protocol);
-        if (sfd == -1)
-            continue;
-
-        if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
-            break;                  /* Success */
-
-        close(sfd);
-    }
-
-
-    if (rp == NULL) {               /* No address succeeded */
-        fprintf(stderr, "Could not bind\n");
-
-        exit(EXIT_FAILURE);
-    }
-
-    /* getaddrinfo() returns a list of address structures.
-       Try each address until we successfully bind(2).
-       If socket(2) (or bind(2)) fails, we (close the socket
-       and) try the next address. */
-
-    for (rp = result; rp != NULL; rp = rp->ai_next) {
-        sfd = socket(rp->ai_family, rp->ai_socktype,
-                rp->ai_protocol);
-        if (sfd == -1)
-            continue;
-
-        if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
-            break;                  /* Success */
-
-        close(sfd);
-    }
-
-    if (rp == NULL) {               /* No address succeeded */
-        fprintf(stderr, "Could not bind\n");
-        exit(EXIT_FAILURE);
-    }
-#endif
   for (rp = result; rp != NULL; rp = rp->ai_next) 
   {
     char ipstr[INET6_ADDRSTRLEN];
@@ -112,5 +84,39 @@ int main(int argc, char *argv[])
   }
 
   freeaddrinfo(result);           /* No longer needed */
+#endif
+
+  vector<addrinfo> res;
+  s = getaddrinfo(dm, NULL, &hints, res);
+  if (s != 0) {
+    fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(s));
+    exit(EXIT_FAILURE);
+  }
+
+  for (int i=0 ; i < res.size() ; ++i)
+  {
+    char ipstr[INET6_ADDRSTRLEN];
+    void *addr;
+    const char *ipver;
+
+    // 取得本身位址的指標，
+    // 在 IPv4 與 IPv6 中的欄位不同：
+    if (res[i].ai_family == AF_INET) 
+    { // IPv4
+      struct sockaddr_in *ipv4 = (struct sockaddr_in *)res[i].ai_addr;
+      addr = &(ipv4->sin_addr);
+      ipver = "IPv4";
+    } 
+    else 
+    { // IPv6
+      struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)res[i].ai_addr;
+      addr = &(ipv6->sin6_addr);
+      ipver = "IPv6";
+    }
+
+    // convert the IP to a string and print it:
+    inet_ntop(res[i].ai_family, addr, ipstr, sizeof ipstr);
+    printf(" %s: %s\n", ipver, ipstr);
+  }
   return 0;
 }
