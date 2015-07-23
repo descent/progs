@@ -369,15 +369,15 @@ int main(int argc, char *argv[])
 
   //QVector<uint> utf32_str = str.toUcs4();
   //QVector<uint> utf32_str = utf8_to_ucs4(disp_str);
-  //vector<wchar_t> utf32_str = utf8_to_ucs4(disp_str);
+  vector<wchar_t> utf32_str = utf8_to_ucs4(disp_str);
 
   //std::wstring utf32_str = utf8_to_wstring(disp_str);
 
-#if 1
+#if 0
   vector<wchar_t> utf32_str;
 
-  utf32_str.push_back(20013);
-  utf32_str.push_back(25991);
+  utf32_str.push_back(20013); // 中 utf-32 code
+  utf32_str.push_back(25991); // 文 utf-32 code
 #endif
   //qDebug() << utf32_str.size();
 
@@ -387,6 +387,7 @@ int main(int argc, char *argv[])
     screen_width = graphic.width();
     screen_height = graphic.height();
   }
+  cout << endl;
 
   //int x=0, y=14;
   for (int i=0 ; i < utf32_str.size() ; ++i)
