@@ -369,9 +369,9 @@ int main(int argc, char *argv[])
 
   //QVector<uint> utf32_str = str.toUcs4();
   //QVector<uint> utf32_str = utf8_to_ucs4(disp_str);
-  vector<wchar_t> utf32_str = utf8_to_ucs4(disp_str);
+  //vector<wchar_t> utf32_str = utf8_to_ucs4(disp_str);
 
-  //std::wstring utf32_str = utf8_to_wstring(disp_str);
+  std::wstring utf32_str = utf8_to_wstring(disp_str);
 
 #if 0
   vector<wchar_t> utf32_str;
