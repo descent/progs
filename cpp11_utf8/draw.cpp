@@ -1,5 +1,15 @@
 #include "draw.h"
+#ifdef SVGALIB
 #include "graphic.h"
+#endif
+
+#define LFB
+
+#ifdef LFB
+#include "fb.h"
+#endif
+
+Fb fb;
 
 #include <iostream>
 
@@ -11,6 +21,8 @@ const char *c_bg = "|";
 
 void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 {
+  uint8_t r=0, g=170, b=0;
+
   cout << "bitmap rows : " << bitmap->rows << endl;
   cout << "bitmap width : " << bitmap->width << endl;
   cout << "bitmap pitch : " << bitmap->pitch << endl;
@@ -55,6 +67,13 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
           else
             gl_setpixel(startx+cx, starty+cy, vga_white());
 #endif
+#ifdef LFB
+          else
+          {
+            color2rgb(LIGHTWHITE, r, g, b);
+            fb.setpixelrgb(startx+cx, starty+cy, r, g, b);
+          }
+#endif
         }
         else
         {
@@ -64,6 +83,14 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
           else
             gl_setpixelrgb(startx+cx, starty+cy, 180, 0, 0);
 #endif
+#ifdef LFB
+          else
+          {
+            color2rgb(RED, r, g, b);
+            fb.setpixelrgb(startx+cx, starty+cy, r, g, b);
+          }
+#endif
+
         }
 
         }
