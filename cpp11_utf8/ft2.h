@@ -1,3 +1,6 @@
+#ifndef FT2_H
+#define FT2_H
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
@@ -11,6 +14,7 @@ using namespace std;
 class Ft2
 {
   public:
+    Ft2(const string fontpath);
     ~Ft2();
     int init_ft2(const string fontpath);
     int get_slot(uint32_t char_code, int font_size, FT_GlyphSlot &slot);
@@ -20,3 +24,4 @@ class Ft2
     FT_Error error;
 };
 
+#endif

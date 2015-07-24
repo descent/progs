@@ -8,6 +8,11 @@
 
 using namespace std;
 
+Ft2::Ft2(const string fontpath)
+{
+  int ret = Ft2::init_ft2(fontpath);
+}
+
 Ft2::~Ft2()
 {
   FT_Done_FreeType(library);
