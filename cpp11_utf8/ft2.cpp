@@ -1,6 +1,6 @@
 #include "ft2.h"
 
-#include "wstring2utf8.h"
+// #include "wstring2utf8.h"
 
 #include <stdint.h>
 
@@ -48,17 +48,17 @@ int Ft2::init_ft2(const string fontpath)
   if (face->charmap==NULL)
    cout << "No charmap is selected" << endl;
   cout << "charmap numbers is : " << face->num_charmaps << endl;
-  error=FT_Select_Charmap(face,ft_encoding_unicode);
+  error = FT_Select_Charmap(face, ft_encoding_unicode);
   if (error)
   {
     cout << "FT_Select_CharMap(face,ft_encoding_unicode) error"  << endl;
     return -1;
   }
 
+#if 0
   const char *disp_str = "a中文bあい";
   std::wstring utf32_str = utf8_to_wstring(disp_str);
 
-#if 0
   for (int i=0 ; i < utf32_str.size() ; ++i)
   {
     cout << "utf-32: " << utf32_str[i] << endl;
@@ -143,7 +143,7 @@ int Ft2::init_ft2(const string fontpath)
 
   //FT_GlyphSlot slot = face->glyph;
 // char_code: usc-4
-int Ft2::get_slot(uint32_t char_code, int font_size, FT_GlyphSlot &slot)
+int Ft2::get_slot(FT_GlyphSlot &slot, uint32_t char_code, int font_size)
 {
   int ret = OK;
   FT_UInt gindex = FT_Get_Char_Index(face, char_code);
@@ -181,6 +181,7 @@ int Ft2::get_slot(uint32_t char_code, int font_size, FT_GlyphSlot &slot)
     cout << "The error number is : " << error << endl;
     return FAIL;
   }
+
   if (face->glyph->format != ft_glyph_format_bitmap)
   {
    cout << "run FT_Render_Glyph" << endl;
@@ -193,6 +194,8 @@ int Ft2::get_slot(uint32_t char_code, int font_size, FT_GlyphSlot &slot)
     return FAIL;
    }
   }
+
+  slot=face->glyph;
 
   cout << "slot->bitmap_left: " << slot->bitmap_left << endl;
   cout << "slot->bitmap_top: " << slot->bitmap_top << endl;
