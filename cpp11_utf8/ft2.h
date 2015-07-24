@@ -5,8 +5,11 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 
+#include <stdint.h>
+
 #include <string>
 using namespace std;
+
 
 #define FAIL -1
 #define OK 0
