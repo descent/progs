@@ -25,7 +25,7 @@ endif
 draw_test: draw_test.o ft2.o graphic.o draw.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(FT2_LIBS) $(LDFLAGS)
 
-main: main.o graphic.o
+main: main.o graphic.o fb.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(FT2_LIBS) $(LDFLAGS)
 
 %.o: %.cpp
