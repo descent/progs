@@ -7,9 +7,8 @@
 
 #ifdef LFB
 #include "fb.h"
-#endif
-
 Fb fb;
+#endif
 
 #include <iostream>
 
