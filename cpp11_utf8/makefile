@@ -14,6 +14,10 @@ LDFLAGS += -lvgagl -lvga
 CXXFLAGS+=-DSVGALIB
 endif
 
+ifdef LFB
+CXXFLAGS+=-DLFB
+endif
+
 ifdef CLANG
 CXX=clang++-3.4
 CXXFLAGS+=-stdlib=libc++
@@ -22,7 +26,7 @@ endif
 # link qt command, need not use qt now.
 #g++ -m64 -Wl,-O1 -Wl,-rpath,/usr/local/Trolltech/Qt-4.8.3/lib -o main main.o    -L/usr/local/Trolltech/Qt-4.8.3/lib -lQtGui -L/usr/local/Trolltech/Qt-4.8.3/lib -L/usr/X11R6/lib64 -lQtCore -lpthread 
 
-draw_test: draw_test.o ft2.o graphic.o draw.o
+draw_test: draw_test.o ft2.o graphic.o draw.o fb.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(FT2_LIBS) $(LDFLAGS)
 
 main: main.o graphic.o fb.o
