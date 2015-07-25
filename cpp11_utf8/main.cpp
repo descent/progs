@@ -30,6 +30,14 @@ int font_size=10;
 int screen_width;
 int screen_height;
 
+
+#define LFB
+
+#ifdef LFB
+#include "fb.h"
+Fb fb;
+#endif
+
 void print_raw_data(FT_Bitmap *bitmap)
 {
   unsigned char *tmp = bitmap->buffer;
@@ -95,6 +103,7 @@ void my_draw_bitmap_256(FT_Bitmap *bitmap,int pen_x,int pen_y)
 
 void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 {
+  uint8_t r, g, b;
   cout << "bitmap rows : " << bitmap->rows << endl;
   cout << "bitmap width : " << bitmap->width << endl;
   cout << "bitmap pitch : " << bitmap->pitch << endl;
@@ -139,6 +148,13 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
           else
             gl_setpixel(startx+cx, starty+cy, vga_white());
 #endif
+#ifdef LFB
+          else
+          {
+            color2rgb(LIGHTWHITE, r, g, b);
+            fb.setpixelrgb(startx+cx, starty+cy, r, g, b);
+          }
+#endif
         }
         else
         {
@@ -147,6 +163,14 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 #ifdef SVGALIB
           else
             gl_setpixelrgb(startx+cx, starty+cy, 180, 0, 0);
+#endif
+
+#ifdef LFB
+          else
+          {
+            color2rgb(RED, r, g, b);
+            fb.setpixelrgb(startx+cx, starty+cy, r, g, b);
+          }
 #endif
         }
 
