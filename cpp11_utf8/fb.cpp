@@ -86,10 +86,28 @@ void Fb::setpixelrgb(int x, int y, int r, int g, int b)
   long int location = 0;
 
   location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y+vinfo.yoffset) * finfo.line_length;
-  *(fbp + location) = b;        // Some blue
-  *(fbp + location + 1) = g;     // A little green
-  *(fbp + location + 2) = r;    // A lot of red
-  *(fbp + location + 3) = 0;      // No transparency
+  switch (vinfo.bits_per_pixel)
+  {
+    case 16:
+    {
+    #if 0
+      int b = 10;
+      int g = (x-100)/6;     // A little green
+      int r = 31-(y-100)/16;    // A lot of red
+    #endif
+      unsigned short int t = r<<11 | g << 5 | b;
+      *((unsigned short int*)(fbp + location)) = t;
+      break;
+    }
+    case 32:
+    {
+      *(fbp + location) = b;        // Some blue
+      *(fbp + location + 1) = g;     // A little green
+      *(fbp + location + 2) = r;    // A lot of red
+      *(fbp + location + 3) = 0;      // No transparency
+      break;
+    }
+  }
 }
 
 void color2rgb(uint8_t color, uint8_t &r, uint8_t &g, uint8_t &b)
