@@ -50,6 +50,7 @@ int Fb::fb_init()
        exit(4);
    }
    printf("The framebuffer device was mapped to memory successfully.\n");
+   return 0;
 }
 
 #if 0
