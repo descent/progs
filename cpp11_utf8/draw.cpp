@@ -1,14 +1,4 @@
 #include "draw.h"
-#ifdef SVGALIB
-#include "graphic.h"
-#endif
-
-#define LFB
-
-#ifdef LFB
-#include "fb.h"
-Fb fb;
-#endif
 
 #include <iostream>
 
@@ -18,7 +8,11 @@ int graphic_mode=1;
 const char *c_fg = "*";
 const char *c_bg = "|";
 
-void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
+#ifdef LFB
+Fb fb;
+#endif
+
+void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y, int fg_c, int bg_c)
 {
   uint8_t r=0, g=170, b=0;
 
@@ -69,7 +63,8 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 #ifdef LFB
           else
           {
-            color2rgb(LIGHTWHITE, r, g, b);
+            color2rgb(fg_c, r, g, b);
+            // color2rgb(BLUE, r, g, b);
             fb.setpixelrgb(startx+cx, starty+cy, r, g, b);
           }
 #endif
@@ -85,7 +80,7 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y)
 #ifdef LFB
           else
           {
-            color2rgb(RED, r, g, b);
+            color2rgb(bg_c, r, g, b);
             fb.setpixelrgb(startx+cx, starty+cy, r, g, b);
           }
 #endif
