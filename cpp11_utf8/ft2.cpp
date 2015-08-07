@@ -215,3 +215,12 @@ int Ft2::get_slot(FT_GlyphSlot &slot, uint32_t char_code, int font_size)
 
   return ret;
 }
+
+Ft2 *get_ft2(const char *fp)
+{
+  static Ft2 *ft2=0;
+
+  if (ft2 == 0)
+    ft2 = new Ft2(fp);
+  return ft2;
+}
