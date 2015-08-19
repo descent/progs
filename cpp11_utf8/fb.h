@@ -40,6 +40,7 @@ class Fb
     ~Fb();
     int fb_init();
     void setpixelrgb(int x, int y, int r, int g, int b);
+    void set_palette();
   private:
    int fbfd;
    char *fbp;

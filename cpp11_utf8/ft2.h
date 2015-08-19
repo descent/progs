@@ -27,4 +27,6 @@ class Ft2
     FT_Error error;
 };
 
+Ft2 *get_ft2(const char *fp);
+
 #endif

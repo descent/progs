@@ -1,5 +1,9 @@
 #include "fb.h"
 
+#include <stdint.h>
+
+#define NR_COLORS 256
+static uint32_t fillColors[NR_COLORS];
 
 Fb::Fb()
 {
@@ -89,6 +93,23 @@ void Fb::setpixelrgb(int x, int y, int r, int g, int b)
   location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y+vinfo.yoffset) * finfo.line_length;
   switch (vinfo.bits_per_pixel)
   {
+    case 8:
+    {
+      // ref: void Screen::draw8(u32 x, u32 y, u32 w, u8 fc, u8 bc, u8 *pixmap) [fbterm]
+
+      location = y * finfo.line_length + x * (vinfo.bits_per_pixel/8);
+      //location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/4) + (y+vinfo.yoffset) * finfo.line_length;
+      printf("location: %d\n", location);
+      printf("x: %d\n", x);
+      printf("y: %d\n", y);
+      printf("r: %d, g: %d, b: %d\n", r, g, b);
+
+      if (r==170)
+        *((unsigned char*)(fbp + location)) = 55;
+      else
+        *((unsigned char*)(fbp + location)) = 0;
+      break;
+    }
     case 16:
     {
     #if 0
@@ -231,6 +252,25 @@ void color2rgb(uint8_t color, uint8_t &r, uint8_t &g, uint8_t &b)
   }
 #endif
 }
+
+
+
+// from: screen_render.cpp [fbterm]]
+void Fb::set_palette()
+{
+  for (uint32_t i = 0; i < NR_COLORS; i++) 
+  {
+    switch (vinfo.bits_per_pixel)
+    {
+      case 8:
+      {
+        fillColors[i] = (i << 24) | (i << 16) | (i << 8) | i;
+        break;
+      }
+    }
+  }
+}
+
 
 #if 0
 int main(int argc, char *argv[])
