@@ -19,6 +19,10 @@ mh.o: mh.c
 hello.pic.o: hello.c
 	gcc -m32 -fPIC -c hello.c -o $@
 
+elf_loader: elf_loader.o
+	g++ -o $@ $<
+elf_loader.o: elf_loader.cpp
+	g++ -c $<
 
 clean:
 	rm -rf *.o
