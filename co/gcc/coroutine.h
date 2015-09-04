@@ -43,7 +43,7 @@
 
 
 #   ifndef CALLBACK
-#      define CALLBACK __stdcall
+#      define CALLBACK 
 #   endif
 
 typedef struct EXPORT RuntimeStack{

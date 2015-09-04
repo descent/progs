@@ -26,6 +26,8 @@
 #include <setjmp.h>
 #include <stdlib.h>
 
+#define __fastcall 
+
 #define PRIVATE static 
 PRIVATE Coroutine* co_cur = 0;
 PRIVATE const unsigned int cosize = sizeof(Coroutine);
