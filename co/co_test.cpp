@@ -22,7 +22,8 @@ void function2(void* p)
 
 void function1(void* p)
 {
-   Coroutine* co = co_create(function2,(void *)"Function2");
+  char para[] = "Function2";
+   Coroutine* co = co_create(function2, para);
    int i = 0;
    int a[ N ];
    for(i=0; i<N; ++i) a[ i ] = i;
@@ -43,7 +44,8 @@ void function1(void* p)
 
 void MainCo(void* p)
 {
-   Coroutine* co = co_create(function1, (void *)"Function1");
+  char para[] = "Function1";
+   Coroutine* co = co_create(function1, para);
    int i = 0;
    int a[ N ];
    for(i=0; i<N; ++i) a[ i ] = 5*i;
@@ -63,7 +65,8 @@ void MainCo(void* p)
 }
 
 int main(){
-   Coroutine* co = co_create(MainCo, (void *)"MainCo");
+  char para[] = "MainCo";
+   Coroutine* co = co_create(MainCo, para);
    co_resume( co );
    co_resume( co );
    co_delete( co );
