@@ -1,7 +1,8 @@
+CC=gcc
 co_test: co_test.o gcc/coroutine.o
-	$(CC) -o $@ $^
+	$(CC) -m32 -g -o $@ $^
 
 co_test.o: co_test.cpp
-	$(CC) -c $<
+	$(CC) -m32 -g -c $<
 clean:
 	rm -rf *.o co_test
