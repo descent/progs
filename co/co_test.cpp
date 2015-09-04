@@ -1,13 +1,10 @@
-// Coroutine.cpp : 定義主控台應用程式的進入點。
-//
-#pragma warning( disable : 4611 4530 4311)
-#include "Coroutine.h"
+#include "gcc/coroutine.h"
 #include <stdlib.h>
 #include <stdio.h>
 
 #define N 100
 
-void __stdcall function2(void* p)
+void function2(void* p)
 {
    int i = 0;
    int a[ N ];
@@ -23,9 +20,9 @@ void __stdcall function2(void* p)
    co_terminate();
 }
 
-void __stdcall function1(void* p)
+void function1(void* p)
 {
-   Coroutine* co = co_create(function2,"Function2");
+   Coroutine* co = co_create(function2,(void *)"Function2");
    int i = 0;
    int a[ N ];
    for(i=0; i<N; ++i) a[ i ] = i;
@@ -44,9 +41,9 @@ void __stdcall function1(void* p)
    co_terminate();
 }
 
-void __stdcall MainCo(void* p)
+void MainCo(void* p)
 {
-   Coroutine* co = co_create(function1,"Function1");
+   Coroutine* co = co_create(function1, (void *)"Function1");
    int i = 0;
    int a[ N ];
    for(i=0; i<N; ++i) a[ i ] = 5*i;
@@ -66,7 +63,7 @@ void __stdcall MainCo(void* p)
 }
 
 int main(){
-   Coroutine* co = co_create(MainCo,"MainCo");
+   Coroutine* co = co_create(MainCo, (void *)"MainCo");
    co_resume( co );
    co_resume( co );
    co_delete( co );
