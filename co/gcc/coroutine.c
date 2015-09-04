@@ -26,7 +26,6 @@
 #include <setjmp.h>
 #include <stdlib.h>
 
-#define __fastcall 
 
 #define PRIVATE static 
 PRIVATE Coroutine* co_cur = 0;
@@ -39,7 +38,7 @@ void CALLBACK def_routine(void* param){
 }
 
 PRIVATE
-void __fastcall copy_memory(unsigned char* dest,const unsigned char* src,unsigned int size){
+void copy_memory(unsigned char* dest,const unsigned char* src,unsigned int size){
    while(size>=4) {
       *(unsigned long*)dest = *(unsigned long*)src;
       dest +=  longsize;
