@@ -24,5 +24,14 @@ elf_loader: elf_loader.o
 elf_loader.o: elf_loader.cpp
 	g++ -c $<
 
+el:el.o
+	gcc -m32 -o $@ $< -ldl
+el.o:el.c
+	gcc -m32 -c $<
+e: e.o
+	gcc -pie -fPIE -m32 -o $@ $<
+e.o: e.c
+	gcc -pie -fPIE -m32 -c $<
+
 clean:
 	rm -rf *.o
