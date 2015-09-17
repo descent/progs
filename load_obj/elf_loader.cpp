@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <stdint.h>
 
 #include <sys/mman.h>
 
@@ -736,6 +737,7 @@ int main(int argc, const char *argv[])
 
   printf("file size: %d\n", fsize);
 
+
 #if 0
 // dump elf content
   for (int i=0 ; i < fsize ; ++i)
@@ -748,16 +750,35 @@ int main(int argc, const char *argv[])
 #endif
 
   Elf32Ehdr *elf_header = (Elf32Ehdr*)buf;
+  print_elf_hdr(elf_header);
+  uint32_t entry = elf_header->e_entry;
+  void *e = (void *)0x8040000;
+
+  //char *exec = (char *)mmap((void*)(&entry), fsize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+  char *exec = (char *)mmap(e, fsize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+  printf("exec: %p\n", exec);
+  if (MAP_FAILED == exec)
+  {
+    printf("mmap fail\n");
+    exit(-1);
+  }
+
   Elf32Phdr *elf_pheader = (Elf32Phdr*)((u8 *)buf + elf_header->e_phoff);
 
-  print_elf_hdr(elf_header);
   for (int i=0 ; i < elf_header->e_phnum; ++i)
   {
     if (CHECK_PT_TYPE_LOAD(elf_pheader))
     {
-      printf("%d ## elf_pheader->p_vaddr: %x\n", i, elf_pheader->p_vaddr);
+      printf("%d ## p_vaddr: %x, p_offset: %x, p_filesz: %d\n", i, elf_pheader->p_vaddr, elf_pheader->p_offset, elf_pheader->p_filesz);
+      int diff = elf_pheader->p_vaddr - entry;
+      if (diff < 0)
+      {
+        printf("mmap address is wrong, diff: %d\n", diff);
+        exit(-2);
+      }
       //elf_pheader->p_offset
       //elf_pheader->p_filesz
+      memcpy((void *)elf_pheader->p_vaddr, buf + elf_pheader->p_offset, elf_pheader->p_filesz);
       for (int i=0 ; i < elf_pheader->p_filesz ; ++i)
       {
         if (i % 16 == 0)
@@ -773,6 +794,10 @@ int main(int argc, const char *argv[])
     }
     ++elf_pheader;
   }
+
+  goto *entry;
+
+
 
 
 #if 0
