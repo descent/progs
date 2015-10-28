@@ -41,9 +41,12 @@ void spinlock_init(Spinlock *spinlock)
 
 int spin_lock(Spinlock *spinlock)
 {
-  atomic_sub(1, spinlock);
   //--spinlock->val_;
-  while(spinlock->val_ < 0);
+  do
+  {
+    if(spinlock->val_ >= 0)
+      atomic_sub(1, spinlock);
+  }while(spinlock->val_ < 0);
 }
 
 int spin_unlock(Spinlock *spinlock)
@@ -65,6 +68,7 @@ int run=1;
 void* write_file_1(void *p)
 {
   int time=0;
+  pthread_t tid = pthread_self();
 
   while(run)
   {
@@ -73,13 +77,16 @@ void* write_file_1(void *p)
 #else
     spin_lock(&sp);
 #endif
-    fprintf(fs, "%d ## thread 1\n", time);
+    printf("111\n");
+    fprintf(fs, "%d ## thread 1 ## %d\n", time, tid);
     fprintf(fs, "%d ## thread 11\n", time);
     fprintf(fs, "%d ## thread 111\n", time);
+#if 1
 #ifdef PTHREAD_FUNC
     pthread_spin_unlock(&spinlock);
 #else
     spin_unlock(&sp);
+#endif
 #endif
     ++time;
   }
@@ -89,6 +96,7 @@ void* write_file_1(void *p)
 void* write_file_2(void *p)
 {
   int time = 0;
+  pthread_t tid = pthread_self();
 
   while(run)
   {
@@ -97,7 +105,8 @@ void* write_file_2(void *p)
 #else
     spin_lock(&sp);
 #endif
-    fprintf(fs, "%d ## thread 2 long string 0123456789\n", time);
+    printf("222\n");
+    fprintf(fs, "%d ## thread 2 long string 0123456789 ## %d\n", time, tid);
     fprintf(fs, "%d ## thread 22 long string 0123456789\n", time);
     fprintf(fs, "%d ## thread 222 long string 0123456789\n", time);
 #ifdef PTHREAD_FUNC
@@ -113,6 +122,7 @@ void* write_file_2(void *p)
 void* write_file_3(void *p)
 {
   int time = 0;
+  pthread_t tid = pthread_self();
   int i;
 
   while(run)
@@ -122,7 +132,7 @@ void* write_file_3(void *p)
 #else
     spin_lock(&sp);
 #endif
-    fprintf(fs, "%d ## thread 3 long string ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()~\n", time);
+    fprintf(fs, "%d ## thread 3 long string ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()~ ## %d\n", time, tid);
     fprintf(fs, "%d ## thread 33 long string ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()~\n", time);
     fprintf(fs, "%d ## thread 333 long string ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()~\n", time);
 #ifdef PTHREAD_FUNC
@@ -151,7 +161,7 @@ static void* sig_thread (void *arg)
       if (sig == SIGINT)
       {
         run = 0;
-         break;
+        //break;
       }
     }
   }
@@ -193,11 +203,11 @@ int main(int argc, char *argv[])
   pthread_create (&thread, NULL, &sig_thread, (void *) &set);
   pthread_create(&thread0, NULL, write_file_1, NULL);
   pthread_create(&thread1, NULL, write_file_2, NULL);
-  pthread_create(&thread2, NULL, write_file_3, NULL);
+  //pthread_create(&thread2, NULL, write_file_3, NULL);
 
   pthread_join(thread0, &ret1);
   pthread_join(thread1, &ret2);
-  pthread_join(thread2, &ret3);
+  //pthread_join(thread2, &ret3);
 
   fclose(fs);
   printf("test end\n");
