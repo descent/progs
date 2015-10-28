@@ -13,6 +13,8 @@ CFLAGS += -DTEST -DPTHREAD_FUNC
 BIN=spinlock.pthread
 endif
 
+BIN += check_result
+
 all: $(BIN)
 
 $(BIN): spinlock.o
@@ -20,5 +22,10 @@ $(BIN): spinlock.o
 
 spinlock.o: spinlock.c spinlock.h
 	$(CC) $(CFLAGS) -c $<
+
+check_result: check_result.o
+	$(CC) $(CFLAGS) -o $@ $< 
+check_result.o: check_result.c
+	$(CC) $(CFLAGS) -c $<
 clean:
-	rm -rf *.o spinlock
+	rm -rf *.o 
