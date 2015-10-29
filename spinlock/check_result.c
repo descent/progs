@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "spinlock.h"
+
 int main(int argc, char *argv[])
 {
 #if 0
@@ -9,7 +11,9 @@ int main(int argc, char *argv[])
 #else
   FILE *fs;
 
-  fs = fopen("/tmp/xyz1", "r");
+  printf("open %s to check\n", FN);
+
+  fs = fopen(FN, "r");
   if (fs == NULL)
   {
     perror("fopen fail");
@@ -21,6 +25,7 @@ int main(int argc, char *argv[])
   int read_len;
   char buf[1000];
   char *ret;
+  int error=0;
 
   while(1)
   {
@@ -62,13 +67,13 @@ int main(int argc, char *argv[])
       printf("time2: %d\n", time2);
       printf("time3: %d\n", time3);
       printf("line %d error\n", line);
-      break;
+      ++error;
     }
     line+=3;
     #endif
   }
 
-
+  printf("total error: %d\n", error);
   fclose(fs);
 #endif
   return 0;
