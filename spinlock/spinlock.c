@@ -193,7 +193,8 @@ int main(int argc, char *argv[])
   }
 
 
-  fs = fopen("/tmp/xyz1", "w");
+  printf("open %s to write\n", FN);
+  fs = fopen(FN, "w");
   if (fs == NULL) 
   {
     perror("open fail");
@@ -205,8 +206,8 @@ int main(int argc, char *argv[])
   pthread_create(&thread1, NULL, write_file_2, NULL);
   //pthread_create(&thread2, NULL, write_file_3, NULL);
 
-  pthread_join(thread0, &ret1);
-  pthread_join(thread1, &ret2);
+  pthread_join(thread0, (void **)&ret1);
+  pthread_join(thread1, (void **)&ret2);
   //pthread_join(thread2, &ret3);
 
   fclose(fs);
