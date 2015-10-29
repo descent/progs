@@ -1,6 +1,8 @@
 #ifndef SPINLOCK_H
 #define SPINLOCK_H
 
+#define FN "/tmp/xyz1"
+
 typedef struct 
 {
   int val_;
