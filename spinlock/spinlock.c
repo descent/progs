@@ -1,5 +1,6 @@
 #include "spinlock.h"
 
+#include <stdio.h>
 
 static inline void atomic_add(int i, Atomic *v)
 {
@@ -36,26 +37,92 @@ static inline void atomic_sub(int i, Atomic *v)
 
 void spinlock_init(Spinlock *spinlock)
 {
-  spinlock->val_ = 1;
+  spinlock->val_ = 0;
 }
 
 int spin_lock(Spinlock *spinlock)
 {
   //--spinlock->val_;
+#if 0
   do
   {
     if(spinlock->val_ >= 0)
       atomic_sub(1, spinlock);
   }while(spinlock->val_ < 0);
+#endif
+#if 0
+  while(1)
+  {
+    atomic_sub(1, spinlock);
+    if(spinlock->val_ == 0)
+      break;
+  }
+#endif
+#if 0
+  int sl;
+  __asm__ __volatile__(
+  "1:  ldrex r1, %1\n"
+      "cmp r1, #1\n"
+      "beq 1b\n"
+      "mov r1, #1\n"
+      "strex r2, r1, %0\n"
+      "cmp r2, #0\n"
+      "bne 1b\n"
+      "dmb\n"
+      : "=&r"(sl)
+      : "r"(sl)
+      :
+      );
+#endif
+#if 0
+lock_mutex:
+  if(spinlock->val_ == 1)
+    goto lock_mutex;
+  else
+    spinlock->val_ = 1;
+
+#endif
+#if 0
+  int result;
+  unsigned long tmp;
+  __asm__ __volatile__(
+  "1:  ldrex %0, [%3]\n"
+      "cmp %0, #1\n"
+      "beq 1b\n"
+      "mov %0, #1\n"
+      "strex %1, %0, [%2]\n"
+      "cmp %1, #0\n"
+      "bne 1b\n"
+      // "dmb\n"
+      : "=&r" (result), "=&r" (tmp), "=r"(spinlock->val_)
+      : "r"(&spinlock->val_)
+      :
+      );
+#endif
+  //printf("spinlock->val_: %d\n", spinlock->val_);
+        unsigned long tmp;
+        int result;
+
+        __asm__ __volatile__("@ atomic_add\n"
+"1:     ldrex   %0, [%3]\n"
+"       cmp     %0, #1\n"
+       "beq 1b\n"
+       "mov %0, #1\n"
+"       strex   %1, %0, [%3]\n"
+"       teq     %1, #0\n"
+"       bne     1b"
+        : "=&r" (result), "=&r" (tmp), "+Qo"(spinlock->val_)
+        : "r" (&spinlock->val_)
+        : "cc");
+  //printf("xx spinlock->val_: %d\n", spinlock->val_);
 }
 
 int spin_unlock(Spinlock *spinlock)
 {
-  spinlock->val_ = 1;
+  spinlock->val_ = 0;
 }
 
 #ifdef TEST
-#include <stdio.h>
 #include <pthread.h>
 #include <signal.h>
 
@@ -77,7 +144,7 @@ void* write_file_1(void *p)
 #else
     spin_lock(&sp);
 #endif
-    printf("111\n");
+    //printf("111\n");
     fprintf(fs, "%d ## thread 1 ## %d\n", time, tid);
     fprintf(fs, "%d ## thread 11\n", time);
     fprintf(fs, "%d ## thread 111\n", time);
@@ -105,7 +172,7 @@ void* write_file_2(void *p)
 #else
     spin_lock(&sp);
 #endif
-    printf("222\n");
+    //printf("222\n");
     fprintf(fs, "%d ## thread 2 long string 0123456789 ## %d\n", time, tid);
     fprintf(fs, "%d ## thread 22 long string 0123456789\n", time);
     fprintf(fs, "%d ## thread 222 long string 0123456789\n", time);
