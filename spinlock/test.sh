@@ -2,7 +2,7 @@
 time=20
 
 if [ "$1" != "" ]; then
-last=$1
+time=$1
 fi
 
 i=0
