@@ -14,7 +14,10 @@ echo $fn
 echo $filename
 echo $extension
 
-echo ffmpeg -vn -i "\"$org_fn\"" -ar 44100 -ab 128k "\"$filename.mp3\""
-ffmpeg -vn -i "\"$org_fn\"" -ar 44100 -ab 128k "\"$filename.mp3\""
+echo ffmpeg -vn -i "\"$org_fn\"" -ar 44100 -ab 128k "\"$filename.mp3\"" 
+echo ffmpeg -vn -i "\"$org_fn\"" -ar 44100 -ab 128k "\"$filename.mp3\"" > r.sh
+sh r.sh
+rm r.sh
+#ffmpeg -vn -i $org_fn -ar 44100 -ab 128k $filename.mp3
 #echo avconv -vn -i "\"$org_fn\"" -ar 44100 -ab 128k "\"$fn.mp3\""
 #avconv -vn -i "$org_fn" -ar 44100 -ab 128k "$fn.mp3"
