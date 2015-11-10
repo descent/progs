@@ -12,7 +12,7 @@ static inline void atomic_add(int i, Atomic *v)
 "       add     %0, %0, %4\n"
 "       strex   %1, %0, [%3]\n"
 "       teq     %1, #0\n"
-"       bne     1b"
+"       bne     1b\n"
         : "=&r" (result), "=&r" (tmp), "+Qo" (v->val_)
         : "r" (&v->val_), "Ir" (i)
         : "cc");
