@@ -110,16 +110,19 @@ lock_mutex:
        "mov %0, #1\n"
 "       strex   %1, %0, [%3]\n"
 "       teq     %1, #0\n"
-"       bne     1b"
+"       bne     1b\n"
+"dmb\n"
         : "=&r" (result), "=&r" (tmp), "+Qo"(spinlock->val_)
         : "r" (&spinlock->val_)
         : "cc");
-  //printf("xx spinlock->val_: %d\n", spinlock->val_);
+#endif
 }
 
 int spin_unlock(Spinlock *spinlock)
 {
+  __asm__ __volatile__("dmb\n");
   spinlock->val_ = 0;
+  __asm__ __volatile__("dsb\n");
 }
 
 #ifdef TEST
@@ -271,11 +274,11 @@ int main(int argc, char *argv[])
   pthread_create (&thread, NULL, &sig_thread, (void *) &set);
   pthread_create(&thread0, NULL, write_file_1, NULL);
   pthread_create(&thread1, NULL, write_file_2, NULL);
-  //pthread_create(&thread2, NULL, write_file_3, NULL);
+  pthread_create(&thread2, NULL, write_file_3, NULL);
 
   pthread_join(thread0, (void **)&ret1);
   pthread_join(thread1, (void **)&ret2);
-  //pthread_join(thread2, &ret3);
+  pthread_join(thread2, (void **)&ret3);
 
   fclose(fs);
   printf("test end\n");
