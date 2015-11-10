@@ -1,9 +1,10 @@
 # make CC=arm-linux-gnueabihf-gcc TEST_P=1 && cp spinlock ~/www/  
 # make CC=arm-linux-gnueabihf-gcc TEST_P=1 && cp spinlock.pthread ~/www/ 
+# I test in RPI2
 CC=gcc
 BIN=spinlock
 
-CFLAGS += -g
+CFLAGS += -g -march=armv7-a -mtune=cortex-a7 
 ifdef TEST
 CFLAGS += -DTEST 
 endif
