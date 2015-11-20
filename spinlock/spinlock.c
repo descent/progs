@@ -42,64 +42,6 @@ void spinlock_init(Spinlock *spinlock)
 
 int spin_lock(Spinlock *spinlock)
 {
-  //--spinlock->val_;
-#if 0
-  do
-  {
-    if(spinlock->val_ >= 0)
-      atomic_sub(1, spinlock);
-  }while(spinlock->val_ < 0);
-#endif
-#if 0
-  while(1)
-  {
-    atomic_sub(1, spinlock);
-    if(spinlock->val_ == 0)
-      break;
-  }
-#endif
-#if 0
-  int sl;
-  __asm__ __volatile__(
-  "1:  ldrex r1, %1\n"
-      "cmp r1, #1\n"
-      "beq 1b\n"
-      "mov r1, #1\n"
-      "strex r2, r1, %0\n"
-      "cmp r2, #0\n"
-      "bne 1b\n"
-      "dmb\n"
-      : "=&r"(sl)
-      : "r"(sl)
-      :
-      );
-#endif
-#if 0
-lock_mutex:
-  if(spinlock->val_ == 1)
-    goto lock_mutex;
-  else
-    spinlock->val_ = 1;
-
-#endif
-#if 0
-  int result;
-  unsigned long tmp;
-  __asm__ __volatile__(
-  "1:  ldrex %0, [%3]\n"
-      "cmp %0, #1\n"
-      "beq 1b\n"
-      "mov %0, #1\n"
-      "strex %1, %0, [%2]\n"
-      "cmp %1, #0\n"
-      "bne 1b\n"
-      // "dmb\n"
-      : "=&r" (result), "=&r" (tmp), "=r"(spinlock->val_)
-      : "r"(&spinlock->val_)
-      :
-      );
-#endif
-  //printf("spinlock->val_: %d\n", spinlock->val_);
         unsigned long tmp;
         int result;
 
@@ -115,7 +57,6 @@ lock_mutex:
         : "=&r" (result), "=&r" (tmp), "+Qo"(spinlock->val_)
         : "r" (&spinlock->val_)
         : "cc");
-#endif
 }
 
 int spin_unlock(Spinlock *spinlock)
