@@ -12,7 +12,7 @@ function ctrl_c()
 
 if [ "$1" == "" ]; then
 echo "$0 filename"
-exit -1
+exit 1
 fi
 
 for fname in "$@"
