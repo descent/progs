@@ -3,6 +3,7 @@
 
 #include "bst.h"
 
+#define COROUTINE_MORRIS_TRAVERSAL
 
 #if 0
 {
@@ -33,18 +34,6 @@
 }
 #endif
 
-template <typename NodeType, typename Key>
-NodeType *search (NodeType *n, const Key &k)
-{
-  if (n==0)
-    return 0;
-  if (n->k_ > k)
-    return search(n->l_, k);
-  if (n->k_ < k)
-    return search(n->r_, k);
-
-  return n; // n->k_ == k
-}
 
 void test_1()
 {
@@ -111,9 +100,77 @@ NodeType* invert_tree(NodeType* root)
   return root;
 }
 
+#if 0
+const char * ascending (void) 
+{
+    static int i;
+    const char *arr[]= {"abcd", "def", 0};
+ 
+    scrBegin;
+    for (i=0; i<10; i++) {
+       scrReturn(arr[i]);
+    }
+    scrFinish(0);
+}
+#endif
+
 #ifdef TEST_MAIN
 int main(int argc, char *argv[])
 {
+#if 0
+  const char *c = ascending();
+  cout << "c: " << c << endl;
+  c = ascending();
+  cout << "c: " << c << endl;
+  exit(0);
+
+  map<int, int> m;
+
+  m = 
+  { 
+    {5,1}, 
+    {10,2},
+    {1,5}, 
+    {11,8}, 
+    {100,81}, 
+    {1000,811}, 
+  };
+
+  for (auto i=m.begin() ; i != m.end() ; ++i)
+  {
+    cout << i->first << endl;
+  }
+  exit(0);
+#endif
+
+#ifdef COROUTINE_MORRIS_TRAVERSAL
+{
+  GNode<double, int> *r1 = 0;
+  r1 = insert(r1, 8.2, 7);
+
+  r1 = insert(r1, 4.2, 7);
+  r1 = insert(r1, 1.2, 3);
+  r1 = insert(r1, 3.2, 5);
+  r1 = insert(r1, 2.2, 4);
+  r1 = insert(r1, 3.4, 4);
+  r1 = insert(r1, 5.8, 0);
+  r1 = insert(r1, 14.2, 7);
+  //print_tree(r1);
+
+  
+  GNode<double, int> *cur_node = r1;
+  cout << "use morris_traversal" << endl;
+
+  while(cur_node)
+  {
+    cur_node = morris_traversal(r1);
+    if (cur_node != 0)
+      cout << cur_node->k_ << endl;
+  }
+  exit(0);
+}
+#endif
+
 #if 0
   GNode<std::string, int> *root = 0;
   root = insert(root, "abc", 3);
@@ -141,6 +198,11 @@ int main(int argc, char *argv[])
   r1 = insert(r1, 3.4, 4);
   r1 = insert(r1, 5.8, 0);
   r1 = insert(r1, 14.2, 7);
+
+  morris_traversal(r1);
+
+
+#if 0
   printf("\\tree");
   print_tree(r1);
   printf("\n");
@@ -148,6 +210,7 @@ int main(int argc, char *argv[])
   printf("\\tree");
   print_tree(r1);
   printf("\n");
+#endif
 
 #if 0
   GNode<double, int> *r2 = 0;
