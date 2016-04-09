@@ -26,5 +26,7 @@ http: http.cpp
 	$(CXX) -g $< -o $@
 im: im.cpp
 	$(CXX) -g $< -o $@
+input: input.cpp
+	$(CXX) -g $< -o $@
 clean:
 	rm ptrptr
