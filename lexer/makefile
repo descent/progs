@@ -1,6 +1,7 @@
+CXXFLAGS=-g -std=c++11
 lexer: lexer.o
-	$(CXX) -std=c++11 -o $@ -g $<
+	$(CXX) $(CXXFLAGS) -o $@ $<
 lexer.o: lexer.cpp
-	$(CXX) -std=c++11 -c -g $<
+	$(CXX) $(CXXFLAGS) -c $<
 clean:
 	rm lexer *.o
