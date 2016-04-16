@@ -6,7 +6,20 @@
 
 using namespace std;
 
+#define OK 0
+#define ERR 1
 
+// printable ascii, but not (, )
+static inline int isgraph_ex(int c) 
+{
+#if 1
+  if (c == '(')
+    return 0;
+  if (c == ')')
+    return 0;
+#endif
+  return isgraph(c);
+}
 
 int la=-1;
 
@@ -22,10 +35,9 @@ int getchar_la()
     return getchar();
 }
 
-string get_token()
+int get_token(string &token)
 {
   int c;
-  string token;
 
   do
   {
@@ -33,7 +45,7 @@ string get_token()
   }while(isspace(c));
 
   if (c == EOF)
-    return "";
+    return EOF;
   else if (isdigit(c))
        {
          do
@@ -54,27 +66,87 @@ string get_token()
                  {
                    c = getchar_la();
                    if (c == '=')
-                     return "==";
+                   {
+                     token = "==";
+                   }
                    else
                    {
                      la = c;
-                     return "=";
+                     token = "=";
                    }
+                   return OK;
                  }
                  else
                  {
-                   return "";
+                   return ERR;
                  }
   if (c != EOF)
     la = c;
-  return token;
+  return OK;
+}
+
+int get_se_token(string &token)
+{
+  int c;
+
+  do
+  {
+    c = getchar_la();
+  }while(isspace(c));
+
+  if (c == EOF)
+    return EOF;
+  else if (c == '(')
+       {
+         token = '(';
+         return OK;
+       }
+       else if (c == ')')
+            {
+              token = ')';
+              return OK;
+            }
+            else if (isgraph_ex(c)) // printable ascii, but not (, )
+                 {
+                   do
+                   {
+                     token.push_back(c); 
+                     c = getchar_la();
+                   }while(isgraph_ex(c));
+                 }
+                 else
+                 {
+                   return ERR;
+                 }
+
+
+  if (c != EOF)
+    la = c;
+  return OK;
 }
 
 int main(int argc, char *argv[])
 {
-  string token = get_token();
+  while(1)
+  {
+    string token;
 
-  cout << "token: " << token << endl;
-  
+    //int ret = get_token(token);
+    int ret = get_se_token(token);
+    if (ret == EOF)
+    {
+      break;
+    }
+    if (ret == OK)
+    {
+      cout << "token: " << token << endl;
+    }
+    else
+    {
+      cout << "token error" << endl;
+    }
+    token.clear();
+  }
+
   return 0;
 }
