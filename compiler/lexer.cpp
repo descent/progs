@@ -3,11 +3,14 @@
 #include <cctype>
 
 #include <iostream>
+#include <vector>
+#include <deque>
+
+#include "mytype.h"
+#include "token.h"
 
 using namespace std;
 
-#define OK 0
-#define ERR 1
 
 // printable ascii, but not (, )
 static inline int isgraph_ex(int c) 
@@ -125,28 +128,103 @@ int get_se_token(string &token)
   return OK;
 }
 
-int main(int argc, char *argv[])
+// 1+2
+int get_token(Token &token)
+{
+  int c;
+
+  do
+  {
+    c = getchar_la();
+  }while(isspace(c));
+
+  if (c == EOF)
+    return EOF;
+  else if (isdigit(c))
+       {
+         do
+         {
+           token.str_.push_back(c);
+           c = getchar_la();
+         }while(isdigit(c));
+         token.type_ = NUMBER;
+       }
+       else 
+       {
+         switch (c)
+         {
+           case '+':
+           {
+             token.str_ = "+";
+             token.type_ = ADD;
+             break;
+           }
+           case '-':
+           {
+             token.str_ = "-";
+             token.type_ = ADD;
+             break;
+           }
+           case '*':
+           {
+             token.str_ = "*";
+             token.type_ = ADD;
+             break;
+           }
+           case '/':
+           {
+             token.str_ = "/";
+             token.type_ = ADD;
+             break;
+           }
+           default:
+           {
+             return ERR;
+           }
+         }
+         return OK;
+       }
+
+  if (c != EOF)
+    la = c;
+  return OK;
+}
+
+std::deque <Token> tokens;
+
+int lexer()
 {
   while(1)
   {
-    string token;
+    //string token;
+    Token token;
 
-    //int ret = get_token(token);
-    int ret = get_se_token(token);
+    int ret = get_token(token);
+    //int ret = get_se_token(token);
     if (ret == EOF)
     {
       break;
     }
     if (ret == OK)
     {
-      cout << "token: " << token << endl;
+      tokens.push_back(token);
+      cout << "token: " << token.str_ << endl;
     }
     else
     {
       cout << "token error" << endl;
     }
-    token.clear();
+    token.str_.clear();
   }
 
   return 0;
 }
+
+#ifdef DEBUG_LEXER
+
+int main(int argc, char *argv[])
+{
+  lexer();
+  return 0;
+}
+#endif
