@@ -85,6 +85,62 @@ int get_token(string &token)
   return OK;
 }
 
+int get_c_comment_token(string &token)
+{
+  int c;
+  int ret = OK;
+
+  do
+  {
+    c = getchar_la();
+  }while(isspace(c));
+  if (c == EOF)
+    return EOF;
+  else if (c == '/')
+       {
+         token.push_back(c); 
+         c = getchar_la();
+
+         if (c == '*')
+         {
+           token.push_back(c); 
+           do
+           {
+             c = getchar_la();
+             token.push_back(c); 
+           }while(c != '*');
+
+           c = getchar_la();
+
+           if (c == '/')
+           {
+             token.push_back(c); 
+             return OK;
+           }
+           else
+           {
+             return ERR;
+             ret = ERR;
+           }
+         }
+         else
+         {
+           return ERR;
+           ret = ERR;
+         }
+       }
+       else
+       {
+         return ERR;
+         ret = ERR;
+       }
+
+
+  if (c != EOF)
+    la = c;
+  return ret;
+}
+
 int get_se_token(string &token)
 {
   int c;
@@ -132,7 +188,8 @@ int main(int argc, char *argv[])
     string token;
 
     //int ret = get_token(token);
-    int ret = get_se_token(token);
+    //int ret = get_se_token(token);
+    int ret = get_c_comment_token(token);
     if (ret == EOF)
     {
       break;
