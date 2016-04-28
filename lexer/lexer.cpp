@@ -9,6 +9,14 @@ using namespace std;
 #define OK 0
 #define ERR 1
 
+static inline int isascii_ex(int c) 
+{
+  if (c == '"')
+    return 0;
+  else
+    return isascii(c);
+}
+
 // printable ascii, but not (, )
 static inline int isgraph_ex(int c) 
 {
@@ -168,6 +176,15 @@ int get_se_token(string &token)
                    {
                      token.push_back(c); 
                      c = getchar_la();
+                     if (c==EOF)
+                     {
+                       printf("EOF\n");
+                       exit(5);
+                     }
+                     else
+                       printf("c: %c\n", c);
+
+
                    }while(isgraph_ex(c));
                  }
                  else
@@ -181,15 +198,68 @@ int get_se_token(string &token)
   return OK;
 }
 
+// " asdf "
+int get_string_token(string &token)
+{
+  int c;
+
+  do
+  {
+    c = getchar_la();
+  }while(isspace(c));
+
+  if (c == EOF)
+    return EOF;
+  else if (c == '"')
+       {
+         do
+         {
+           token.push_back(c); 
+           c = getchar_la();
+         }while (isascii_ex(c));
+         if (c=='"')
+         {
+           token.push_back(c); 
+           return OK;
+         }
+         else
+         {
+           printf("should \"\n");
+           return ERR;
+         }
+
+         
+       }
+  
+}
+
 int main(int argc, char *argv[])
 {
+  int c;
+#if 0
+  while(1)
+  {
+    c = getchar();
+    if (c==EOF)
+    {
+      printf("EOF\n");
+      return -1;
+    }
+    else
+    {
+      printf("\nc: %c\n", c);
+    }
+  }
+#endif
+#if 1
   while(1)
   {
     string token;
 
     //int ret = get_token(token);
     //int ret = get_se_token(token);
-    int ret = get_c_comment_token(token);
+    //int ret = get_c_comment_token(token);
+    int ret = get_string_token(token);
     if (ret == EOF)
     {
       break;
@@ -204,6 +274,6 @@ int main(int argc, char *argv[])
     }
     token.clear();
   }
-
+#endif
   return 0;
 }
