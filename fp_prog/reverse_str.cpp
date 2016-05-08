@@ -20,7 +20,8 @@ int main(int argc, char *argv[])
   {
     str = argv[1];
   }
-  printf("normal: %s\n", str);
+  printf("normal : %s\n", str);
+  printf("reverse: ");
   func(str);
   printf("\n");
   return 0;
