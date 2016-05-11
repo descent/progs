@@ -9,6 +9,22 @@ using namespace std;
 #define OK 0
 #define ERR 1
 
+int isgraph_ex1(int c)
+{
+  if (c == ' ')
+    return 1;
+  else
+    return isgraph(c);
+}
+
+static inline int isascii_ex1(int c) 
+{
+  if (c == '\x1b')
+    return 0;
+  else
+    return isascii(c);
+}
+
 static inline int isascii_ex(int c) 
 {
   if (c == '"')
@@ -233,6 +249,111 @@ int get_string_token(string &token)
   
 }
 
+// terminal escape sequence
+// \x1b[31m
+// \x1b[31;41m"
+
+int get_tes_token(string &token)
+{
+  int c;
+
+  do
+  {
+    c = getchar_la();
+  }while(isspace(c));
+
+  if (c == EOF)
+    return EOF;
+  else if (c == '\x1b') // ESC
+       {
+         token.push_back(c);
+         c = getchar_la();
+         if (c == '[')
+         {
+           do
+           {
+             token.push_back(c);
+             c = getchar_la();
+           } while(isdigit(c));
+
+           if (c == 'm')
+           {
+             token.push_back(c);
+             return OK;
+           }
+           else if (c == ';')
+                {
+                   do
+                   {
+                     token.push_back(c);
+                     c = getchar_la();
+                   } while(isdigit(c));
+                   if (c == 'm')
+                   {
+                     token.push_back(c);
+                     return OK;
+                   }
+                }
+         }
+         else if (c == ']')
+            {
+              // ref: https://www.gnu.org/software/screen/manual/html_node/Control-Sequences.html
+              // ESC ] 0 ; string ^G     (A)     Operating System Command (Hardstatus, xterm
+              token.push_back(c);
+
+             c = getchar_la();
+             if (c == '0')
+             {
+              token.push_back(c);
+               c = getchar_la();
+               if (c == ';')
+               {
+                 do
+                 {
+                   token.push_back(c);
+                   c = getchar_la();
+                 } while(c != 0x7);
+
+                 if (c == 0x7) // ^G
+                 {
+                   token.push_back(c);
+                   return OK;
+                 }
+
+                 
+               }
+             }
+              
+            }
+         else // unknown tes
+         {
+           do
+           {
+             token.push_back(c);
+             c = getchar_la();
+           } while(isascii_ex1(c));
+           la = c;
+           return OK; 
+         }
+
+       }
+       else
+       {
+         do
+         {
+           token.push_back(c);
+           c = getchar_la();
+         } while(isascii_ex1(c));
+         la = c;
+         return OK; 
+       }
+
+  if (c != EOF)
+    la = c;
+  return ERR;
+}
+
+
 int main(int argc, char *argv[])
 {
   int c;
@@ -259,14 +380,22 @@ int main(int argc, char *argv[])
     //int ret = get_token(token);
     //int ret = get_se_token(token);
     //int ret = get_c_comment_token(token);
-    int ret = get_string_token(token);
+    //int ret = get_string_token(token);
+    int ret = get_tes_token(token);
     if (ret == EOF)
     {
       break;
     }
     if (ret == OK)
     {
-      cout << "token: " << token << endl;
+      const char *s = token.c_str();
+
+      if (*s == '\x1b')
+      {
+        cout << "token: ESC " << s+1 << endl;
+      }
+      else 
+        cout << "token: " << token << endl;
     }
     else
     {
