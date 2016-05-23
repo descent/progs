@@ -1,8 +1,16 @@
+CXX=g++
+
+raw_sock_test: raw_sock_test.o
+	$(CXX) -o $@ $<
+raw_sock_test.o: raw_sock_test.cpp
+	$(CXX) -c $<
+
 getaddrinfo_demo: getaddrinfo_demo.o
 	$(CXX) -o $@ $<
 getaddrinfo_demo.o: getaddrinfo_demo.cpp
 	$(CXX) -c $<
 	
+
 all: uds_c uds_s uds_c1 uds_s1
 uds_c: uds_c.o
 	$(CXX) -o $@ $<
