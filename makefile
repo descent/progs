@@ -1,3 +1,6 @@
+CXX=g++
+mbytes: mbytes.cpp
+	$(CXX) -std=c++11 -g $< -o $@
 cidr: cidr.cpp
 	$(CXX) -g $< -o $@
 
