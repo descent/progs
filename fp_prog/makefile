@@ -1,4 +1,9 @@
 CXXFLAGS=-g -std=c++11
+palindrome: palindrome.o
+	$(CXX) $(CXXFLAGS) -o $@ $<
+palindrome.o: palindrome.cpp
+	$(CXX) $(CXXFLAGS) -c $<
+
 fact: fact.o
 	$(CXX) $(CXXFLAGS) -o $@ $<
 fact.o: fact.cpp
