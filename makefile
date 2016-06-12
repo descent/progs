@@ -1,3 +1,6 @@
+get_prime: get_prime.cpp
+	g++ -g -o $@ $<
+
 cidr: cidr.cpp
 	$(CXX) -g $< -o $@
 
