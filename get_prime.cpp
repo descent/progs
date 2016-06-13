@@ -26,29 +26,29 @@ int find_next_prime(int p)
 
 int get_prime(int i)
 {
-  if (i==0) return 2;
-  int p=3;
-  int c=1;
+  int p = 1;
+  int c = -1;
   while(1)
   { 
-    if (is_prime(p) == true && c == i)
-    {
+    p = find_next_prime(p);
+    ++c;
+    if (c == i)
       return p;
-    }
-    else
-    {
-      p = find_next_prime(p);
-      ++c;
-    }
   }
+  return 1; // means fail
 }
 
 
-int main()
+int main(int argc, char *argv[])
 {
+  int n = 5;
+
+  if (argc > 1)
+  {
+    n = strtol(argv[1], 0, 10);
+  }
   for (int p=1 ; p < 20 ; ++p)
     cout << p << ": " << is_prime(p) << endl;
-  int n=4;
   cout << "------" << endl;
   cout << n << ": " << get_prime(n) << endl;
 
