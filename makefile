@@ -1,6 +1,12 @@
+CC=gcc
 CXX=g++
+CXXFLAGS=-std=c++11 -g
 mbytes: mbytes.cpp
-	$(CXX) -std=c++11 -g $< -o $@
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
+get_prime: get_prime.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
 cidr: cidr.cpp
 	$(CXX) -g $< -o $@
 
