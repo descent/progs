@@ -1,3 +1,6 @@
+ret_func: ret_func.cpp
+	g++ -g -o $@ $<
+
 get_prime: get_prime.cpp
 	g++ -g -o $@ $<
 
