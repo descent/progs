@@ -3,6 +3,8 @@ CXX=g++
 CXXFLAGS=-std=c++11 -g
 mbytes: mbytes.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
+ret_func: ret_func.cpp
+	g++ -g -o $@ $<
 
 get_prime: get_prime.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
