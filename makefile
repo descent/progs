@@ -1,6 +1,12 @@
 CC=gcc
 CXX=g++
 CXXFLAGS=-std=c++11 -g
+ret_struct: ret_struct.cpp
+	g++ -m32 -fno-stack-protector -g -o $@ $<
+
+ret_struct_c: ret_struct.c
+	g++ -m32 -fno-stack-protector -g -o $@ $<
+
 mbytes: mbytes.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
 ret_func: ret_func.cpp
