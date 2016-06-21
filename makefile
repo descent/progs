@@ -5,7 +5,7 @@ ret_struct: ret_struct.cpp
 	g++ -m32 -fno-stack-protector -g -o $@ $<
 
 ret_struct_c: ret_struct.c
-	g++ -m32 -fno-stack-protector -g -o $@ $<
+	gcc -m32 -fno-stack-protector -g -o $@ $<
 
 mbytes: mbytes.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
