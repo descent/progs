@@ -1,4 +1,7 @@
-CXXFLAGS=-g -std=c++11
+CXXFLAGS=-g -std=c++11 -m32 -O2 -static -fno-stack-protector
+add: add.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
 palindrome: palindrome.o
 	$(CXX) $(CXXFLAGS) -o $@ $<
 palindrome.o: palindrome.cpp
