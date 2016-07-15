@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
   cout << "cout ui: " << ui << endl;
   cout << "cout i: " << i << endl;
 
+  // ref: http://stackoverflow.com/questions/673240/how-do-i-print-an-unsigned-char-as-hex-in-c-using-ostream
   cout << "cout uc: " << hex << +uc << endl;
   cout << "cout c: " << hex << +c << endl;
 
