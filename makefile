@@ -2,6 +2,9 @@ CC=gcc
 CXX=g++
 CXXFLAGS=-std=c++11 -g
 
+p: p.cpp
+	g++ -m32 -fno-stack-protector $(CXXFLAGS) -g -o $@ $<
+
 struct_size: struct_size.o
 	$(CC) -m32 -fno-stack-protector -g -o $@ $<
 struct_size.o: struct_size.c
