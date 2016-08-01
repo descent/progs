@@ -1,6 +1,8 @@
 CC=gcc
 CXX=g++
 CXXFLAGS=-std=c++11 -g
+pf: pf.cpp
+	g++ -m32 -fno-stack-protector $(CXXFLAGS) -g -o $@ $<
 
 p: p.cpp
 	g++ -m32 -fno-stack-protector $(CXXFLAGS) -g -o $@ $<
