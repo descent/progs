@@ -46,18 +46,21 @@ int main(int argc, char *argv[])
 {
   vector<string> args;
 
-  string fmt = R"("test %d %s\n")";
+  string fmt = R"(test %d, %s, %s\n)";
   string p_str = tree_string(fmt);
 
   args.push_back(fmt);
   args.push_back("123");
   args.push_back("string_test");
+  args.push_back("space string");
 
   string cmd=R"(printf "My name is \"%s\".\nIt's a pleasure to meet you %d.\n" "John" )";
   string cmd_s{"printf "};
   for (auto &i : args)
   {
+    cmd_s += "\"";
     cmd_s += i;
+    cmd_s += "\"";
     cmd_s += " ";
   }
   cout << "cmd_s: " << cmd_s << endl;
