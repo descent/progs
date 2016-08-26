@@ -1,20 +1,26 @@
 CXX=g++
-CXXFLAGS=-std=c++14 -g -m32 -fno-stack-protector -g
-vt1: vt1.o
+CXXFLAGS=-std=c++14 -g  -fno-stack-protector -g -m32
+EXEC=vt1 t vt
+
+t1: t1.o
 	$(CXX) $(CXXFLAGS) -o $@ $<
-vt1.o: vt1.cpp
-	$(CXX) $(CXXFLAGS) -g -c $<
+t1.o: t1.cpp
+	$(CXX) $(CXXFLAGS) -g -c $< -lrt
 
 t: t.o
 	$(CXX) $(CXXFLAGS) -o $@ $<
 t.o: t.cpp
-	$(CXX) $(CXXFLAGS) -g -c $<
+	$(CXX) $(CXXFLAGS) -g -c $< -lrt
 
 vt: vt.o
 	$(CXX) $(CXXFLAGS) -o $@ $<
 vt.o: vt.cpp
 	$(CXX) $(CXXFLAGS) -g -c $<
 
+vt1: vt1.o
+	$(CXX) $(CXXFLAGS) -o $@ $<
+vt1.o: vt1.cpp
+	$(CXX) $(CXXFLAGS) -g -c $<
 
 clean:
-	rm *.o t vt
+	rm *.o t $(EXEC)
