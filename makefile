@@ -21,7 +21,12 @@ ret_struct_c: ret_struct.c
 mbytes: mbytes.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
 ret_func: ret_func.cpp
-	g++ -g -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
+vec_printf: vec_printf.o
+	$(CXX) -std=c++14 -o $@ -g $<
+vec_printf.o: vec_printf.cpp
+	$(CXX) -std=c++14 -c -g $<
 
 get_prime: get_prime.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
