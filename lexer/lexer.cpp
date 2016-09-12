@@ -179,8 +179,10 @@ int get_c_comment_token(string &token)
   return ret;
 }
 
-int get_bcgl(string &token)
+int get_bcgl(string &token, const char *pattern="bcgl")
 {
+  //char *pattern="bcgl";
+  const char *p = &pattern[1];
   int c;
 
   do
@@ -188,41 +190,32 @@ int get_bcgl(string &token)
     c = getchar_la();
   }while(isspace(c));
 
-  if (c == 'b')
+  if (c==EOF)
+    return EOF;
+
+
+  if (c == pattern[0])
   {
     token.push_back(c);
     c = getchar_la();
-    if (c == 'c')
+    while (*p)
     {
-      token.push_back(c);
-      c = getchar_la();
-      if (c == 'g')
+      if (c == *p)
       {
         token.push_back(c);
         c = getchar_la();
-        if (c == 'l')
-        {
-          token.push_back(c);
-          return OK;
-        }
-        else
-          ungetchar_la(c);
       }
       else
+      {
         ungetchar_la(c);
-
-    }
-    else
-    {
-      ungetchar_la(c);
+        return ERR;
+      }
+      ++p;
     }
   }
   else
-  {
     return ERR;
-  }
-
-
+  return OK;
 }
 
 int get_se_token(string &token)
@@ -454,6 +447,11 @@ int get_tes_token(string &token)
 int main(int argc, char *argv[])
 {
   int c;
+  string pat = "abc";
+  if (argc >= 2)
+  {
+    pat = argv[1];
+  }
   #if 0
   while(1)
   {
@@ -483,7 +481,7 @@ int main(int argc, char *argv[])
 
     //int ret = get_token(token);
     //int ret = get_se_token(token);
-    int ret = get_bcgl(token);
+    int ret = get_bcgl(token, pat.c_str());
     //int ret = get_c_comment_token(token);
     //int ret = get_string_token(token);
     //int ret = get_tes_token(token);
