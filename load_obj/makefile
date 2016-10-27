@@ -20,9 +20,9 @@ hello.pic.o: hello.c
 	gcc -m32 -fPIC -c hello.c -o $@
 
 elf_loader: elf_loader.o
-	g++ -o $@ $<
+	g++ -m32 -g -o $@ $<
 elf_loader.o: elf_loader.cpp
-	g++ -c $<
+	g++ -m32 -g -c $<
 
 el:el.o
 	gcc -m32 -o $@ $< -ldl

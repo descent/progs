@@ -4,7 +4,8 @@
 CC=gcc
 BIN=spinlock
 
-CFLAGS += -g -march=armv7-a -mtune=cortex-a7 
+#CFLAGS += -g -march=armv7-a -mtune=cortex-a7 
+CFLAGS += -g -mcpu=cortex-m3 -mthumb
 ifdef TEST
 CFLAGS += -DTEST 
 endif

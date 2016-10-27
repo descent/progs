@@ -1,3 +1,7 @@
+github: github.cpp
+	g++ -o $@ $< -lutil
+bitbucket: bitbucket.cpp
+	g++ -o $@ $< -lutil
 h: h.c
 	gcc -o $@ $<
 fill_input_scp: fill_input_scp.o

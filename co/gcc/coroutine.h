@@ -23,6 +23,8 @@
  * homepage:  http://sunneo.myweb.hinet.net
  */
 
+
+
 #ifndef COROUTINE_H_
 #   define COROUTINE_H_
 #   include <setjmp.h>
@@ -45,6 +47,8 @@
 #   ifndef CALLBACK
 #      define CALLBACK 
 #   endif
+
+#include <stdio.h>
 
 typedef struct EXPORT RuntimeStack{
    unsigned char* bp,*sp,*buf;

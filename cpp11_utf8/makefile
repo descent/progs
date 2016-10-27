@@ -3,6 +3,12 @@ FT2_LIBS=`freetype-config --libs`
 CXXFLAGS=-g -std=c++11
 CXX=g++-5
 
+#objects := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+objects := $(patsubst %.cpp,%.o, a.c)
+
+pobjs:
+	echo $(objects)
+
 LDFLAGS=
 
 #CLANG=1

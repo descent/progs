@@ -10,7 +10,7 @@
 #include <setjmp.h>
 #endif
 
-// #define BACKUP_STACK
+#define BACKUP_STACK
 
 int backup_stack_size;
 unsigned char *stack_ptr1;
@@ -89,11 +89,27 @@ void co1()
   printf("xxx i (%p): %d\n", &i, i);
   i=3;
 
-#if 1
-  gi = i;
+
+
   // pause
   if (setjmp(callee) == 0)
+  {
+#ifdef BACKUP_STACK
+    // backup current stack context
+    backup_cur_stack();
+#endif
     longjmp(caller, 1);
+  }
+  else
+  {
+#ifdef BACKUP_STACK
+    // restore stack
+    memcpy(stack_ptr2, stack_backup, backup_stack_size);
+#endif
+  }
+
+#if 1
+  gi = i;
 
   i=4;
 #endif

@@ -1,9 +1,9 @@
 CC=gcc
 CXX=g++
-CXXFLAGS=-Wall -DTEST_MAIN -DUSE_OS -std=c++11
+CXXFLAGS=-Wall -DTEST_MAIN -DUSE_OS -std=c++11 -g
 bst: bst.o
 	$(CXX) $(CXXFLAGS) -o $@ $< 
-bst.o: bst.cpp
+bst.o: bst.cpp bst.h
 	$(CXX) $(CXXFLAGS) -c -g $<
 
 btree: btree.o

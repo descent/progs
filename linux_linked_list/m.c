@@ -47,6 +47,5 @@ int main()
     list_del(&iter->list);
     free(iter);
   }
-  
   return 0;
 }

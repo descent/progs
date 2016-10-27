@@ -304,8 +304,8 @@ done:	goto repeat;
 int main(int argc, char *argv[])
 {
   printf("DEFAULT_IF: %s\n", DEFAULT_IF);
-  //raw_send("eth1");
-  promisc_recv("eth0");
+  raw_send("eth1");
+  //promisc_recv("eth0");
   
   return 0;
 }

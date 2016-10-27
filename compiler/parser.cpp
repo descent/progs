@@ -10,6 +10,7 @@
 #define PRINT_TREE_STRING
 //#define WARN_MSG
 //#define DEBUG_MSG
+//#define DEBUG_LEXER_MSG
 
 using namespace std;
 

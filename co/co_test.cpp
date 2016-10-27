@@ -20,6 +20,14 @@ void function2(void* p)
    co_terminate();
 }
 
+
+int printf(int a)
+{
+  a=1;
+  return a;
+}
+
+
 void function1(void* p)
 {
   char para[] = "Function2";
@@ -44,6 +52,7 @@ void function1(void* p)
 
 void MainCo(void* p)
 {
+  printf("MainCo para: %s\n", (char *)p);
   char para[] = "Function1";
    Coroutine* co = co_create(function1, para);
    int i = 0;

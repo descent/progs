@@ -3,7 +3,7 @@
 
 #include "bst.h"
 
-#define COROUTINE_MORRIS_TRAVERSAL
+//#define COROUTINE_MORRIS_TRAVERSAL
 
 #if 0
 {
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 }
 #endif
 
-#if 0
+#if 1
   GNode<std::string, int> *root = 0;
   root = insert(root, "abc", 3);
   root = insert(root, "def", 1);
@@ -181,6 +181,7 @@ int main(int argc, char *argv[])
   print_tree(root);
   printf("\n");
 
+#else
   string str("def");
   GNode<std::string, int> *n = search(root, str);
   if (n==0)
@@ -188,7 +189,6 @@ int main(int argc, char *argv[])
   else
     cout << "found (" << n->k_ << ", " <<  n->v_<< ")" << endl;
 
-#else
   GNode<double, int> *r1 = 0;
   r1 = insert(r1, 8.2, 7);
   r1 = insert(r1, 4.2, 7);

@@ -423,16 +423,26 @@ void test_list_malloc()
 #ifdef TEST
 int main(int argc, char *argv[])
 {
-  test_list_malloc();
+  //test_list_malloc();
   //printf("heap: %p\n", heap);
 
+  char *p1 = (char *)mymalloc(4);
+  print_memarea(); 
+  myfree(p1);
+  print_memarea(); 
+  #if 1
   #if 0
-  char *p1 = (char *)mymalloc(64);
+  char *p1 = (char *)mymalloc(1024*5);
   if (p1 == 0)
     printf("p1 is 0\n");
   else
     printf("p1: %p\n", p1);
+
+  (char *)mymalloc(1024*2);
+  myfree(p1);
+
   print_memarea(); 
+  #endif
   #else
 
 #if 0

@@ -18,8 +18,17 @@ ret_struct: ret_struct.cpp
 ret_struct_c: ret_struct.c
 	gcc -m32 -fno-stack-protector -g -o $@ $<
 
-mbytes: mbytes.cpp
+cpp_hook_eh: cpp_hook_eh.o
+	$(CXX) $(CXXFLAGS) -o $@ $< -ldl
+cpp_hook_eh.o: cpp_hook_eh.cpp
+	$(CXX) $(CXXFLAGS) -c $<
+
+get_prime_eratosthenes: get_prime_eratosthenes.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
+
+get_prime: get_prime.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
 ret_func: ret_func.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
@@ -28,7 +37,7 @@ vec_printf: vec_printf.o
 vec_printf.o: vec_printf.cpp
 	$(CXX) -std=c++14 -c -g $<
 
-get_prime: get_prime.cpp
+mbytes: mbytes.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
 cidr: cidr.cpp
@@ -62,4 +71,4 @@ im: im.cpp
 input: input.cpp
 	$(CXX) -g $< -o $@
 clean:
-	rm ptrptr
+	rm ptrptr *.o

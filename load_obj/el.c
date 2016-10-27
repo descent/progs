@@ -26,6 +26,7 @@ void *resolve(const char* sym)
 
 void relocate(Elf32_Shdr* shdr, const Elf32_Sym* syms, const char* strings, const char* src, char* dst)
 {
+  printf("relocate\n");
     Elf32_Rel* rel = (Elf32_Rel*)(src + shdr->sh_offset);
     int j;
     for(j = 0; j < shdr->sh_size / sizeof(Elf32_Rel); j += 1) {

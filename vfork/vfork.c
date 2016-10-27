@@ -16,15 +16,21 @@ int a=1;
   //pid_t pid = fork();
   if (pid == 0)
   { // child
+    char *const argv[] = {"ls", "/", ">", "/tmp/3", NULL};
+    char *newenviron[] = { NULL };
+
     ++a;
     printf("vfork: child ## a: %d\n", a);
-    while(1);
-    //exit(2);
+    //while(1);
+    //execve("ls", argv, newenviron);
+    execl("/bin/date", "date", 0, 0);
+
+    // exit(2);
   }
   else
   {  // parent
     printf("vfork: parent ## a: %d\n", a);
-    while(1);
+    // while(1);
   }
   return 0;
 }

@@ -752,10 +752,10 @@ int main(int argc, const char *argv[])
   Elf32Ehdr *elf_header = (Elf32Ehdr*)buf;
   print_elf_hdr(elf_header);
   uint32_t entry = elf_header->e_entry;
-  void *e = (void *)0x8040000;
+  void *e = (void *)0x8000000;
 
-  //char *exec = (char *)mmap((void*)(&entry), fsize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
-  char *exec = (char *)mmap(e, fsize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+  char *exec = (char *)mmap((void*)(&entry), fsize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+  // char *exec = (char *)mmap(e, fsize, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
   printf("exec: %p\n", exec);
   if (MAP_FAILED == exec)
   {

@@ -64,7 +64,7 @@ Coroutine* co_create( CallBackRoutine fn ,void* param){
    Coroutine* co = (Coroutine*)malloc(cosize);
    co->stack.buf = 0;
    co->stack.size = 0;
-   co->status = 0;
+   co->status = STATUS_NEW;
    co->fn = fn;
    co->param = param;
    return co;
@@ -95,6 +95,7 @@ void co_pause(){
       case 0:
         co_cur->stack.size = stksize;
         co_cur->stack.buf = (unsigned char*)malloc(stksize);
+        //printf("co_cur->stack.buf: %p\n", co_cur->stack.buf);
         break;
    }
    if(!setjmp(co_cur->ctx) ) {
@@ -132,7 +133,9 @@ void co_terminate2( Coroutine* co ){
 EXPORT 
 void co_terminate(){
    co_cur->status = STATUS_TERMINATED;
+   //printf("term co_cur->stack.buf: %p\n", co_cur->stack.buf);
    free(co_cur->stack.buf);
+   co_cur->stack.buf = 0;
    co_cur->stack.size = 0;
    co_cur = co_cur->caller;
    longjmp(co_cur->ctx,1);
