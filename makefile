@@ -1,10 +1,32 @@
 CC=gcc
 CXX=g++
 CXXFLAGS=-std=c++11 -g
+pf: pf.cpp
+	g++ -m32 -fno-stack-protector $(CXXFLAGS) -g -o $@ $<
+
+p: p.cpp
+	g++ -m32 -fno-stack-protector $(CXXFLAGS) -g -o $@ $<
+
+struct_size: struct_size.o
+	$(CC) -m32 -fno-stack-protector -g -o $@ $<
+struct_size.o: struct_size.c
+	$(CC) -m32 -fno-stack-protector -g -c $<
+
+ret_struct: ret_struct.cpp
+	g++ -m32 -fno-stack-protector -g -o $@ $<
+
+ret_struct_c: ret_struct.c
+	gcc -m32 -fno-stack-protector -g -o $@ $<
+
 mbytes: mbytes.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
 ret_func: ret_func.cpp
-	g++ -g -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
+vec_printf: vec_printf.o
+	$(CXX) -std=c++14 -o $@ -g $<
+vec_printf.o: vec_printf.cpp
+	$(CXX) -std=c++14 -c -g $<
 
 get_prime: get_prime.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<

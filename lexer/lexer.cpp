@@ -4,10 +4,16 @@
 
 #include <iostream>
 
+
 using namespace std;
 
 #define OK 0
 #define ERR 1
+
+#define UP 2
+#define DOWN 3
+#define RIGHT 4
+#define LEFT 5
 
 int isgraph_ex1(int c)
 {
@@ -59,6 +65,11 @@ int getchar_la()
     return getchar();
 }
 
+int ungetchar_la(int c)
+{
+  la = c;
+}
+
 int get_token(string &token)
 {
   int c;
@@ -69,7 +80,10 @@ int get_token(string &token)
   }while(isspace(c));
 
   if (c == EOF)
+  {
+    cout << endl << "eof" << endl;
     return EOF;
+  }
   else if (isdigit(c))
        {
          do
@@ -165,6 +179,45 @@ int get_c_comment_token(string &token)
   return ret;
 }
 
+int get_bcgl(string &token, const char *pattern="bcgl")
+{
+  //char *pattern="bcgl";
+  const char *p = &pattern[1];
+  int c;
+
+  do
+  {
+    c = getchar_la();
+  }while(isspace(c));
+
+  if (c==EOF)
+    return EOF;
+
+
+  if (c == pattern[0])
+  {
+    token.push_back(c);
+    c = getchar_la();
+    while (*p)
+    {
+      if (c == *p)
+      {
+        token.push_back(c);
+        c = getchar_la();
+      }
+      else
+      {
+        ungetchar_la(c);
+        return ERR;
+      }
+      ++p;
+    }
+  }
+  else
+    return ERR;
+  return OK;
+}
+
 int get_se_token(string &token)
 {
   int c;
@@ -185,6 +238,43 @@ int get_se_token(string &token)
             {
               token = ')';
               return OK;
+            }
+            else if (c == '\x1b')
+            {
+              c = getchar_la();
+              if (c == '\x5b')
+              {
+                c = getchar_la();
+                switch (c)
+                {
+                  case 'A': // up
+                  {
+                    return UP;
+                  }
+                  case 'B': // down
+                  {
+                    return DOWN;
+                  }
+                  case 'C': // right
+                  {
+                    return RIGHT;
+                  }
+                  case 'D': // left
+                  {
+                    return LEFT;
+                  }
+                  default:
+                  {
+                    printf("xx error\n");
+                    return ERR;
+                  }
+                }
+              }
+              else
+              {
+                printf("error\n");
+                return ERR;
+              }
             }
             else if (isgraph_ex(c)) // printable ascii, but not (, )
                  {
@@ -357,6 +447,18 @@ int get_tes_token(string &token)
 int main(int argc, char *argv[])
 {
   int c;
+  string pat = "abc";
+  if (argc >= 2)
+  {
+    pat = argv[1];
+  }
+  #if 0
+  while(1)
+  {
+    c = getchar();
+    printf("%x\n", c);
+  }
+  #endif
 #if 0
   while(1)
   {
@@ -379,28 +481,57 @@ int main(int argc, char *argv[])
 
     //int ret = get_token(token);
     //int ret = get_se_token(token);
+    int ret = get_bcgl(token, pat.c_str());
     //int ret = get_c_comment_token(token);
     //int ret = get_string_token(token);
-    int ret = get_tes_token(token);
-    if (ret == EOF)
+    //int ret = get_tes_token(token);
+    switch (ret)
     {
-      break;
-    }
-    if (ret == OK)
-    {
-      const char *s = token.c_str();
-
-      if (*s == '\x1b')
+      case UP:
       {
-        cout << "token: ESC " << s+1 << endl;
+        cout << "up" << endl;
+        break;
       }
-      else 
-        cout << "token: " << token << endl;
+      case DOWN:
+      {
+        cout << "down" << endl;
+        break;
+      }
+      case LEFT:
+      {
+        cout << "left" << endl;
+        break;
+      }
+      case RIGHT:
+      {
+        cout << "right" << endl;
+        break;
+      }
+      case OK:
+      {
+        const char *s = token.c_str();
+ 
+        if (*s == '\x1b')
+        {
+          cout << "token: ESC " << s+1 << endl;
+        }
+        else 
+          cout << "token: " << token << endl;
+        break;
+      }
+
+      case EOF:
+      {
+        cout << endl << "xx eof" << endl;
+        return 0;
+      }
+      case ERR:
+      {
+        cout << "token error" << endl;
+        break;
+      }
     }
-    else
-    {
-      cout << "token error" << endl;
-    }
+
     token.clear();
   }
 #endif
