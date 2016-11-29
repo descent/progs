@@ -34,6 +34,19 @@ void preorder_avltree(AVLTree tree)
     }
 }
 
+// print tree syntax
+void print_tree_syntax(AVLTree tree)
+{
+    if(tree != NULL)
+    {
+        printf("(");
+        printf("%d", tree->key);
+        print_tree_syntax(tree->left);
+        print_tree_syntax(tree->right);
+        printf(")");
+    }
+}
+
 
 /*
  * 中序遍历"AVL树"
@@ -419,7 +432,8 @@ void print_avltree(AVLTree tree, Type key, int direction)
 #include <stdio.h>
 #include "avl.h"
 
-static int arr[]= {3,2,1,4,5,6,7,16,15,14,13,12,11,10,8,9};
+//static int arr[]= {3,2,1,4,5,6,7,16,15,14,13,12,11,10,8,9};
+static int arr[]= {4, 5, 3, 7, 6};
 #define TBL_SIZE(a) ( (sizeof(a)) / (sizeof(a[0])) )
 
 int main(int argc, char *argv[])
@@ -436,6 +450,10 @@ int main(int argc, char *argv[])
         root = avltree_insert(root, arr[i]);
     }
 
+    printf("\n\\tree");
+    print_tree_syntax(root);
+
+#if 0
     printf("\n== 前序遍历: ");
     preorder_avltree(root);
 
@@ -449,13 +467,16 @@ int main(int argc, char *argv[])
     printf("== 高度: %d\n", avltree_height(root));
     printf("== 最小值: %d\n", avltree_minimum(root)->key);
     printf("== 最大值: %d\n", avltree_maximum(root)->key);
-    printf("== 树的详细信息: \n");
+#endif
+    printf("\n== 树的详细信息: \n");
     print_avltree(root, root->key, 0);
 
 
-    i = 8;
+    i = 4;
     printf("\n== 删除根节点: %d", i);
     root = avltree_delete(root, i);
+    printf("\n\\tree");
+    print_tree_syntax(root);
 
     printf("\n== 高度: %d", avltree_height(root));
     printf("\n== 中序遍历: ");
