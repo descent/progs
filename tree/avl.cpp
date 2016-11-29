@@ -10,6 +10,11 @@
 #include <stdlib.h>
 #include "avl.h"
 
+#include <cstdlib>
+#include <string>
+#include <iostream>
+using namespace std;
+
 #define HEIGHT(p)    ( (p==NULL) ? -1 : (((Node *)(p))->height) )
 #define MAX(a, b)    ( (a) > (b) ? (a) : (b) )
 
@@ -44,6 +49,26 @@ void print_tree_syntax(AVLTree tree)
         print_tree_syntax(tree->left);
         print_tree_syntax(tree->right);
         printf(")");
+    }
+    else
+    {
+        printf("()");
+    }
+}
+
+void gen_tree_syntax_string(AVLTree tree, string &str)
+{
+    if(tree != NULL)
+    {
+        str += "(";
+        str += std::to_string(tree->key);
+        gen_tree_syntax_string(tree->left, str);
+        gen_tree_syntax_string(tree->right, str);
+        str += ")";
+    }
+    else
+    {
+        str += "()";
     }
 }
 
@@ -436,11 +461,19 @@ void print_avltree(AVLTree tree, Type key, int direction)
 static int arr[]= {4, 5, 3, 7, 6};
 #define TBL_SIZE(a) ( (sizeof(a)) / (sizeof(a[0])) )
 
+void show_avl(const string &str)
+{
+  string display_cmd;
+  display_cmd = "echo \"" + str + "\"|./tree/tree";
+  system(display_cmd.c_str());
+}
+
 int main(int argc, char *argv[])
 {
     int i,ilen;
     AVLTree root=NULL;
 
+#if 0
     printf("== 高度: %d\n", avltree_height(root));
     printf("== 依次添加: ");
     ilen = TBL_SIZE(arr);
@@ -450,8 +483,65 @@ int main(int argc, char *argv[])
         root = avltree_insert(root, arr[i]);
     }
 
-    printf("\n\\tree");
-    print_tree_syntax(root);
+    //printf("\n\\tree");
+    //print_tree_syntax(root);
+
+    string str{"\\tree"};
+    gen_tree_syntax_string(root, str);
+    cout << endl << "str: " << str << endl;
+#endif
+
+  bool run = true;
+    while (run)
+    {
+      char cmd;
+      int val;
+
+      cin >> cmd >> val;
+      #if 0
+      cout << "cmd: " << cmd << endl;
+      cout << "val: " << val << endl;
+      #endif
+      switch (cmd)
+      {
+        case 'a':
+        {
+          cout << "insert " << val << endl;
+          root = avltree_insert(root, val);
+          string str{"\\tree"};
+          gen_tree_syntax_string(root, str);
+          show_avl(str);
+          break;
+        }
+        case 'd':
+        {
+          cout << "delete " << val << endl;
+          root = avltree_delete(root, val);
+          string str{"\\tree"};
+          gen_tree_syntax_string(root, str);
+          show_avl(str);
+          break;
+        }
+        case 'p':
+        {
+          string str{"\\tree"};
+          gen_tree_syntax_string(root, str);
+          cout << "display avl tree: " << str << endl;
+          show_avl(str);
+          break;
+        }
+        case 'e':
+        {
+          run = false; 
+          break;
+        }
+        default:
+        {
+          break;
+        }
+      }
+      
+    }
 
 #if 0
     printf("\n== 前序遍历: ");
@@ -467,7 +557,6 @@ int main(int argc, char *argv[])
     printf("== 高度: %d\n", avltree_height(root));
     printf("== 最小值: %d\n", avltree_minimum(root)->key);
     printf("== 最大值: %d\n", avltree_maximum(root)->key);
-#endif
     printf("\n== 树的详细信息: \n");
     print_avltree(root, root->key, 0);
 
@@ -484,6 +573,7 @@ int main(int argc, char *argv[])
     printf("\n== 树的详细信息: \n");
     print_avltree(root, root->key, 0);
 
+#endif
     // 销毁二叉树
     destroy_avltree(root);
     return 0;
