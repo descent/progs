@@ -1,6 +1,10 @@
 CXXFLAGS=-g -std=c++11 -m32 -O2 -static -fno-stack-protector
 add: add.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
+find_val: find_val.o
+	$(CXX) $(CXXFLAGS) -o $@ $<
+find_val.o: find_val.cpp
+	$(CXX) $(CXXFLAGS) -c $<
 
 palindrome: palindrome.o
 	$(CXX) $(CXXFLAGS) -o $@ $<
