@@ -17,6 +17,9 @@ int main(int argc, char *argv[])
   time_point<system_clock> tp = system_clock::now();
 
   time_point<steady_clock> tp1 = steady_clock::now();
+
+  time_point<steady_clock> steady_epoch = time_point<steady_clock>{};
+
   //duration<int, ratio<1,1000000>> d = duration_cast<microseconds>(epoch - tp);
   //duration<int, ratio<1,1000000>> d = duration_cast<microseconds>(tp - epoch);
  
