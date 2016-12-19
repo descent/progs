@@ -7,6 +7,11 @@ t1: t1.o
 t1.o: t1.cpp
 	$(CXX) $(CXXFLAGS) -g -c $< -lrt
 
+t2: t2.o
+	$(CXX) $(CXXFLAGS) -o $@ $<
+t2.o: t2.cpp
+	$(CXX) $(CXXFLAGS) -g -c $< -lrt
+
 t: t.o
 	$(CXX) $(CXXFLAGS) -o $@ $<
 t.o: t.cpp
