@@ -2,6 +2,8 @@ CXX=g++
 
 target = libmylib.so.1.0.0 m
 
+all: $(target)
+
 m: m.o
 	$(CXX) -o $@ $< -ldl
 m.o: m.cpp
