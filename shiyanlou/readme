@@ -1,0 +1,6 @@
+實驗樓 - ebay在线拍卖数据分析
+https://www.shiyanlou.com/courses/714
+
+wget http://labfile.oss.aliyuncs.com/courses/714/dataAnalysis.py
+wget http://labfile.oss.aliyuncs.com/courses/714/isSold_pred.py
+wget http://labfile.oss.aliyuncs.com/courses/714/Price_pred.py
