@@ -16,6 +16,11 @@ int main(int argc, char *argv[])
   time_point<system_clock> epoch = time_point<system_clock>{};
   time_point<system_clock> tp = system_clock::now();
 
+  time_t t = system_clock::to_time_t(tp);
+
+  string ts = ctime(&t);
+  cout << "now: " << ts << endl;
+
   time_point<steady_clock> tp1 = steady_clock::now();
 
   time_point<steady_clock> steady_epoch = time_point<steady_clock>{};
