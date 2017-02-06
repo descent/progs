@@ -7,7 +7,17 @@ using namespace std;
 using namespace std::chrono;
 
 #include <unistd.h>
-#include <time.h>
+#include <ctime>
+
+string as_string(const system_clock::time_point &tp)
+{
+  time_t t = system_clock::to_time_t(tp);
+  string ts = ctime(&t);
+  ts.resize(ts.size()-1);
+  cout << "time_t t: " << t << endl;
+  cout << "ts: " << ts << endl;
+  return ts;
+}
 
 int main(int argc, char *argv[])
 {
@@ -15,6 +25,8 @@ int main(int argc, char *argv[])
   //cout << d.count() << endl;
   time_point<system_clock> epoch = time_point<system_clock>{};
   time_point<system_clock> tp = system_clock::now();
+
+  as_string(epoch);
 
   time_t t = system_clock::to_time_t(tp);
 
