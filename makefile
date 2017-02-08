@@ -1,6 +1,9 @@
 CC=gcc
 CXX=g++
 CXXFLAGS=-std=c++11 -g
+
+self_printf: self_printf.c
+	$(CC) -Wint-conversion -o $@ $<
 bt: bt.cpp
 	g++ -m32 -fno-stack-protector $(CXXFLAGS)  -o $@ $<
 
