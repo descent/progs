@@ -1,4 +1,8 @@
 #include ../rule.mk
+c_queue: c_queue.c
+	gcc -DUNIT_TEST -o $@ $<
+c_queue.o: c_queue.c
+	gcc -c $<
 
 history: history.o gdeque.o cstring.o
 	$(CXX) -o $@ $^ -lncursesw
