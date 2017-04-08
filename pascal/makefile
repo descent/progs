@@ -7,5 +7,7 @@ h.o: h.pas
 	#fpc h.pas
 	#ppcx64 $<
 	/usr/local/lib/fpc/3.1.1/ppcross386 -Cn h.pas
+	/usr/local/lib/fpc/3.1.1/ppcross386 -Cn h.pas -Fu/usr/local/lib/fpc/3.1.1/units/i386-linux/rtl-console/crt.ppu # -Fu spec Crt unit path
+	/usr/local/lib/fpc/3.1.1/ppcross386 -Cn h.pas -Fu/usr/local/lib/fpc/3.1.1/units/i386-linux/rtl-console/ # -Fu spec Crt unit path
 clean:
 	rm -f h *.o
