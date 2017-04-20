@@ -1,6 +1,6 @@
 package DescentPackage;
 //import DescentPackage.*;
-import Pkg1.*;
+//import Pkg1.*;
 
 public class HelloWorld
 {
@@ -10,6 +10,6 @@ public class HelloWorld
     PrintPkg1 pkg1 = new PrintPkg1();
     System.out.println("Hello World");
     ps.msg();
-    pkg1.msg();
+    //pkg1.msg();
   }
 }
