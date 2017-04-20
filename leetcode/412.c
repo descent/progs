@@ -42,37 +42,28 @@ char** fizzBuzz(int n, int* returnSize)
 
 
   //printf("str_arr %p, &str_arr %p\n", str_arr, &str_arr);
+
+  for (int i = 3 ; i <= n ; i+=3)
+  {
+    str_arr[i-1] = f;
+  }
+  for (int i = 5 ; i <= n ; i+=5)
+  {
+    str_arr[i-1] = b;
+  }
+
+  for (int i = 15 ; i <= n ; i+=15)
+  {
+    str_arr[i-1] = fb;
+  }
+
   for (int i = 1 ; i <= n ; ++i)
   {
-    char *num_str = malloc(20 * sizeof(char));
+      char *num_str = malloc(20 * sizeof(char));
 
-    if (i<=15)
-      str_arr[i-1] = gen_str[i%15];
-    else
-    {
+      sprintf(num_str, "%d", i);
+      str_arr[i-1] = num_str;
 
-    //if (i%3==0 && i%5==0)
-    if (i%15 == 0)
-    {
-      str_arr[i-1] = fb;
-    }
-    else if (i%3==0)
-         {
-           str_arr[i-1] = f;
-         }
-         else if (i%5==0)
-              {
-                str_arr[i-1] = b;
-              }
-              else
-              {
-          
-                sprintf(num_str, "%d", i);
-                str_arr[i-1] = num_str;
-              }
-               
-    }
-    //printf("yy %s, &str_arr[i]: %p, str_arr[i]: %p\n", str_arr[i], &str_arr[i], str_arr[i]);
   }
   *returnSize = n;
   return str_arr; 
@@ -82,7 +73,7 @@ char** fizzBuzz(int n, int* returnSize)
 int main(int argc, char *argv[])
 {
   int ret_size;
-  int n=5;
+  int n=15;
   char **str_arr = fizzBuzz(n, &ret_size);
   printf("ret_size: %d\n", ret_size);
   for (int i=0 ; i < ret_size ; ++i)
@@ -93,7 +84,7 @@ int main(int argc, char *argv[])
     char *line = *str_arr+i;
   #endif
 
-    printf("zz %d ## %p, %s\n", i, line, line);
+    //printf("zz %d ## %p, %s\n", i, line, line);
     //printf("zz %p: %s\n", line, *line);
     printf("xx %d ## %p: %s\n", i, (str_arr + i), *(str_arr + i));
   }

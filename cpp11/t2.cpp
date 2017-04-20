@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
   time_point<system_clock> epoch = time_point<system_clock>{};
   time_point<system_clock> tp = system_clock::now();
 
-  as_string(epoch);
+  as_string(tp);
 
   time_t t = system_clock::to_time_t(tp);
 

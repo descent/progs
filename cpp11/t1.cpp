@@ -9,54 +9,22 @@ using namespace std::chrono;
 #include <unistd.h>
 #include <time.h>
 
-//string to_string(const steady_clock::time_point &tp)
-string to_string(const system_clock::time_point &tp)
-{
-  //time_t t = steady_clock::to_time_t(tp);
-  time_t t = system_clock::to_time_t(tp);
-}
-
-auto time_start()
-{
-  return steady_clock::now();
-}
-
-
-long long time_pass(auto start)
-{
-  auto t2 = steady_clock::now();
-  auto dus = duration_cast<microseconds>(t2 - start);
-  cout << dus.count() << endl;
-  auto tick = dus.count();
-  return tick;
-}
-
 int main(int argc, char *argv[])
 {
-  auto t1 = steady_clock::now();
-  //auto t1 = time_start();
+  //duration<int, ratio<1, 1000>> d{2};
+  //cout << d.count() << endl;
+  time_point<system_clock> epoch = time_point<system_clock>{};
+  time_point<system_clock> tp = system_clock::now();
 
-  sleep(5);
-  auto t2 = steady_clock::now();
-  auto dms = duration_cast<milliseconds>(t2-t1);
-  auto dus = duration_cast<microseconds>(t2-t1);
-  cout << "ms: " << dms.count() << endl;
-  cout << "us: " << dus.count() << endl;
-
-  //diff = time_pass(t1);
-  //cout << "t1: " << t1 << ", diff2: " << diff << endl;
-
-  #if 0
-  auto diff = time_pass(t1);
-
-  auto dms = duration_cast<milliseconds>(t2-t1);
-  auto dus = duration_cast<microseconds>(t2-t1);
-  
-
-  now = std::chrono::system_clock::now();
-  now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-  //cout << "b now_ms: " << now_ms << endl;
-  #endif
+  time_point<steady_clock> tp1 = steady_clock::now();
+  //duration<int, ratio<1,1000000>> d = duration_cast<microseconds>(epoch - tp);
+  //duration<int, ratio<1,1000000>> d = duration_cast<microseconds>(tp - epoch);
+ 
+  typedef duration<unsigned long long, ratio<1,1000000>> unit;
+  //typedef duration<int, ratio<1,1000000>> unit;
+  //typedef microseconds unit;
+  unit d = duration_cast<unit>(tp - epoch);
+  cout << d.count() << endl;
 
   return 0;
 }

@@ -1,6 +1,6 @@
 CC=gcc
 CXX=g++
-CXXFLAGS=-Wall -DTEST_MAIN -DUSE_OS -std=c++11 -g
+CXXFLAGS=-Wall -DTEST_MAIN -DUSE_OS -std=c++11 -g 
 avl: avl.o
 	$(CXX) $(CXXFLAGS) -o $@ $< 
 avl.o: avl.cpp avl.h
