@@ -2,6 +2,12 @@ CC=gcc
 CXX=g++
 CXXFLAGS=-std=c++11 -g
 
+vfc: vfc.c
+	$(CC) -o $@ $<
+
+vf: vf.cpp
+	$(CXX) -o $@ $<
+
 self_printf: self_printf.c
 	$(CC) -Wint-conversion -o $@ $<
 bt: bt.cpp
