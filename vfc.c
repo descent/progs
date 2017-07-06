@@ -1,22 +1,24 @@
+// try use c to implement c++ virtual function.
 #include <stdio.h>
-
+#include <stdint.h>
 
 typedef struct A_ A;
 
 typedef void VfPtr(A *a);
-VfPtr *vfptr[2];
+uintptr_t a_vfptr_table[2];
+uintptr_t b_vfptr_table[2];
 
 typedef struct A_
 {
+  typeof (a_vfptr_table) *vt;
   int k;
-  typeof (vfptr) *vt;
 }A;
 
 typedef struct B_
 {
+  typeof (b_vfptr_table) *b_vt;
   int k;
   int h;
-  typeof (vfptr) *vt;
 }B;
 
 
@@ -34,13 +36,13 @@ void vf_b(A *a)
 void ctor_a(A *a)
 {
   a->k = 1;
-  a->vt = &vfptr;
+  a->vt = &a_vfptr_table;
 }
 
 void ctor_b(B *b)
 {
   b->h = 2;
-  b->vt = &vfptr;
+  b->b_vt = &b_vfptr_table;
 }
 
 int main(int argc, char *argv[])
@@ -49,29 +51,34 @@ int main(int argc, char *argv[])
   A a;
   B b;
 
-  vfptr[0] = vf_a;
-  vfptr[1] = vf_b;
+  a_vfptr_table[0] = 0;
+  a_vfptr_table[1] = (uintptr_t)vf_a;
+
+  b_vfptr_table[0] = 0;
+  b_vfptr_table[1] = (uintptr_t)vf_b;
 
   ctor_a(&a);
   ctor_b(&b);
 
 #if 0
   pa->vf();
+  (pa->vf[1])();
 #endif
 
-  typeof (vfptr) *vt;
+  uintptr_t vt;
   VfPtr *vfp;
 
   pa = &a;
-  vt = pa->vt;    // get pa virtaul table
-  vfp = (*vt)[0]; // index 0 is vf_a
+  //vt = pa->vt;    // get pa virtaul table
+  vt = (uintptr_t)(*(int *)pa);    // get pa virtaul table
+  vfp = (VfPtr *)*((uintptr_t *)(vt + sizeof(uintptr_t))); // index 1 is vf_a, index 0 put rtti info
   (*vfp)(pa);     // call vf_a the virtual function
 
   pa = &b;
-  vt = pa->vt;    // get pa virtaul table
-  vfp = (*vt)[1]; // index 1 is vf_b
+  //vt = ((B*)pa)->b_vt;    // get pa virtaul table
+  vt = (uintptr_t)(*(int *)pa);    // get pa virtaul table
+  vfp = (VfPtr *)*((uintptr_t *)(vt + sizeof(uintptr_t))); // index 1 is vf_a, index 0 put rtti info
   (*vfp)(pa);     // call vf_b the virtual function
-
 #if 0
   VfPtr *avfp = (*vt)[0];
   VfPtr *bvfp = (*vt)[1];
