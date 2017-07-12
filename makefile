@@ -3,10 +3,10 @@ CXX=g++
 CXXFLAGS=-std=c++11 -g
 
 vfc: vfc.c
-	$(CC) -o $@ $<
+	$(CC) -m32 -g -o $@ $<
 
 vf: vf.cpp
-	$(CXX) -o $@ $<
+	$(CXX) -std=c++14 -m32 -g -o $@ $<
 
 self_printf: self_printf.c
 	$(CC) -Wint-conversion -o $@ $<
