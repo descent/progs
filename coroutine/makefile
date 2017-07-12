@@ -1,5 +1,8 @@
 all: sample
 
+m: m.cpp
+	g++-7 -std=c++17 -ggdb -o $@ $<
+
 sample: sample.o my_setjmp.o
 	gcc -ggdb -o sample sample.c my_setjmp.S
 
