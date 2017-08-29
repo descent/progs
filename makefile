@@ -2,6 +2,8 @@ CC=gcc
 CXX=g++
 CXXFLAGS=-std=c++11 -g
 
+m_array: m_array.c
+	$(CXX) $(CXXFLAGS) -g -o $@ $<
 reentrant: reentrant.cpp
 	$(CXX) $(CXXFLAGS) -g -o $@ $<
 vfc: vfc.c
