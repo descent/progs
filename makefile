@@ -1,6 +1,12 @@
 CC=gcc
 CXX=g++
+CFLAGS=-g
 CXXFLAGS=-std=c++11 -g
+
+float2str: float2str.o
+	$(CC) $(CFLAGS) -o $@ $< -lm
+float2str.o: float2str.c
+	$(CC) $(CFLAGS) -c $<
 
 m_array: m_array.c
 	$(CXX) $(CXXFLAGS) -g -o $@ $<
