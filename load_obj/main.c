@@ -416,6 +416,22 @@ int load_elf(const char *fn)
   printf("shnum: %x\n", elf_hdr->e_shnum);
   printf("e_shstrndx: %d\n", elf_hdr->e_shstrndx);
 
+  if (1 == elf_hdr->e_ident[4])
+  {
+    printf("32bit elf\n");
+  }
+  else if (2 == elf_hdr->e_ident[4])
+       {
+         printf("64bit elf\n");
+         printf("don't support 64bit elf\n");
+         return -1;
+       }
+       else
+       {
+         printf("unknow elf\n");
+         return -1;
+       }
+
   sec_num = elf_hdr->e_shnum;
 
   shstrndx = elf_hdr->e_shstrndx;
@@ -736,7 +752,10 @@ int main(int argc, const char *argv[])
   if (is_elf(hello_addr) == 0)
   {
     printf("load elf object: %s\n", argv[1]);
-    load_elf(argv[1]);
+    if (-1 == load_elf(argv[1]))
+    {
+      return -1;
+    }
   }
   else if (is_win32_coff(hello_addr) == 0)
        {
