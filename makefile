@@ -3,6 +3,12 @@ CXX=g++
 CFLAGS=-g
 CXXFLAGS=-std=c++11 -g
 
+erase_function: erase_function.o
+	$(CXX) $(CXXFLAGS) -g -o $@ $<
+
+erase_function.o: erase_function.cpp
+	$(CXX) $(CXXFLAGS) -c $<
+
 float2str: float2str.o
 	$(CC) $(CFLAGS) -o $@ $< -lm
 float2str.o: float2str.c
