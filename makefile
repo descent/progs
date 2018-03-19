@@ -5,6 +5,7 @@ CXXFLAGS=-std=c++11 -g
 
 erase_function: erase_function.o
 	$(CXX) $(CXXFLAGS) -g -o $@ $<
+	#g++ -T ./c.ld -std=c++11 erase_function.cpp -o erase_function # use linker script c.ld
 
 erase_function.o: erase_function.cpp
 	$(CXX) $(CXXFLAGS) -c $<
