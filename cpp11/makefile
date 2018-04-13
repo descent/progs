@@ -2,6 +2,9 @@ CXX=g++
 CXXFLAGS=-std=c++14 -g  -fno-stack-protector -g -m32
 EXEC=vt1 t vt
 
+fs: fs.cpp
+	g++-8 -std=c++17 fs.cpp -o fs -lstdc++fs
+
 t1: t1.o
 	$(CXX) $(CXXFLAGS) -o $@ $<
 t1.o: t1.cpp
