@@ -52,19 +52,21 @@ int main(int argc, char *argv[])
   cout << ec.message() << endl;
   cout << ec.value() << ", " << EACCES << endl;
 
-
-
   if (ec.value() == 0)
   {
     // https://www.boost.org/doc/libs/1_47_0/libs/filesystem/v3/doc/tutorial.html
-    typedef vector<fs::path> vec;             // store paths,
+    //typedef vector<fs::path> vec;             // store paths,
+    typedef vector<fs::directory_entry> vec;             // store paths,
     vec v;                                // so we can sort them later
     copy(dir_it, end_dir_it, back_inserter(v));
     sort(v.begin(), v.end());   
 
     for (auto &i : v)
     {
-      cout << i << endl;
+      cout << i;
+      if (i.is_directory())
+        cout << "/";
+      cout << endl;
     }
   }
 
