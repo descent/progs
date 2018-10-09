@@ -1,0 +1,3 @@
+測試 c/c++ inline function
+測試 c++ inline function 裡頭的 static object, 
+static inline void f1() 和 inline void f1() 的不同。
