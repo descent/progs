@@ -35,7 +35,7 @@ int Ft2::init_ft2(const string fontpath)
   }
   else if (error)
        {
-         cout << "The font file cann't be opened!" << endl;
+         cout << "The font file cann't be opened! ## " << fontpath << endl;
          return -1;
        }
   cout << "face information : " << endl;
