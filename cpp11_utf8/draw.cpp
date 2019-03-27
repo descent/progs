@@ -16,6 +16,7 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y, int fg_c, int bg
 {
   uint8_t r=0, g=170, b=0;
 
+#ifdef PRINT_INFO
   cout << "bitmap rows : " << bitmap->rows << endl;
   cout << "bitmap width : " << bitmap->width << endl;
   cout << "bitmap pitch : " << bitmap->pitch << endl;
@@ -26,6 +27,7 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y, int fg_c, int bg
     cout << "bitmap pixel mode : grays" << endl;
     cout << "bitmap grays level : " << bitmap->num_grays << endl;
    }
+#endif
 
   int startx = pen_x;
   int starty = pen_y;
@@ -39,7 +41,7 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y, int fg_c, int bg
     int font_w = 0;
     for (int j=0 ; j < bitmap->pitch ; j++)
     {
-      #if 0
+      #ifdef PRINT_INFO
       printf("%x, ", ch); 
       ++tmp;
       ch = *tmp;
@@ -98,8 +100,9 @@ void my_draw_bitmap_mono(FT_Bitmap *bitmap,int pen_x,int pen_y, int fg_c, int bg
     }
     cx=0;
     ++cy;
+#ifdef PRINT_INFO
     printf("\n");
-
+#endif
     #if 0
     for (int j=0 ; j < bitmap->width ; j++)
     {
