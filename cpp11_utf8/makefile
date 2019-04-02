@@ -1,7 +1,7 @@
-FT2_CFLAGS=`freetype-config --cflags`
-FT2_LIBS=`freetype-config --libs`
+FT2_CFLAGS=`pkg-config --cflags freetype2`
+FT2_LIBS=`pkg-config --libs freetype2`
 CXXFLAGS=-g -std=c++11
-CXX=g++-5
+CXX=g++
 
 #objects := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 objects := $(patsubst %.cpp,%.o, a.c)
