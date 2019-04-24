@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>xss test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+  <body>
+  test<br>
+    <!-- <FORM METHOD="GET" ACTION="http://192.168.1.11/~descent/cgi-bin/xss_test.cgi"> -->
+    <FORM METHOD="post" ACTION="http://192.168.1.11/~descent/cgi-bin/xss_test.cgi">
+    姓名：<INPUT SIZE=1000 NAME="name"><BR>
+    <INPUT TYPE="submit" VALUE="送出資料">
+    <INPUT TYPE="reset" VALUE="清除資料">
+    </FORM>
+  </body>
+</html>
