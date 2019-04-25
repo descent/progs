@@ -142,43 +142,6 @@ void usage(const char *fp)
   printf("%s -p font_path -s font_size -t render_string -f fb -b bg -g 0 -a 0 -m [opened file] -x x -y y -d step_y\n", fp);
 }
 
-vector<wchar_t> utf8_to_ucs4(const std::string utf8_str)
-{
-  return utf8_to_ucs4(utf8_str.c_str());
-}
-
-vector<wchar_t> utf8_to_ucs4(const char *utf8)
-{
-  vector<wchar_t> usc4;
-  char tmp_fn[] = "./convert_XXXXXX";
-  if (mkstemp(tmp_fn) == -1)
-  {
-    return usc4;
-  }
-
-  cout << "tmp_fn: " << tmp_fn;
-
-  //char utf8[] = u8"中";
-  ofstream(tmp_fn) << utf8;
-  //ofstream("text.txt") << u8"z\u00df\u6c34\U0001d10b"; 
-  wifstream fin(tmp_fn);
-  // 该locale的facet - codecvt<wchar_t, char, mbstate_t>
-  //     // 可以将UTF-8转化为UTF-32
-  fin.imbue(locale("en_US.UTF-8")); 
-
-
-  //wstring line;
-  wchar_t c;
-  while(fin.get(c))
-  {
-    //cout << "U+" << hex << setw(4) << setfill('0') << c << '\n';
-    usc4.push_back(c);
-  }
-  remove(tmp_fn);
-  return usc4;
-}
-
-
 int main(int argc, char *argv[])
 {
   const char *disp_str = "a中文bあい";
@@ -206,6 +169,7 @@ int main(int argc, char *argv[])
       case 'p':
       {
         fontpath = optarg;
+        cout << "fontpath: " << fontpath << endl;
         break;
       }
       case 'f':
