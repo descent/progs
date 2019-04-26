@@ -31,7 +31,7 @@ int screen_width;
 int screen_height;
 
 
-#define LFB
+//#define LFB
 
 #ifdef LFB
 #include "fb.h"

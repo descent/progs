@@ -1,10 +1,13 @@
 #include "graphic.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 Graphic::Graphic()
 {
 #ifdef SVGALIB
   init_graph_mode();
   gl_fillbox(0,0,640,480, 200);
+  //vga_getch();
 #endif
 }
 
@@ -20,7 +23,14 @@ void Graphic::init_graph_mode()
 {
 #ifdef SVGALIB
   vga_init();
-  int vga_mode=G640x480x16M;
+  //int vga_mode=G640x480x16M;
+  int vga_mode=34;
+
+  if (!vga_hasmode(vga_mode)) 
+  {
+    printf("Mode not available.\n");
+    exit(-1);
+  }
   vga_setmode(vga_mode);
   gl_setcontextvga(vga_mode);
 #endif
