@@ -16,7 +16,10 @@
 
 #include "type.h"
 #include "elf.h"
+#include "elf64.h"
 #include "mype.h"
+
+int elf_type = 64;
 
 #define STR_NUM 30
 
@@ -384,6 +387,35 @@ int load_coff(const char *fn)
   }
 }
 
+int load_elf64(const char *fn)
+{
+  u8 *ptr = hello_addr;
+
+  Elf64Ehdr *elf_header = (Elf64Ehdr*)ptr;
+  Elf64_Addr entry = elf_header->e_entry;           /* Entry point virtual address */
+
+  printf("shoff: %x\n", elf_header->e_shoff);
+  printf("shnum: %x\n", elf_header->e_shnum);
+  printf("e_shstrndx: %d\n", elf_header->e_shstrndx);
+  printf("entry: %#x\n", entry);
+
+  Elf64Phdr *elf_pheader = (Elf64Phdr*)((u8 *)ptr + elf_header->e_phoff);
+
+  for (int i=0 ; i < elf_header->e_phnum; ++i)
+  {
+    if (CHECK_PT_TYPE_LOAD(elf_pheader))
+    {
+      printf("%d\n", i);
+      printf("elf_pheader->p_vaddr: %#x\n", elf_pheader->p_vaddr);
+      printf("elf_pheader->p_offset: %#x\n", elf_pheader->p_offset);
+      printf("elf_pheader->p_filesz: %#x\n", elf_pheader->p_filesz);
+      //s32_print_int(elf_pheader->p_offset, (u8*)(0xb8000+160*line), 16);
+      //asm_absolute_memcpy((u8*)elf_pheader->p_vaddr, buff+(elf_pheader->p_offset), elf_pheader->p_filesz);
+      //s32_memcpy((u8*)elf_pheader->p_vaddr, buff+(elf_pheader->p_offset), elf_pheader->p_filesz);
+    }
+    ++elf_pheader;
+  }
+}
 
 int load_elf(const char *fn)
 {
@@ -418,12 +450,16 @@ int load_elf(const char *fn)
 
   if (1 == elf_hdr->e_ident[4])
   {
+    elf_type = 32;
     printf("32bit elf\n");
   }
   else if (2 == elf_hdr->e_ident[4])
        {
+         elf_type = 64;
          printf("64bit elf\n");
-         printf("don't support 64bit elf\n");
+         //printf("don't support 64bit elf\n");
+         printf("load elf64\n");
+         load_elf64(fn);
          return -1;
        }
        else
