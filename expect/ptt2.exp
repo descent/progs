@@ -1,0 +1,63 @@
+#!/usr/bin/expect
+set timeout 60
+
+set f [open "/tmp/1.txt"]
+set commands [split [read $f] "\n"]
+close $f
+
+#exit
+
+  spawn ssh -oBatchMode=no -oStrictHostKeyChecking=no bbsu@ptt.cc
+
+set f [open "/tmp/id"]
+  gets $f BBS_ID
+close $f
+set f [open "/tmp/pwd"]
+   gets $f BBS_PW 
+close $f
+
+expect "或以 new 註冊: " { send "$BBS_ID\r" }
+expect "請輸入您的密碼" { send "$BBS_PW\r" }
+expect "請按任意鍵繼續" 
+send "\r"
+
+expect "oodbye" 
+sleep 1
+send "f\r"
+
+# 進入 test 看板
+expect "20" 
+send "113\r\r" 
+
+expect "請按任意鍵繼續" 
+send "\r"
+
+# 進入 test 看板  end
+
+#send -- "\[C"
+send -- ""
+
+expect ") "
+send "1\r"
+
+sleep 1
+send -- "輸入 test 7\r"
+foreach cmd $commands {
+  send "$cmd\r"
+sleep 1
+}
+
+# 離開編輯畫面
+send -- ""
+send -- "s"
+sleep 1
+send -- "\r"
+
+# 存檔
+sleep 1
+send -- "0\r"
+
+expect "請按任意鍵繼續"
+send -- "\r"
+
+interact
