@@ -1,20 +1,32 @@
 #!/usr/bin/expect
 set timeout 60
 
+
+
 set f [open "/tmp/1.txt"]
 set commands [split [read $f] "\n"]
 close $f
 
 #exit
+foreach arg $argv {
+  puts $arg
+}
+lindex $argv 0
+#set BBS_ID [array get argv]
+set BBS_ID [lindex $argv 0]
+set BBS_PW [lindex $argv 1]
+puts $BBS_ID
+puts $BBS_PW
+#exit
 
   spawn ssh -oBatchMode=no -oStrictHostKeyChecking=no bbsu@ptt.cc
 
-set f [open "/tmp/id"]
-  gets $f BBS_ID
-close $f
-set f [open "/tmp/pwd"]
-   gets $f BBS_PW 
-close $f
+#set f [open "/tmp/id"]
+#  gets $f BBS_ID
+#close $f
+#set f [open "/tmp/pwd"]
+#   gets $f BBS_PW 
+#close $f
 
 expect "或以 new 註冊: " { send "$BBS_ID\r" }
 expect "請輸入您的密碼" { send "$BBS_PW\r" }
@@ -41,7 +53,7 @@ expect ") "
 send "1\r"
 
 sleep 1
-send -- "輸入 test 7\r"
+send -- "輸入 test 9\r"
 foreach cmd $commands {
   send "$cmd\r"
 sleep 1
