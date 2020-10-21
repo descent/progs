@@ -50,6 +50,7 @@ int yywrap(void)
   printf("bb hex yytext: %s, val: %d\n", yytext, val);
   return INT_LITERAL;
 }
+[ \t]+ {}
 .  {
     fprintf(stderr, "lexer error: %s\n", yytext);
     exit(1);
