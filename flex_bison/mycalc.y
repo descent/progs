@@ -2,7 +2,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #define YYDEBUG 1
+int yylex (void);
+int yyerror(char const *str);
 
 %}
 %union{
@@ -29,6 +32,11 @@ expression
       $$ = $1 + $3;
       printf("add: %d\n", $$);
     }
+    | expression ADD SUB term
+    { // handle 1 + -2 expression
+      $$ = $1 + -$4;
+      printf("add/sub: $$: %d, $1: %d, $4: %d\n", $$, $1, $4);
+    }
     | expression SUB term
     {
       $$ = $1 - $3;
@@ -50,7 +58,13 @@ primary_expression
 int yyerror(char const *str)
 {
   extern char *yytext;
-  fprintf(stderr, "parser error near '%s'\n", yytext);
+  fprintf(stderr, "'%s' parser error near ", str);
+  if (strcmp(yytext, "\n") == 0)
+  {
+    fprintf(stderr, "'new_line'\n");
+  }
+  else
+    fprintf(stderr, "'%s'\n", yytext);
   return 0;
 }
 
@@ -61,10 +75,11 @@ int main()
   extern FILE *yyin;
   
   yyin = stdin;
-  if (yyparse())
+  while (yyparse())
   {
-    fprintf(stderr, "error !!\n");
-    exit(1);
+    fprintf(stderr, "error!!\n");
+    //exit(1);
   }
+  printf("exit yyparse()\n");
 
 }
