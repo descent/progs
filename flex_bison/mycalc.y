@@ -31,6 +31,11 @@ expression
       $$ = $1 + $3;
       printf("add: %d\n", $$);
     }
+    | expression ADD SUB term
+    { // handle 1 + -2 expression
+      $$ = $1 + -$4;
+      printf("add/sub: $$: %d, $1: %d, $4: %d\n", $$, $1, $4);
+    }
     | expression SUB term
     {
       $$ = $1 - $3;
@@ -65,7 +70,7 @@ int main()
   yyin = stdin;
   if (yyparse())
   {
-    fprintf(stderr, "error !!\n");
+    fprintf(stderr, "error!!\n");
     exit(1);
   }
 
