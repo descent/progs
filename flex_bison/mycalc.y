@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #define YYDEBUG 1
 int yylex (void);
 int yyerror(char const *str);
@@ -57,7 +58,13 @@ primary_expression
 int yyerror(char const *str)
 {
   extern char *yytext;
-  fprintf(stderr, "parser error near '%s'\n", yytext);
+  fprintf(stderr, "'%s' parser error near ", str);
+  if (strcmp(yytext, "\n") == 0)
+  {
+    fprintf(stderr, "'new_line'\n");
+  }
+  else
+    fprintf(stderr, "'%s'\n", yytext);
   return 0;
 }
 
@@ -68,10 +75,11 @@ int main()
   extern FILE *yyin;
   
   yyin = stdin;
-  if (yyparse())
+  while (yyparse())
   {
     fprintf(stderr, "error!!\n");
-    exit(1);
+    //exit(1);
   }
+  printf("exit yyparse()\n");
 
 }
