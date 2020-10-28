@@ -44,10 +44,10 @@ int yywrap(void)
   return INT_LITERAL;
 }
 
-(0x[0-9]*[a-f]*[A-f]*) {
+(0x[a-f,0-9]*[A-f]*) {
   val = strtol(yytext, 0, 16);
   yylval.int_val = val;
-  printf("bb hex yytext: %s, val: %d\n", yytext, val);
+  printf("bb hex yytext: %s, signed val: %d, unsigned val: %u, hex val: %#x\n", yytext, val, val);
   return INT_LITERAL;
 }
 [ \t]+ {}
