@@ -36,6 +36,8 @@ int yywrap(void)
 "-"   return SUB;
 "*"   return MUL;
 "/"   return DIV;
+"("   return LP;
+")"   return RP;
 "\n"  {printf("aa new line\n"); return CR;}
 ([1-9][0-9]*)|0|([0-9]+\.[0-9]+) {
   val = strtol(yytext, 0, 10);

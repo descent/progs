@@ -12,7 +12,7 @@ int yyerror(char const *str);
   int int_val;
 }
 %token <int_val> INT_LITERAL
-%token ADD SUB MUL DIV CR
+%token ADD SUB MUL DIV CR LP RP
 %type <int_val> expression term primary_expression
 %%
 line_list
@@ -54,6 +54,7 @@ term
     }
 primary_expression
     : INT_LITERAL
+    | LP expression RP
 %%
 int yyerror(char const *str)
 {
