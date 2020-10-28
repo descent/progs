@@ -13,7 +13,7 @@ int val;
     char *line;
     //printf("aa size: %d\n", size); // size: 8192
     if (feof(yyin))  return YY_NULL;
-    line = readline("> ");
+    line = readline("mycal> ");
     if(!line)        return YY_NULL;
     if(strlen(line) > size-2){
        fprintf(stderr,"input line too long\n"); return YY_NULL; }
