@@ -54,7 +54,7 @@ int yywrap(void)
 }
 [ \t]+ {}
 .  {
-    fprintf(stderr, "lexer error: %s\n", yytext);
+    fprintf(stderr, "lexer error: '%s'\n", yytext);
     exit(1);
 }
 %%
