@@ -22,7 +22,7 @@ line_list
 line
     : expression CR
     {
-      printf("aa val: %d (%#x)\n", $1, $1);
+      printf("result val: %d (%#x)\n", $1, $1);
     }
     ;
 expression
