@@ -32,11 +32,6 @@ expression
       $$ = $1 + $3;
       printf("add: %d\n", $$);
     }
-    | expression ADD SUB term
-    { // handle 1 + -2 expression
-      $$ = $1 + -$4;
-      printf("add/sub: $$: %d, $1: %d, $4: %d\n", $$, $1, $4);
-    }
     | expression SUB term
     {
       $$ = $1 - $3;
@@ -55,6 +50,13 @@ term
 primary_expression
     : INT_LITERAL
     | LP expression RP
+    {
+      $$ = $2;
+    }
+    | SUB primary_expression
+    {
+      $$ = -$2;
+    }
 %%
 int yyerror(char const *str)
 {
