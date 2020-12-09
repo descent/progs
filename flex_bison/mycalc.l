@@ -49,7 +49,7 @@ int yywrap(void)
 (0x[a-f,0-9]*[A-f]*) {
   val = strtol(yytext, 0, 16);
   yylval.int_val = val;
-  printf("bb hex yytext: %s, signed val: %d, unsigned val: %u, hex val: %#x\n", yytext, val, val);
+  printf("hex yytext: %s, signed val: %d, unsigned val: %u, hex val: %#x\n", yytext, val, val, val);
   return INT_LITERAL;
 }
 [ \t]+ {}
