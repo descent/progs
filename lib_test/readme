@@ -1,1 +1,11 @@
-c++ link c library.
+1. c++ link c library.
+2. test link 順序
+
+gcc -o m2 m2.o liba1.a libb1.a
+gcc -o m2 m2.o libb1.a liba1.a  # link error
+
+
+如果直接 link .o 沒有順序問題, 以下2個都可以成功
+gcc -o m2 m2.o a1.o b1.o
+gcc -o m2 m2.o b1.o a1.o
+
