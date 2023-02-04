@@ -62,7 +62,7 @@ int yywrap(void)
     yylval.val.double_val = 0;
 
     yylval.val.int_val = strtol(yytext, 0, 10);
-    printf("aa int_val: %d\n", yylval.val.int_val);
+    printf("aa int_val: %d (%#x)\n", yylval.val.int_val, yylval.val.int_val);
 #endif
   }
 
