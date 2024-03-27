@@ -123,7 +123,7 @@ void f3()
       previous_rbp = rbp_value;
       
       rbp_value = *(uintptr_t*)(rbp_value);
-      printf("%d ## The value of RBP register is: %#lx\n", level, rbp_value);
+      printf("%d ## The value of RBP register is: %#lx, previous_rbp: %#lx\n", level, rbp_value, previous_rbp);
       ++level;
 
       if (rbp_value > previous_rbp)
