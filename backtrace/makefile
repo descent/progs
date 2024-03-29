@@ -1,5 +1,10 @@
 CC=gcc
-CFLAGS=-static -Wall -save-temps -g -no-pie
+CFLAGS=-static -Wall -save-temps -no-pie 
+#-fno-asynchronous-unwind-tables
+u2: u2.o
+	gcc $(CFLAGS) $< -o $@ 
+u2.o: u2.c
+	gcc $(CFLAGS) -c $<
 t1: t1.o
 	gcc -D_GNU_SOURCE $(CFLAGS) $< -o $@ -pthread
 t1.o: t1.c
