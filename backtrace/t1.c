@@ -29,6 +29,16 @@
 #if 1
 #define BT_BUF_SIZE 100
 
+int addr2func(uintptr_t addr)
+{
+  char cmd[128] = {0};
+  sprintf(cmd, "addr2line -f -e ./t1 %#lx\n", addr);
+  printf("cmd: %s\n", cmd);
+  system(cmd);
+  return 0;
+}
+
+#if 1
 uintptr_t get_rip_value() 
 {
   //uintptr_t rip_value;
@@ -47,14 +57,7 @@ unsigned long get_rbp()
   return rbp_value;
 }
 
-int addr2func(uintptr_t addr)
-{
-  char cmd[128] = {0};
-  sprintf(cmd, "addr2line -f -e ./t1 %#lx\n", addr);
-  printf("cmd: %s\n", cmd);
-  system(cmd);
-  return 0;
-}
+#endif
 
 void print_backtrace() 
 {
@@ -75,6 +78,8 @@ void print_backtrace()
     {
       char cmd[128]={0};
       printf("nn %s\n", strings[i]);
+      addr2func( (uintptr_t)buffer[i]);
+      #if 0
       //printf("aa %#x\n", buffer[i]);
       sprintf(cmd, "/usr/bin/addr2line -f -e ./t123 %p\n", buffer[i]);
       //printf("cmd: %s\n", cmd);
@@ -86,6 +91,7 @@ void print_backtrace()
         printf("data: %s\n", data);
       }
       pclose(fs);
+      #endif
       
 
     }
@@ -95,8 +101,10 @@ void print_backtrace()
 #else
 
 
+#if 0
 #define UNW_LOCAL_ONLY
 #include <libunwind.h>
+#endif
 
 
 
@@ -129,18 +137,19 @@ void sig_handler(int signo)
 {
   int level = 0;
   printf("in sig_handler\n");
-  #if 0
+  #if 1
 
   //printf ("Caller name: %p\n", __builtin_return_address(0));
   print_backtrace();
 
   #if 1
-  printf("xx sig thread pid: %d\n", getpid());
-  printf("xx sig thread tid: %d\n", gettid());
+  printf("in sig_handler pid: %d\n", getpid());
+  printf("in sig_handler tid: %d\n", gettid());
   if (signo == SIGINT)
     printf("Received SIGINT\n");
   #endif
   #endif
+  #if 1
     {
       uintptr_t current_address;
       asm("lea (%%rip), %0" : "=r" (current_address));
@@ -216,6 +225,7 @@ void sig_handler(int signo)
     if (return_address)
       printf("Return 0 address of f3: %p\n", return_address);
     }
+    #endif
 }
 
 static void * sig_thread (void *arg)
@@ -373,6 +383,8 @@ int main(int argc, char *argv[])
   //pause();
   while(1)
   {
+    printf("main thread pid: %d\n", getpid());
+    printf("main thread tid: %d\n", gettid());
     fun_22();
     #if 0
     printf("main thread pid: %d\n", getpid());
