@@ -9,15 +9,17 @@ void printNodeAndTag(tinyxml2::XMLNode* node)
     if (element) {
         const char* tagName = element->Value();
         const char* content = element->GetText();
+        #if 0
         if (tagName)
           std::cout << "Node: " << tagName << endl;
+        #endif
 
         //if (std::string(tagName) != "body") 
         {
 #if 1
             if (std::string(tagName) == "a") 
             {
-              std::cout << "a tag" << std::endl;
+              //std::cout << "a tag" << std::endl;
               const char* href = element->Attribute("href");
               if (href) 
               {
@@ -80,7 +82,7 @@ void printNodeAndTag(tinyxml2::XMLNode* node)
         if (node->ToText()) {
             const char* content = node->ToText()->Value();
             if (content) {
-                std::cout << "node Content: " << endl;
+                //std::cout << "node Content: " << endl;
                 std::cout << content << std::endl;
             }
         }
