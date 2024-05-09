@@ -5,6 +5,8 @@
 
 using namespace std;
 
+int do_shorten;
+int print_newline; // 1: 不管有沒有 <br> 都印出 \n, 0: 不印 \n
 int br_tag_cnt;
 int use_img;
 
@@ -20,16 +22,18 @@ std::string trim(const std::string& str) {
 int shorten(const string &href_str)
 {
   string cmd = string("./shorten.sh ") + href_str;
-#if 1
-  cout << cmd;
-  #ifdef BR_TAG
-  cout << endl;
-  #endif
-#else
-  system(cmd.c_str());
-  cout << "run shorten.sh delay 1s" << endl;
-  sleep(1);
-#endif
+  if (do_shorten == 0)
+  {
+    cout << cmd;
+   //if (print_newline)
+    cout << endl;
+  }
+  else
+  {
+    system(cmd.c_str());
+    //cout << "run shorten.sh delay 1s" << endl;
+    sleep(1);
+  }
   return 0;
 }
 
@@ -85,9 +89,8 @@ void printNodeAndTag(tinyxml2::XMLNode* node)
                 else
                 {
                   std::cout << href;
-                  #ifdef BR_TAG
-                  cout << endl;
-                  #endif
+                  if (print_newline)
+                    cout << endl;
                 }
 
                shorten(href_str);
@@ -116,7 +119,7 @@ void printNodeAndTag(tinyxml2::XMLNode* node)
                      const char* src = element->Attribute("src");
                      if (src)
                      {
-                       cout << "src: " << src << endl;
+                       //cout << "src: " << src << endl;
                        shorten(src);
                      }
                    }
@@ -150,9 +153,8 @@ void printNodeAndTag(tinyxml2::XMLNode* node)
                 //std::cout << "node Content: " << endl;
                 //std::cout << content << std::endl;
                 cout << trim(content);
-                #ifdef BR_TAG
-                cout << endl;
-                #endif
+                if (print_newline)
+                  cout << endl;
             }
         }
     }
@@ -163,16 +165,53 @@ void printNodeAndTag(tinyxml2::XMLNode* node)
     }
 }
 
+void usage(const char *cmd)
+{
+  printf("%s -f fn -s 0/1 -n 0/1\n", cmd);
+  printf("-s 0 don't do shorten url\n");
+  printf("-s 1 do shorten url\n");
+  printf("-n 0 don't printf newline\n");
+  printf("-n 1 force printf newline\n");
+}
+
 int main(int argc, char *argv[])
 {
-  if (argc < 2)
+  char *fn=0;
+  int opt;
+
+  while ((opt = getopt(argc, argv, "f:s:n:h?")) != -1) 
   {
-    cout << argv[0] << " " << "filename" << endl;
-    return 0;
+    switch (opt) 
+    {
+      case 'f':
+      {
+        fn = optarg;
+        break;
+      }
+      case 's':
+      {
+        do_shorten = strtol(optarg, 0, 0);
+        printf("do_shorten: %d\n", do_shorten);
+        break;
+      }
+      case 'n':
+      {
+        print_newline = strtol(optarg, 0, 0);
+        printf("print_newline: %d\n", print_newline);
+        break;
+      }
+    }
   }
-    tinyxml2::XMLDocument doc;
+
     //doc.LoadFile("example.html");
-    doc.LoadFile(argv[1]);
+    if (fn == 0)
+    {
+      usage(argv[0]);
+      return 0;
+    }
+
+    tinyxml2::XMLDocument doc;
+    doc.LoadFile(fn);
 
     if (doc.ErrorID() == tinyxml2::XML_SUCCESS) {
         //tinyxml2::XMLElement* root = doc.FirstChildElement("body");
