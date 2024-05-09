@@ -6,6 +6,7 @@
 using namespace std;
 
 int br_tag_cnt;
+int use_img;
 
 std::string trim(const std::string& str) {
     size_t first = str.find_first_not_of(" \t\n\r");
@@ -14,6 +15,22 @@ std::string trim(const std::string& str) {
 
     size_t last = str.find_last_not_of(" \t\n\r");
     return str.substr(first, last - first + 1);
+}
+
+int shorten(const string &href_str)
+{
+  string cmd = string("./shorten.sh ") + href_str;
+#if 1
+  cout << cmd;
+  #ifdef BR_TAG
+  cout << endl;
+  #endif
+#else
+  system(cmd.c_str());
+  cout << "run shorten.sh delay 1s" << endl;
+  sleep(1);
+#endif
+  return 0;
 }
 
 void printNodeAndTag(tinyxml2::XMLNode* node) 
@@ -49,24 +66,32 @@ void printNodeAndTag(tinyxml2::XMLNode* node)
               {
                 //std::cout << "a tag Link Href: " << href << std::endl;
                 string href_str{href};
-                size_t pos = href_str.find("img");
+                size_t pos = href_str.find("picasaweb");
+                if (pos != std::string::npos) 
+                {
+                // found
+                  use_img = 1;
+                  
+                }
+                else
+                {
+                  use_img = 0;
+
+                pos = href_str.find("img");
                 if (pos != std::string::npos) 
                 {
                 // found
                 }
                 else
                 {
-                  std::cout << href;// << std::endl;
+                  std::cout << href;
+                  #ifdef BR_TAG
+                  cout << endl;
+                  #endif
                 }
 
-                string cmd = string("./shorten.sh ") + href_str;
-#if 1
-                cout << cmd;// << endl;
-#else
-                system(cmd.c_str());
-                cout << "run shorten.sh delay 1s" << endl;
-                sleep(1);
-#endif
+               shorten(href_str);
+
                 const char* content = element->GetText();
                 if (content) 
                 {
@@ -77,16 +102,23 @@ void printNodeAndTag(tinyxml2::XMLNode* node)
                 {
                   //std::cout << "Link Text: empty" << std::endl;
                 }
+
+                } // end else
+
               }
             }
             else if (std::string(tagName) == "img") 
                  {
-                 #if 0
-                   br_tag_cnt = 0;
-                   const char* src = element->Attribute("src");
-                   if (src)
+                 #if 1
+                   if (use_img)
                    {
-                     cout << "src: " << src << endl;
+                     br_tag_cnt = 0;
+                     const char* src = element->Attribute("src");
+                     if (src)
+                     {
+                       cout << "src: " << src << endl;
+                       shorten(src);
+                     }
                    }
                  #endif
                  }
@@ -117,7 +149,10 @@ void printNodeAndTag(tinyxml2::XMLNode* node)
 
                 //std::cout << "node Content: " << endl;
                 //std::cout << content << std::endl;
-                std::cout << trim(content);
+                cout << trim(content);
+                #ifdef BR_TAG
+                cout << endl;
+                #endif
             }
         }
     }
