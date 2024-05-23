@@ -11,6 +11,7 @@ int print_newline; // 1: 不管有沒有 <br> 都印出 \n, 0: 不印 \n
 int br_tag_cnt;
 int use_img;
 int to_next_sibling;
+int debug_tag;
 
 std::string trim(const std::string& str) {
     size_t first = str.find_first_not_of(" \t\n\r");
@@ -204,9 +205,10 @@ void traversingXML(tinyxml2::XMLNode *node)
     }
     if(node->ToElement()) {
         auto element = dynamic_cast<XMLElement*>(node);
-        #if 0
-        cout << "XML element，name=" << element->Name() << ", value=" << element->Value() << endl;
-        #endif
+        if (debug_tag)
+        {
+          cout << "XML element，name=" << element->Name() << ", value=" << element->Value() << endl;
+        }
         const char* tagName = element->Value();
         if (std::string(tagName) == "br") 
         {
@@ -282,6 +284,7 @@ void traversingXML(tinyxml2::XMLNode *node)
           }
         }
         else
+        }
         {
         // for debug
           #if 0
@@ -331,11 +334,12 @@ next_node:
 
 void usage(const char *cmd)
 {
-  printf("%s -f fn -s 0/1 -n 0/1\n", cmd);
+  printf("%s -f fn -s 0/1 -n 0/1 -d 0/1\n", cmd);
   printf("-s 0 don't do shorten url\n");
   printf("-s 1 do shorten url\n");
   printf("-n 0 don't printf newline\n");
   printf("-n 1 force printf newline\n");
+  printf("-d 1 print tag for debug\n");
 }
 
 int main(int argc, char *argv[])
@@ -343,7 +347,7 @@ int main(int argc, char *argv[])
   char *fn=0;
   int opt;
 
-  while ((opt = getopt(argc, argv, "f:s:n:h?")) != -1) 
+  while ((opt = getopt(argc, argv, "d:f:s:n:h?")) != -1) 
   {
     switch (opt) 
     {
@@ -362,6 +366,12 @@ int main(int argc, char *argv[])
       {
         print_newline = strtol(optarg, 0, 0);
         printf("print_newline: %d\n", print_newline);
+        break;
+      }
+      case 'd':
+      {
+        debug_tag = strtol(optarg, 0, 0);
+        printf("debug_tag: %d\n", debug_tag);
         break;
       }
     }
