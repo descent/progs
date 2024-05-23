@@ -1,4 +1,6 @@
 #include <iostream>
+#include <regex>
+
 #include <unistd.h>
 
 #include "tinyxml2.h"
@@ -13,7 +15,17 @@ int use_img;
 int to_next_sibling;
 int debug_tag;
 
-std::string trim(const std::string& str) {
+std::string removeTrailingNewlines(const std::string& input) 
+{
+    // Define a regular expression that matches one or more newline characters at the end of the string
+    //std::regex trailingNewlinesPattern(R"(\n+$)");
+    std::regex trailingNewlinesPattern(R"(\n{3,})");
+
+    // Replace the matched pattern with a single newline character
+    return std::regex_replace(input, trailingNewlinesPattern, "\n\n");
+}
+
+{
     size_t first = str.find_first_not_of(" \t\n\r");
     if (first == std::string::npos) // 如果字符串全是空白字符
         return "";
