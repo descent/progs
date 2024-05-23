@@ -296,7 +296,18 @@ void traversingXML(tinyxml2::XMLNode *node)
           }
         }
         else
+        if (std::string(tagName) == "iframe") 
+        {
+          const char* src = element->Attribute("src");
+          if (src) 
+          {
+            cout << src;
+            if (print_newline)
+              cout << endl;
+          }
+
         }
+        else
         {
         // for debug
           #if 0
