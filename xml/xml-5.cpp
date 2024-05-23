@@ -3,7 +3,7 @@
 
 #include <unistd.h>
 
-#include "tinyxml2.h"
+#include <tinyxml2.h>
 
 using namespace std;
 using namespace tinyxml2;
@@ -25,6 +25,7 @@ std::string removeTrailingNewlines(const std::string& input)
     return std::regex_replace(input, trailingNewlinesPattern, "\n\n");
 }
 
+std::string trim(const std::string& str)
 {
     size_t first = str.find_first_not_of(" \t\n\r");
     if (first == std::string::npos) // 如果字符串全是空白字符
@@ -47,7 +48,7 @@ int shorten(const string &href_str)
   {
     system(cmd.c_str());
     //cout << "run shorten.sh delay 1s" << endl;
-    sleep(1);
+    usleep(300000);
   }
   return 0;
 }
@@ -281,6 +282,8 @@ void traversingXML(tinyxml2::XMLNode *node)
                    //cout << "XML 22 text：" << text->Value() << endl;
                    //cout << text->Value() << endl;
                    cout << trim(text->Value() );
+                   if (print_newline)
+                     cout << endl;
                    node = ch;
                    break;
                  }
@@ -292,7 +295,12 @@ void traversingXML(tinyxml2::XMLNode *node)
           if (href) 
           {
             //cout << href << endl;
+            shorten(href);
+            #if 0
             cout << trim(href);
+            if (print_newline)
+              cout << endl;
+            #endif
           }
         }
         else
@@ -328,6 +336,8 @@ void traversingXML(tinyxml2::XMLNode *node)
       //cout << "XML text：" << text->Value() << endl;
       //cout << text->Value() << endl;
       cout << trim(text->Value());
+      if (print_newline)
+        cout << endl;
     }
     if(node->ToComment()) {
         auto comment = dynamic_cast<XMLComment*>(node);
