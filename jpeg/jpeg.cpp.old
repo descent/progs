@@ -1,0 +1,121 @@
+/*
+ *
+ * $Author: descent $
+ * $Date: 2002/06/20 02:55:23 $
+ * $Id: jpeg.cpp,v 1.2 2002/06/20 02:55:23 descent Exp descent $
+ * $Revision: 1.2 $
+ * 程式功能：用 jpeg library 來讀取 jpeg 圖檔，用 svgalib 來秀圖
+ */
+
+#include <cstdio>
+#include "jpeglib.h"
+#include "jerror.h"
+
+#include <string>
+#include <vector>
+#include <iostream>
+
+#include <vga.h>
+#include <vgagl.h>
+
+using std::string;
+using std::cout;
+using std::endl;
+
+int main(int argc,char **argv)
+{
+ struct jpeg_decompress_struct cinfo;
+ struct jpeg_error_mgr jerr;
+
+ cinfo.err=jpeg_std_error(&jerr);
+ jpeg_create_decompress(&cinfo);
+
+ if (argc != 2)
+ {
+  cout << "Enter a file name" << endl;
+  return -1;
+ }
+
+ string filename=argv[1];
+ FILE *infile;
+ if ((infile=fopen(filename.c_str(),"rb"))==NULL)
+ {
+  fprintf(stderr,"cann't open file");
+  return -1;
+ }
+ jpeg_stdio_src(&cinfo,infile);
+ jpeg_read_header(&cinfo,true);
+ jpeg_start_decompress(&cinfo);
+ 
+ JSAMPARRAY buffer;
+ int row_stride=cinfo.output_width * cinfo.output_components;
+ int jpeg_width=cinfo.output_width;
+ buffer=(*cinfo.mem->alloc_sarray)((j_common_ptr)&cinfo,JPOOL_IMAGE,row_stride,1);
+ JSAMPROW ptr=NULL;
+ int i=0;
+ vector<JSAMPLE> bitmap;
+
+ vga_init();
+ int vga_mode=G1024x768x16M;
+ vga_setmode(vga_mode);
+ gl_setcontextvga(vga_mode);
+ int x=100,y=100;
+ int dx=0,dy=0;
+ while(cinfo.output_scanline < cinfo.output_height)
+ {
+  jpeg_read_scanlines(&cinfo,buffer,1);
+  ptr=buffer[0];
+  //cout << "line " << ++i << " : " << endl;
+  int index=0;
+  // scanline 是圖檔的寬度 * 顏色的數目，在 full color 一個 pixel 要三個 byte
+  //for (int col=0 ; col < cinfo.image_width * cinfo.output_components ; col++)
+  for (int col=0 ; col < cinfo.image_width ; col++)
+  {
+   //cout << index++ << " : GETJSAMPLE(*ptr++) : " << GETJSAMPLE(*ptr++) << endl;
+   //bitmap.push_back(GETJSAMPLE(*ptr++));
+   gl_setpixelrgb(x+dx,y,GETJSAMPLE(*ptr),GETJSAMPLE(*(ptr+1)),GETJSAMPLE(*(ptr+2)));
+   dx++;
+   ptr+=3;
+  }
+  dx=0;
+  y++;
+  //cout << endl;
+ }
+ vga_getch();
+ vga_setmode(TEXT);
+ int color_components=cinfo.output_components;
+ //cout << "cinfo.output_components : " << cinfo.output_components << endl;
+ jpeg_finish_decompress(&cinfo);
+ jpeg_destroy_decompress(&cinfo);
+
+ fclose(infile);
+
+ vector<JSAMPLE> :: iterator it;
+ i=0;
+ int ln=0;
+ cout << "line " << ln << " : ";
+ for ( it=bitmap.begin() ; it != bitmap.end() ; it++)
+ {
+  if ( i >= color_components )
+  {
+   //cout << endl;
+   //cout << "line " << ++ln << " : ";
+   i=0;
+  }
+  //cout << (int)*it << " ";
+  ++i;
+ }
+ //cout << endl;
+ for ( it=bitmap.begin() ; it != bitmap.end() ; it+=3)
+ {
+  if (dx > jpeg_width)
+  {
+   dx=0;
+   dy++;
+  }
+  //gl_setpixelrgb(x+dx,y+dy,(int)*it,(int)*(it+1),(int)*(it+2));
+  dx++;
+ }
+
+ 
+}
