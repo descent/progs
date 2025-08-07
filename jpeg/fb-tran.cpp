@@ -100,14 +100,16 @@ uint8_t alpha_blend(uint8_t fg, uint8_t bg, uint8_t alpha) {
     return (fg * alpha + bg * (255 - alpha)) / 255;
 }
 
-void show(const Bitmap& bitmap, int x, int y, int level, const Bitmap& bg_bitmap)
+void show(const Bitmap& bitmap, int x, int y, unsigned char alpha, const Bitmap& bg_bitmap)
 {
   //bitmap.color_pixel();
   std::vector < Color >::const_iterator it = bitmap.color_pixel ().begin ();
 
   std::vector < Color >::const_iterator bg_it = bg_bitmap.color_pixel ().begin ();
+  #if 0
   printf("bitmap.h(): %d, bitmap.w(): %d\n", bitmap.h(), bitmap.w());
   printf("bg_bitmap.h(): %d, bg_bitmap.w(): %d\n", bg_bitmap.h(), bg_bitmap.w());
+  #endif
 
   //gl_getpalettecolor(color_value,&r,&g,&b);
   
@@ -136,7 +138,7 @@ void show(const Bitmap& bitmap, int x, int y, int level, const Bitmap& bg_bitmap
         unsigned char new_r, new_g, new_b;
 
         //double alpha = 0.8;
-        unsigned char alpha = 100;
+        //unsigned char alpha = 100;
         #if 0
         new_r = (unsigned char)((*it).r() * alpha + (*bg_it).r() *(255-alpha))/255;
         new_b = (unsigned char)((*it).b() * alpha + (*bg_it).b() *(255-alpha))/255;
@@ -370,8 +372,11 @@ int main(int argc, char *argv[])
     sleep(2);
     #endif
 
-    show(fg_bitmap, 300, 200, 100, bg_bitmap);
-    sleep(2);
+    for (int i = 0 ; i < 255 ; i+=10)
+    {
+      show(fg_bitmap, 300, 200, i, bg_bitmap);
+      sleep(1);
+    }
 
 
 #if 0
